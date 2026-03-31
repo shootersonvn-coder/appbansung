@@ -1,0 +1,151 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #dfeaf5;
+  color: #111;
+}
+
+.header {
+  background: #005f37;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 18px;
+}
+
+.logo-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: white;
+  color: #2446c8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 28px;
+  border: 3px solid #d9e8ff;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.tabs {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  background: #cfe0f2;
+  color: #1f7ee8;
+  padding: 12px 22px;
+  border-radius: 22px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.banner-wrap {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+  padding: 0 18px 18px;
+}
+
+.banner-main,
+.side-box {
+  background: white;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #2a5bbb;
+}
+
+.banner-main {
+  min-height: 230px;
+}
+
+.banner-side {
+  display: grid;
+  gap: 14px;
+}
+
+.side-box {
+  min-height: 108px;
+}
+
+.medal-box {
+  margin: 0 18px 18px;
+  background: #f4f4f4;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.medal-head,
+.medal-total,
+.medal-row {
+  display: grid;
+  grid-template-columns: 70px 1.6fr 80px 80px 80px 80px 90px;
+  align-items: center;
+}
+
+.medal-head {
+  background: #108433;
+  color: white;
+  font-weight: 700;
+  padding: 14px 18px;
+  font-size: 18px;
+}
+
+.medal-total {
+  background: #f1df88;
+  padding: 14px 18px;
+  font-size: 18px;
+}
+
+.medal-row {
+  background: #f7f7f7;
+  padding: 14px 18px;
+  border-top: 1px solid #ddd;
+  font-size: 18px;
+}
+
+.more {
+  text-align: center;
+  padding: 16px;
+  color: #2b86e8;
+  font-size: 18px;
+  font-weight: 700;
+  background: #f7f7f7;
+  border-top: 1px solid #ddd;
+}
+
+.buttons {
+  padding: 0 18px 24px;
+}
+
+.buttons button {
+  width: 100%;
+  margin-bottom: 16px;
+  border: none;
+  border-radius: 20px;
+  background: #005f37;
+  color: white;
+  font-size: 22px;
+  font-weight: 700;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.footer {
+  text-align: center;
+  color: #777;
+  padding: 8px 18px 24px;
+  font-size: 16px;
+}
