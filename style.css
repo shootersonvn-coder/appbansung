@@ -1,0 +1,355 @@
+:root {
+  --bg: #eef3fb;
+  --green-dark: #005f37;
+  --green-head: #138130;
+  --green-button-top: #17853a;
+  --green-button-bottom: #0a612d;
+
+  --text-main: #294b96;
+  --text-soft: #7787a2;
+  --text-white: #ffffff;
+
+  --tab-bg: #dce5f2;
+  --line: #dbe3ee;
+  --yellow: #f0df8a;
+  --card: #ffffff;
+
+  --font-main: "Roboto Condensed", -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", Arial, sans-serif;
+
+  --fs-main: 15px;
+  --fs-small: 13px;
+  --fs-title: 20px;
+  --fw-main: 700;
+  --radius: 18px;
+}
+
+/* RESET */
+* {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text-main);
+  font-family: var(--font-main);
+  font-size: var(--fs-main);
+  font-weight: var(--fw-main);
+  letter-spacing: -0.35px;
+  line-height: 1.08;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.app {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* HEADER */
+.header {
+  background: linear-gradient(180deg, #0c6c3a 0%, #005f37 100%);
+  color: var(--text-white);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px;
+}
+
+.logo-circle {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #dbe7ff;
+  color: #2b49c8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.title {
+  color: #ffffff;
+  font-size: var(--fs-title);
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  line-height: 1;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 12px 12px;
+}
+
+.tab {
+  min-width: 76px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--tab-bg);
+  color: #4363b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.35px;
+  line-height: 1;
+}
+
+/* BANNER */
+.banner-wrap {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+  padding: 0 12px 12px;
+  align-items: stretch;
+}
+
+.banner-main,
+.side-box {
+  background: var(--card);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.35px;
+}
+
+.banner-main {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 10px;
+}
+
+.banner-side {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+}
+
+.side-box {
+  min-height: 0;
+  padding: 10px;
+}
+
+/* MEDAL BOX */
+.medal-box {
+  margin: 0 12px 12px;
+  background: #f7f9fc;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.medal-grid {
+  display: grid;
+  grid-template-columns: 38px minmax(70px, 1.45fr) 42px 42px 42px 42px 48px;
+  align-items: center;
+}
+
+.medal-head {
+  background: var(--green-head);
+  color: #ffffff;
+  min-height: 30px;
+  padding: 0 6px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.medal-total {
+  background: var(--yellow);
+  color: #4d4316;
+  min-height: 30px;
+  padding: 0 6px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.medal-row {
+  background: #f9fbfd;
+  min-height: 30px;
+  padding: 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+  border-top: 1px solid var(--line);
+}
+
+.medal-head > div,
+.medal-total > div,
+.medal-row > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1px 3px;
+  line-height: 1;
+  letter-spacing: -0.35px;
+}
+
+.unit-col {
+  justify-content: flex-start !important;
+  text-align: left !important;
+  padding-left: 6px !important;
+  word-break: break-word;
+}
+
+/* MORE */
+.more {
+  text-align: center;
+  padding: 9px 6px;
+  color: #4f7dca;
+  background: #f7f9fc;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.3px;
+}
+
+/* BUTTONS */
+.buttons {
+  padding: 0 12px 18px;
+}
+
+.buttons button {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    var(--green-button-top) 0%,
+    var(--green-button-bottom) 100%
+  );
+  color: #ffffff;
+  font-family: var(--font-main);
+  font-size: 14px;
+  font-weight: 800;
+  height: 36px;
+  padding: 0 10px;
+  margin-bottom: 7px;
+  line-height: 1;
+  letter-spacing: -0.35px;
+  cursor: pointer;
+}
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  color: var(--text-soft);
+  padding: 2px 12px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.25px;
+}
+
+/* TABLET / DESKTOP */
+@media (min-width: 768px) {
+  .app {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .header {
+    padding: 14px 16px;
+  }
+
+  .logo-circle {
+    width: 56px;
+    height: 56px;
+    flex-basis: 56px;
+    font-size: 21px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .tabs {
+    gap: 12px;
+    padding: 12px 16px 14px;
+  }
+
+  .tab {
+    min-width: 82px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .banner-wrap {
+    gap: 12px;
+    padding: 0 16px 14px;
+  }
+
+  .medal-box {
+    margin: 0 16px 14px;
+  }
+
+  .medal-grid {
+    grid-template-columns: 42px minmax(84px, 1.55fr) 46px 46px 46px 46px 54px;
+  }
+
+  .medal-head {
+    min-height: 44px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+
+  .medal-total,
+  .medal-row {
+    min-height: 40px;
+    font-size: 14px;
+    padding: 0 8px;
+  }
+
+  .buttons {
+    padding: 0 20px 18px;
+  }
+
+  .buttons button {
+    font-size: 14px;
+    height: 38px;
+    padding: 0 12px;
+  }
+}
+.logo-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.logo-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
