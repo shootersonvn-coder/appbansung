@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>SFS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #eef3fb;
+      --green-dark: #005f37;
+      --text-main: #294b96;
+      --text-soft: #6f7d95;
+      --card: #ffffff;
+      --line: #dbe3ee;
+      --font-main: "Roboto Condensed", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: var(--font-main);
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    .app-shell {
+      min-height: 100vh;
+    }
+
+    .app-header {
+      background: var(--green-dark);
+      color: #fff;
+      padding: 10px 14px 12px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .back-btn {
+      border: none;
+      background: rgba(255,255,255,0.16);
+      color: #fff;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .main-content {
+      padding: 14px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--green-dark);
+      margin: 2px 0 12px;
+    }
+
+    .button-list,
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .menu-btn {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text-main);
+      border-radius: 14px;
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .menu-btn:hover {
+      background: #f8fbff;
+    }
+
+    .event-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .event-year {
+      font-size: 14px;
+      color: #7d8797;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .event-name {
+      font-size: 18px;
+      color: #111;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .loading,
+    .empty {
+      color: var(--text-soft);
+      font-size: 16px;
+      padding: 10px 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-row">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <div class="header-title" id="headerTitle">SFS</div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div id="screenRoot">
+        <div class="section-title" id="sectionTitle">Danh mục</div>
+
+        <div id="loadingText" class="loading">Đang tải dữ liệu...</div>
+
+        <div id="categoryScreen" class="button-list hidden"></div>
+
+        <div id="detailScreen" class="hidden">
+          <div class="button-list" style="margin-bottom:12px;">
+            <button class="menu-btn" onclick="backToCategories()">← Quay lại danh mục</button>
+          </div>
+          <div id="eventList" class="event-list"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const SHEET_ID = "1oLxufg1IYuHXF4LtSsmme2nYvtMTNSAav8LgJzOGfWw";
+    const GID = "1544561860";
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+    const FIXED_CATEGORIES = [
+      "Giới thiệu",
+      "Lịch sử Bắn súng thế giới",
+      "Lịch sử Bắn súng Việt nam"
+    ];
+
+    let allRows = [];
+    let currentCategory = null;
+
+    function normalizeText(str) {
+      return (str || "")
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
+    }
+
+    function parseCSVLine(line) {
+      const result = [];
+      let current = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const next = line[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === "," && !inQuotes) {
+          result.push(current);
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+
+      result.push(current);
+      return result.map(v => v.trim());
+    }
+
+    function parseCSV(text) {
+      const lines = text.replace(/\r/g, "").split("\n").filter(Boolean);
+      return lines.map(parseCSVLine);
+    }
+
+    async function fetchData() {
+      const res = await fetch(CSV_URL, { cache: "no-store" });
+      const text = await res.text();
+      const rows = parseCSV(text);
+
+      allRows = rows
+        .map(cols => ({
+          category: (cols[0] || "").trim(),
+          year: (cols[1] || "").trim(),
+          event: (cols[2] || "").trim()
+        }))
+        .filter(item => item.category || item.year || item.event);
+    }
+
+    function renderCategories() {
+      document.getElementById("headerTitle").textContent = "SFS";
+      document.getElementById("sectionTitle").textContent = "Danh mục";
+
+      const categoryScreen = document.getElementById("categoryScreen");
+      const detailScreen = document.getElementById("detailScreen");
+      const loadingText = document.getElementById("loadingText");
+
+      categoryScreen.innerHTML = "";
+      detailScreen.classList.add("hidden");
+      categoryScreen.classList.remove("hidden");
+      loadingText.classList.add("hidden");
+
+      FIXED_CATEGORIES.forEach(name => {
+        const btn = document.createElement("button");
+        btn.className = "menu-btn";
+        btn.textContent = name;
+        btn.onclick = () => openCategory(name);
+        categoryScreen.appendChild(btn);
+      });
+    }
+
+    function openCategory(categoryName) {
+      currentCategory = categoryName;
+
+      document.getElementById("headerTitle").textContent = categoryName;
+      document.getElementById("sectionTitle").textContent = categoryName;
+
+      const categoryScreen = document.getElementById("categoryScreen");
+      const detailScreen = document.getElementById("detailScreen");
+      const eventList = document.getElementById("eventList");
+
+      categoryScreen.classList.add("hidden");
+      detailScreen.classList.remove("hidden");
+      eventList.innerHTML = "";
+
+      const matched = allRows.filter(
+        row => normalizeText(row.category)

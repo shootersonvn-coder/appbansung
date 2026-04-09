@@ -2,124 +2,668 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
   <title>SFS Shooting</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
+
+  <style>
+    .home-lower-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.75fr) minmax(180px, 0.85fr);
+      gap: 16px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .home-lower-grid .medal-card,
+    .home-lower-grid .main-actions {
+      margin-top: 0;
+    }
+
+    .main-actions.side-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .home-lower-grid > .main-actions.side-actions {
+      min-width: 180px;
+    }
+
+    .main-actions.side-actions .main-action {
+      width: 100%;
+      margin: 0;
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    /* ===== FIX TAB ===== */
+    .tabs-row {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 8px !important;
+      margin-bottom: 6px !important;
+    }
+
+    .pill-tab {
+      height: 38px !important;
+      min-height: 38px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 14px !important;
+      line-height: 1 !important;
+    }
+
+    /* MOBILE */
+    @media (max-width: 700px) {
+      .tabs-row {
+        gap: 8px;
+        margin-top: 6px !important;
+        margin-bottom: 6px !important;
+      }
+
+      .pill-tab {
+        height: 34px !important;
+        min-height: 34px !important;
+        padding: 0 12px !important;
+      }
+    }
+    /* ===== END FIX ===== */
+
+    .medal-card {
+      min-width: 0;
+    }
+
+    .medal-card .medal-grid.five-cols {
+      display: grid;
+      grid-template-columns: minmax(82px, 1.5fr) repeat(4, minmax(34px, 1fr));
+      align-items: center;
+      width: 100%;
+    }
+
+    .medal-card .medal-grid.five-cols .unit {
+      text-align: left;
+      padding-left: 14px;
+    }
+
+    .medal-card .medal-grid.five-cols .medal {
+      text-align: center;
+    }
+
+    @media (max-width: 700px) {
+      .home-lower-grid {
+        grid-template-columns: minmax(0, 1.6fr) minmax(150px, 0.95fr);
+        gap: 12px;
+      }
+
+      .main-actions.side-actions {
+        gap: 12px;
+      }
+
+      .home-lower-grid > .main-actions.side-actions {
+        min-width: 150px;
+      }
+
+      .medal-card .medal-grid.five-cols {
+        grid-template-columns: minmax(72px, 1.35fr) repeat(4, minmax(30px, 1fr));
+      }
+    }
+
+    /* ===== PANEL CHUNG ===== */
+    .docs-panel {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #eef3fb;
+      display: none;
+      flex-direction: column;
+    }
+
+    .docs-panel.show {
+      display: flex;
+    }
+
+    .docs-panel-header {
+      background: linear-gradient(180deg, #005f37 0%, #0a6a3e 100%);
+      padding-top: env(safe-area-inset-top);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      flex: 0 0 auto;
+    }
+
+    .docs-panel-header-inner {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 14px;
+    }
+
+    .docs-back-btn {
+      width: 38px;
+      height: 38px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.96);
+      color: #1f2937;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .docs-panel-title {
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .docs-panel-body {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: 14px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .docs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .doc-item-btn {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      padding: 14px 16px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .doc-item-title {
+      color: #294b96;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.25;
+    }
+
+    .doc-item-arrow {
+      color: #d72d2d;
+      font-size: 18px;
+      flex: 0 0 auto;
+    }
+
+    .doc-empty {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      color: #294b96;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+  </style>
 </head>
 <body>
-  <div class="header">
-  <div class="logo-circle">
-    <img src="https://drive.google.com/thumbnail?id=1hD6kz8VLtibH5bYwsWSFkdC8IV5O7HzB&sz=w500" alt="Logo SFS">
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="safe-top"></div>
+      <div class="header-row">
+        <div class="logo-wrap">
+          <img
+            src="https://drive.google.com/thumbnail?id=1hD6kz8VLtibH5bYwsWSFkdC8IV5O7HzB&sz=w500"
+            alt="Logo SFS"
+          />
+        </div>
+        <div class="header-title">SFS Shooting</div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="tabs-row">
+        <button class="pill-tab">sfs</button>
+        <button class="pill-tab" onclick="window.open('http://sfs.vn/?p=35285', '_blank')">
+  Giải đấu
+</button>
+        <button class="pill-tab">Tài liệu</button>
+        <button class="pill-tab">Tin tức</button>
+      </section>
+
+      <section class="hero-grid">
+        <a href="competition.html" class="hero-main card">
+          <img
+            id="main-banner-image"
+            src=""
+            alt="Đang load giải đấu này"
+          />
+        </a>
+
+        <div class="hero-side">
+  <a
+    href="https://www.youtube.com/@phamcaoson9472"
+    target="_blank"
+    class="video-link"
+  >
+    <div class="side-card card video-card">
+      <img
+        src="images/logoyoutube.png"
+        alt="Video"
+        onerror="this.onerror=null; this.src='images/logo.png';"
+      />
+      <div class="youtube-badge">
+        <span>▶</span>
+      </div>
+    </div>
+  </a>
+
+  <div class="side-card card">
+    <img
+      src="https://drive.google.com/thumbnail?id=1nuYdNvKGkqrnXSPwsfnZ27ruci9RnMUm&sz=w900"
+      alt="Ảnh"
+    />
   </div>
-  <div class="title">SFS Shooting</div>
 </div>
+      </section>
 
-    <div class="tabs">
-      <div class="tab">sfs</div>
-      <div class="tab">Giải đấu</div>
-      <div class="tab">Tài liệu</div>
-      <div class="tab">Tin tức</div>
-    </div>
+      <section class="home-lower-grid">
+        <section class="medal-card">
+          <div class="medal-head medal-grid five-cols">
+            <div class="unit">Đơn vị</div>
+            <div class="medal">🥇</div>
+            <div class="medal">🥈</div>
+            <div class="medal">🥉</div>
+            <div class="medal">💥</div>
+          </div>
 
-    <div class="banner-wrap">
-      <div class="banner-main">Banner chính</div>
+          <div class="medal-total medal-grid five-cols">
+            <div class="unit">11</div>
+            <div class="medal">0</div>
+            <div class="medal">0</div>
+            <div class="medal">0</div>
+            <div class="medal">0</div>
+          </div>
 
-      <div class="banner-side">
-        <div class="side-box">Video</div>
-        <div class="side-box">Ảnh</div>
+          <div class="medal-row medal-grid five-cols">
+            <div class="unit linkish">DAL</div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+          </div>
+
+          <div class="medal-row medal-grid five-cols">
+            <div class="unit linkish">DAN</div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+          </div>
+
+          <div class="medal-row medal-grid five-cols">
+            <div class="unit linkish">DON</div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+          </div>
+
+          <div class="medal-row medal-grid five-cols">
+            <div class="unit linkish">CAN</div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+          </div>
+
+          <div class="medal-row medal-grid five-cols">
+            <div class="unit linkish">HAN</div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+          </div>
+
+          <div class="medal-row medal-grid five-cols">
+            <div class="unit linkish">HAP</div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+          </div>
+
+          
+
+          <div class="medal-row medal-grid five-cols">
+            <div class="unit linkish">QNI</div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+          </div>
+
+          <div class="medal-row medal-grid five-cols">
+            <div class="unit linkish">PHT</div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+          </div>
+
+          <div class="medal-row medal-grid five-cols">
+            <div class="unit linkish">HCM</div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+          </div>
+
+          <div class="medal-row medal-grid five-cols">
+            <div class="unit linkish">THH</div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+            <div class="medal"></div>
+          </div>
+        </section>
+
+        <section class="main-actions side-actions">
+          <button class="main-action"
+            onclick="openDangKyMenu()">
+            Đã đăng ký thi đấu
+          </button>
+
+          <button class="main-action"
+            onclick="openSingleLink('https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=1884712084&size=a4&portrait=true&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25')">
+            Danh sách thi đấu
+          </button>
+
+          <button class="main-action"
+            onclick="openSingleLink('https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=1612478114&size=a4&portrait=true&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25')">
+            HLV VĐV tham dự
+          </button>
+
+          <button class="main-action"
+            onclick="openSingleLink('https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=1566207731&size=a4&portrait=true&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25')">
+            Nhật ký huy chương
+          </button>
+
+          <button class="main-action"
+            onclick="openSingleLink('https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=725452647&single=true&output=pdf')">
+            Thành tích sơ bộ
+          </button>
+
+          <button class="main-action"
+            onclick="openSingleLink('https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=116305899&single=true&output=pdf')">
+            Thẻ thi đấu
+          </button>
+
+          <button class="main-action"
+            onclick="openTaiLieuMenu()">
+            Tài liệu trọng tài
+          </button>
+        </section>
+      </section>
+
+      <footer class="copyright">
+        © 2025 SFS Shooting – All rights reserved
+      </footer>
+    </main>
+
+    <button class="floating-left" aria-label="Logo">
+      <img
+        src="https://drive.google.com/thumbnail?id=1XSLbpCOj0fR76s3grVM9KnVCLDQMK6-v&sz=w300"
+        alt="Logo phụ"
+        onerror="this.src='https://drive.google.com/thumbnail?id=1hD6kz8VLtibH5bYwsWSFkdC8IV5O7HzB&sz=w300';"
+      />
+    </button>
+
+    <button class="floating-right" aria-label="Chat">
+      <span class="chat-bubble">sfs</span>
+    </button>
+
+    <nav class="bottom-nav">
+      <button class="bottom-item">Thành viên</button>
+      <button class="bottom-item">Luật</button>
+      <button class="bottom-item">Liên hệ</button>
+    </nav>
+  </div>
+
+  <div id="docsPanel" class="docs-panel" aria-hidden="true">
+    <div class="docs-panel-header">
+      <div class="docs-panel-header-inner">
+        <button class="docs-back-btn" onclick="closeTaiLieuMenu()" aria-label="Quay lại">&lt;</button>
+        <div class="docs-panel-title">Tài liệu</div>
       </div>
     </div>
 
-    <div class="medal-box">
-      <div class="medal-head medal-grid">
-        <div>XH</div>
-        <div class="unit-col">Đơn vị</div>
-        <div>🥇</div>
-        <div>🥈</div>
-        <div>🥉</div>
-        <div>💥</div>
-        <div>Cộng</div>
-      </div>
-
-      <div class="medal-total medal-grid">
-        <div>10</div>
-        <div class="unit-col">Tổng</div>
-        <div>55</div>
-        <div>55</div>
-        <div>61</div>
-        <div>10</div>
-        <div>171</div>
-      </div>
-
-      <div class="medal-row medal-grid">
-  <div>1</div>
-  <div class="unit-col">Hà Nội</div>
-  <div>15</div>
-  <div>17</div>
-  <div>9</div>
-  <div>3</div>
-  <div>41</div>
-</div>
-
-<div class="medal-row medal-grid">
-  <div>2</div>
-  <div class="unit-col">Quân đội</div>
-  <div>15</div>
-  <div>16</div>
-  <div>19</div>
-  <div>2</div>
-  <div>50</div>
-</div>
-
-<div class="medal-row medal-grid">
-  <div>3</div>
-  <div class="unit-col">TP.HCM</div>
-  <div>12</div>
-  <div>11</div>
-  <div>8</div>
-  <div>1</div>
-  <div>32</div>
-</div>
-
-<div class="medal-row medal-grid">
-  <div>4</div>
-  <div class="unit-col">Đà Nẵng</div>
-  <div>9</div>
-  <div>10</div>
-  <div>7</div>
-  <div>1</div>
-  <div>27</div>
-</div>
-
-<div class="medal-row medal-grid">
-  <div>5</div>
-  <div class="unit-col">Cần Thơ</div>
-  <div>8</div>
-  <div>7</div>
-  <div>6</div>
-  <div>0</div>
-  <div>21</div>
-</div>
-
-      <div class="more">Xem thêm</div>
-    </div>
-
-    <div class="buttons">
-      <button>Đã đăng ký thi đấu</button>
-      <button>Danh sách thi đấu</button>
-      <button>Thành viên tham dự</button>
-      <button>Thành tích sơ bộ</button>
-      <button>Thẻ thi đấu</button>
-    </div>
-
-    <div class="footer">
-      © 2025 SFS Shooting – All rights reserved
+    <div class="docs-panel-body">
+      <div id="docsList" class="docs-list"></div>
     </div>
   </div>
+
+  <div id="dangKyPanel" class="docs-panel" aria-hidden="true">
+    <div class="docs-panel-header">
+      <div class="docs-panel-header-inner">
+        <button class="docs-back-btn" onclick="closeDangKyMenu()" aria-label="Quay lại">&lt;</button>
+        <div class="docs-panel-title">Đã đăng ký thi đấu</div>
+      </div>
+    </div>
+
+    <div class="docs-panel-body">
+      <div id="dangKyList" class="docs-list"></div>
+    </div>
+  </div>
+
+  <script>
+const latestBannerCSV =
+  "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=311114195";
+
+const dangKyLinks = [
+  { title: "Công an nhân dân", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=1723060023&single=true&output=pdf" },
+  { title: "Đà Nẵng", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=603217805&single=true&output=pdf" },
+  { title: "Đắk Lắk", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=486724803&single=true&output=pdf" },
+  { title: "Đồng Nai", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=1959244350&single=true&output=pdf" },
+  { title: "Hà Nội", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=141422022&single=true&output=pdf" },
+  { title: "Hải Phòng", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=10418944&single=true&output=pdf" },
+  { title: "TP Hồ Chí Minh", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=397127405&single=true&output=pdf" },
+  { title: "Phú Thọ", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=1057563954&single=true&output=pdf" },
+  { title: "Quân đội", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=802253602&single=true&output=pdf" },
+  { title: "Quảng Ninh", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=1025073822&single=true&output=pdf" },
+  { title: "Thanh Hóa", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pubhtml?gid=815894742&single=true" }
+];
+
+const taiLieuLinks = [
+  {
+    title: "Lượt đấu",
+    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=419654162&single=true&output=pdf"
+  },
+  
+  {
+    title: "Số đeo",
+    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=165539880&single=true&output=pdf"
+  },
+
+{
+    title: "Số lượng từng nội dung (Làm bia)",
+    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=329133971&single=true&output=pdf"
+  },
+
+  {
+    title: "Biên bản",
+    url: "bienban.html"
+  }
+];
+
+function splitCSVRow(row) {
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for (let i = 0; i < row.length; i++) {
+    const char = row[i];
+    const next = row[i + 1];
+
+    if (char === '"') {
+      if (insideQuotes && next === '"') {
+        current += '"';
+        i++;
+      } else {
+        insideQuotes = !insideQuotes;
+      }
+    } else if (char === "," && !insideQuotes) {
+      result.push(current);
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+
+  result.push(current);
+  return result.map(v => v.trim());
+}
+
+function normalizeDriveImage(url) {
+  if (!url) return "";
+
+  const trimmed = url.trim();
+
+  if (trimmed.includes("/file/d/")) {
+    const match = trimmed.match(/\/d\/([^/]+)/);
+    if (match && match[1]) {
+      return "https://drive.google.com/thumbnail?id=" + match[1] + "&sz=w1600";
+    }
+  }
+
+  if (trimmed.includes("drive.google.com") && trimmed.includes("id=")) {
+    return trimmed;
+  }
+
+  return trimmed;
+}
+
+async function loadMainBanner() {
+  try {
+    const res = await fetch(latestBannerCSV, { cache: "no-store" });
+    const text = await res.text();
+
+    const firstLine = text.split(/\r?\n/)[0];
+    const cols = splitCSVRow(firstLine);
+
+    const rawURL = cols[27] || "";
+    const finalURL = normalizeDriveImage(rawURL);
+
+    const img = document.getElementById("main-banner-image");
+    if (img && finalURL) {
+      img.src = finalURL;
+      img.onerror = function () {
+        console.log("Banner load lỗi:", finalURL);
+      };
+    }
+
+    console.log("AB1 raw =", rawURL);
+    console.log("Banner final =", finalURL);
+  } catch (e) {
+    console.log("Lỗi banner", e);
+  }
+}
+
+function openSingleLink(link) {
+  if (!link || link.startsWith("LINK_")) return;
+  window.location.href = link;
+}
+
+function renderList(targetId, items, openFnName, emptyText) {
+  const list = document.getElementById(targetId);
+  if (!list) return;
+
+  if (!items.length) {
+    list.innerHTML = `<div class="doc-empty">${emptyText}</div>`;
+    return;
+  }
+
+  list.innerHTML = items.map((item, index) => `
+    <button class="doc-item-btn" onclick="${openFnName}(${index})">
+      <div class="doc-item-title">${item.title}</div>
+      <div class="doc-item-arrow">›</div>
+    </button>
+  `).join("");
+}
+
+function openTaiLieuMenu() {
+  const panel = document.getElementById("docsPanel");
+  if (!panel) return;
+
+  renderList("docsList", taiLieuLinks, "openTaiLieuLink", "Chưa có tài liệu.");
+  panel.classList.add("show");
+  panel.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeTaiLieuMenu() {
+  const panel = document.getElementById("docsPanel");
+  if (!panel) return;
+
+  panel.classList.remove("show");
+  panel.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+function openTaiLieuLink(index) {
+  const item = taiLieuLinks[index];
+  if (!item || !item.url || item.url.startsWith("LINK_")) return;
+  window.location.href = item.url;
+}
+
+function openDangKyMenu() {
+  const panel = document.getElementById("dangKyPanel");
+  if (!panel) return;
+
+  renderList("dangKyList", dangKyLinks, "openDangKyLink", "Chưa có link đăng ký.");
+  panel.classList.add("show");
+  panel.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeDangKyMenu() {
+  const panel = document.getElementById("dangKyPanel");
+  if (!panel) return;
+
+  panel.classList.remove("show");
+  panel.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+function openDangKyLink(index) {
+  const item = dangKyLinks[index];
+  if (!item || !item.url || item.url.startsWith("LINK_")) return;
+  window.location.href = item.url;
+}
+
+loadMainBanner();
+  </script>
 </body>
 </html>

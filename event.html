@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Event</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #eef3fb;
+      --green-dark: #0b5d2a;
+      --green-head-top: #0a5f34;
+      --green-head-bottom: #083f24;
+      --tab-bg: #dfeaf6;
+      --tab-text: #2d84ea;
+      --tab-active: #1f6a48;
+      --line: #d8dde5;
+      --summary-bg: #e6c161;
+      --card: #ffffff;
+      --muted: #8b8f97;
+      --red: #ff4b57;
+      --blue: #2d84ea;
+
+      --top-fixed-h: 156px;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: #111;
+      font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    .top-fixed {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: var(--bg);
+    }
+
+    .header {
+      background: var(--green-dark);
+      color: #fff;
+      padding: 12px 16px 14px;
+    }
+
+    .back {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1;
+      width: fit-content;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 8px;
+    }
+
+    .title-main {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+
+    .title-sub {
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-top: 4px;
+      word-break: break-word;
+    }
+
+    .tabs-wrap {
+      background: #e9edf3;
+      padding: 10px 12px 10px;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tab-btn {
+      flex: 1 1 0;
+      min-width: 0;
+      height: 44px;
+      border: 1px solid rgba(47,108,72,0.08);
+      border-radius: 16px;
+      background: var(--tab-bg);
+      color: var(--tab-text);
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      padding: 0 8px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-btn.active {
+      background: var(--tab-active);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .content {
+      padding-top: calc(var(--top-fixed-h) + 6px);
+      padding-bottom: 20px;
+    }
+
+    .summary-bar {
+      background: var(--summary-bg);
+      color: #111;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 14px;
+      white-space: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: hidden;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      background: #fff;
+    }
+
+    thead th {
+      background: linear-gradient(180deg, var(--green-head-top) 0%, var(--green-head-bottom) 100%);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      height: 34px;
+      padding: 3px 6px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+      vertical-align: middle;
+      background: #fff;
+    }
+
+    td.name, th.name {
+      text-align: left;
+    }
+
+    td.note, th.note {
+      text-align: left;
+    }
+
+    td.unit, th.unit,
+    td.code, th.code,
+    td.rank, th.rank,
+    td.num, th.num {
+      white-space: nowrap;
+    }
+
+    .name-text {
+      display: block;
+      line-height: 1.12;
+      word-break: break-word;
+    }
+
+    .row-click {
+      cursor: pointer;
+    }
+
+    .detail-row td {
+      background: #f8fafc;
+      padding: 0;
+      border-bottom: 1px solid var(--line);
+      height: auto;
+    }
+
+    .detail-box {
+      padding: 10px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .detail-chip {
+      background: #fff;
+      border: 1px solid #e2e6ec;
+      border-radius: 10px;
+      padding: 7px 6px;
+      text-align: center;
+    }
+
+    .detail-chip .label {
+      font-size: 11px;
+      color: #6f7782;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .detail-chip .value {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: #111;
+    }
+
+    .detail-note {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #444;
+      line-height: 1.2;
+    }
+
+    .cards-wrap {
+      padding: 10px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .team-card {
+      background: var(--card);
+      border: 1px solid #d7dbe1;
+      border-radius: 18px;
+      padding: 8px 12px 6px;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+    }
+
+    .team-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .team-unit {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .team-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--blue);
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .team-total {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--red);
+      margin-bottom: 3px;
+    }
+
+    .athlete-line {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 8px;
+      align-items: center;
+      min-height: 26px;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .athlete-order {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.2;
+      text-align: right;
+      padding-top: 0;
+    }
+
+    .athlete-name {
+      font-size: 16px;
+      line-height: 1.15;
+    }
+
+    .team-athlete-detail {
+      margin: 4px 0 6px 30px;
+      background: #f8fafc;
+      border: 1px solid #e2e6ec;
+      border-radius: 12px;
+      padding: 8px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .empty {
+      padding: 20px 16px;
+      font-size: 15px;
+      text-align: center;
+      color: #666;
+      background: #fff;
+    }
+
+    @media (min-width: 768px) {
+      :root {
+        --top-fixed-h: 190px;
+      }
+
+      .header {
+        padding: 18px 24px 18px;
+      }
+
+      .back {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+
+      .title-main {
+        font-size: 26px;
+      }
+
+      .title-sub {
+        font-size: 18px;
+        margin-top: 6px;
+      }
+
+      .tabs-wrap {
+        padding: 14px 24px 12px;
+      }
+
+      .tabs {
+        gap: 12px;
+      }
+
+      .tab-btn {
+        height: 52px;
+        font-size: 18px;
+      }
+
+      .summary-bar {
+        font-size: 15px;
+        padding: 10px 24px;
+      }
+
+      thead th {
+        font-size: 16px;
+        padding: 10px 8px;
+      }
+
+      tbody td {
+        height: 36px;
+        font-size: 16px;
+        padding: 3px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-fixed" id="topFixed">
+    <div class="header">
+      <div class="back" onclick="history.back()">&lt;</div>
+      <div class="title-main" id="competition"></div>
+      <div class="title-sub" id="title"></div>
+    </div>
+
+    <div class="tabs-wrap">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="all">Danh sách</button>
+        <button class="tab-btn" data-tab="individual">Cá nhân</button>
+        <button class="tab-btn" data-tab="team">Đồng đội</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="summary-bar" id="summaryBar">Đang tải...</div>
+
+    <div id="allView" class="tab-view"></div>
+    <div id="individualView" class="tab-view hidden"></div>
+    <div id="teamView" class="tab-view hidden"></div>
+  </div>
+
+  <script>
+    const url = "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=311114195";
+
+    const params = new URLSearchParams(window.location.search);
+    const eventName = (params.get("name") || "").trim();
+    const competitionName = (params.get("competition") || "").trim();
+    const yearText = (params.get("year") || "").trim();
+
+    document.getElementById("competition").innerText =
+      [competitionName, yearText].filter(Boolean).join(" ");
+
+    document.getElementById("title").innerText = eventName || "Nội dung";
+
+    let latestSignature = "";
+    let latestData = [];
+    let currentTab = "all";
+    let pollingTimer = null;
+
+    function updateStickyMetrics() {
+      const topFixed = document.getElementById("topFixed");
+      if (topFixed) {
+        document.documentElement.style.setProperty("--top-fixed-h", `${Math.ceil(topFixed.offsetHeight)}px`);
+      }
+    }
+
+    function splitCSVRow(row) {
+      const result = [];
+      let current = "";
+      let insideQuotes = false;
+
+      for (let i = 0; i < row.length; i++) {
+        const char = row[i];
+        const next = row[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && next === '"') {
+            current += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === "," && !insideQuotes) {
+          result.push(current);
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+
+      result.push(current);
+      return result.map(v => v.trim());
+    }
+
+    function norm(s) {
+      return (s || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D")
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, " ");
+    }
+
+    function trim(s) {
+      return (s ?? "").toString().trim();
+    }
+
+    function safe(v) {
+      return trim(v);
+    }
+
+    function hasRealName(r) {
+      return safe(r.name).length > 0;
+    }
+
+    function normalizeP(raw) {
+      return trim(raw).toUpperCase().replace(/[^A-Z0-9]/g, "");
+    }
+
+    function modeFlagsFromP(pRaw) {
+      const p = normalizeP(pRaw);
+      return {
+        hasIndividual: p.includes("C") || p.includes("K"),
+        hasTeam: /[123]/.test(p)
+      };
+    }
+
+    function isIndividual(code) {
+      return modeFlagsFromP(code).hasIndividual;
+    }
+
+    function isTeam(code) {
+      return modeFlagsFromP(code).hasTeam;
+    }
+
+    function normTeamCodeKey(code) {
+      const p = normalizeP(code);
+      if (p.includes("1")) return "1";
+      if (p.includes("2")) return "2";
+      if (p.includes("3")) return "3";
+      return p;
+    }
+
+    function parseNum(v) {
+      const s = safe(v).replace(",", ".");
+      const n = parseFloat(s);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function isDecimalContent() {
+      const t = (eventName || document.getElementById("title").innerText || "")
+        .toLowerCase()
+        .replace(/\u00A0/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      if (t.includes("súng trường hơi di động")) return false;
+      if (t.includes("súng trường hơi")) return true;
+      if (t.includes("súng trường nằm")) return true;
+
+      return false;
+    }
+
+    function formatScore(v) {
+      if (v == null) return "";
+
+      if (isDecimalContent()) {
+        return v.toFixed(1);
+      }
+
+      return String(Math.round(v));
+    }
+
+    function formatSeriesValue(raw) {
+      const t = safe(raw);
+      if (!t || t === "-" || t === "—") return "";
+
+      const n = parseNum(t);
+      if (n == null) return t;
+
+      if (isDecimalContent()) {
+        return n.toFixed(1);
+      }
+
+      return String(Math.round(n));
+    }
+
+    function teamLabel(code) {
+      const k = normTeamCodeKey(code);
+      if (k === "1") return "Đội 1";
+      if (k === "2") return "Đội 2";
+      if (k === "3") return "Đội 3";
+      return "";
+    }
+
+    function calcTotal(row) {
+      const vals = [row.s1, row.s2, row.s3, row.s4, row.s5, row.s6]
+        .map(parseNum)
+        .filter(v => v != null);
+      if (!vals.length) return null;
+      return vals.reduce((a, b) => a + b, 0);
+    }
+
+    function buildSummary(rows, tab) {
+      const listRows = rows.filter(hasRealName);
+
+      const countAll = listRows.length;
+      const countUnits = new Set(listRows.map(r => safe(r.unit)).filter(Boolean)).size;
+      const countIndividual = listRows.filter(r => isIndividual(r.code)).length;
+
+      const teamRows = listRows.filter(r => isTeam(r.code));
+      const teamGroupCount = new Set(
+        teamRows.map(r => `${safe(r.unit)}__${normTeamCodeKey(r.code)}`)
+      ).size;
+
+      const teamUnitCount = new Set(teamRows.map(r => safe(r.unit)).filter(Boolean)).size;
+
+      if (tab === "team") {
+        return `Đơn vị: ${teamUnitCount} Đội: ${teamGroupCount}`;
+      }
+
+      return `Tổng: ${countAll} Đơn vị: ${countUnits} Cá nhân: ${countIndividual} Đồng đội: ${teamGroupCount}`;
+    }
+
+    function detailBoxHTML(r) {
+      return `
+        <div class="detail-box">
+          <div class="detail-grid">
+            <div class="detail-chip"><div class="label">10</div><div class="value">${formatSeriesValue(r.s1) || "-"}</div></div>
+            <div class="detail-chip"><div class="label">20</div><div class="value">${formatSeriesValue(r.s2) || "-"}</div></div>
+            <div class="detail-chip"><div class="label">30</div><div class="value">${formatSeriesValue(r.s3) || "-"}</div></div>
+            <div class="detail-chip"><div class="label">40</div><div class="value">${formatSeriesValue(r.s4) || "-"}</div></div>
+            <div class="detail-chip"><div class="label">50</div><div class="value">${formatSeriesValue(r.s5) || "-"}</div></div>
+            <div class="detail-chip"><div class="label">60</div><div class="value">${formatSeriesValue(r.s6) || "-"}</div></div>
+            <div class="detail-chip"><div class="label">X</div><div class="value">${safe(r.x) || "-"}</div></div>
+            <div class="detail-chip"><div class="label">Cộng</div><div class="value">${formatScore(calcTotal(r)) || "-"}</div></div>
+          </div>
+          ${safe(r.note) ? `<div class="detail-note">Ghi chú: ${safe(r.note)}</div>` : ""}
+        </div>
+      `;
+    }
+
+    function attachExpandableRows(scope) {
+      scope.querySelectorAll("[data-expand-id]").forEach(row => {
+        row.addEventListener("click", () => {
+          const id = row.getAttribute("data-expand-id");
+          const detail = scope.querySelector(`[data-detail-id="${id}"]`);
+          if (!detail) return;
+          detail.classList.toggle("hidden");
+        });
+      });
+    }
+
+    function normalizeVN(s) {
+      return safe(s)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D")
+        .toLowerCase();
+    }
+
+    function shotOptional(raw) {
+      const t = safe(raw);
+      if (!t || t === "-" || t === "—") return null;
+      return parseNum(t);
+    }
+
+    function hasAnySeriesValue(r) {
+      return [r.s1, r.s2, r.s3, r.s4, r.s5, r.s6].some(v => shotOptional(v) != null);
+    }
+
+    function xValue(r) {
+      return parseInt(safe(r.x), 10) || 0;
+    }
+
+    function shouldShowIndividualRank(r) {
+      if (!hasAnySeriesValue(r)) return false;
+      const total = calcTotal(r);
+      return total != null && total > 0.0001;
+    }
+
+    function shotTieValue(r, k) {
+      const arr = [r.s1, r.s2, r.s3, r.s4, r.s5, r.s6];
+      const idx = k - 1;
+      if (idx < 0 || idx >= arr.length) return -Number.MAX_VALUE;
+      const v = shotOptional(arr[idx]);
+      return v == null ? -Number.MAX_VALUE : v;
+    }
+
+    function equalIndividualRankKey(a, b) {
+      const ta = calcTotal(a) ?? 0;
+      const tb = calcTotal(b) ?? 0;
+      if (Math.abs(ta - tb) > 0.0001) return false;
+
+      const xa = xValue(a);
+      const xb = xValue(b);
+      if (xa !== xb) return false;
+
+      for (let k = 6; k >= 1; k--) {
+        const av = shotTieValue(a, k);
+        const bv = shotTieValue(b, k);
+        if (Math.abs(av - bv) > 0.0001) return false;
+      }
+      return true;
+    }
+
+    function buildRankedIndividualRows(rows) {
+      const base = rows
+        .filter(hasRealName)
+        .filter(r => isIndividual(r.code));
+
+      const ranked = base.filter(shouldShowIndividualRank);
+      const unranked = base.filter(r => !shouldShowIndividualRank(r));
+
+      ranked.sort((a, b) => {
+        const ta = calcTotal(a) ?? -Number.MAX_VALUE;
+        const tb = calcTotal(b) ?? -Number.MAX_VALUE;
+        if (Math.abs(ta - tb) > 0.0001) return tb - ta;
+
+        const xa = xValue(a);
+        const xb = xValue(b);
+        if (xa !== xb) return xb - xa;
+
+        for (let k = 6; k >= 1; k--) {
+          const av = shotTieValue(a, k);
+          const bv = shotTieValue(b, k);
+          if (Math.abs(av - bv) > 0.0001) return bv - av;
+        }
+
+        return normalizeVN(a.name).localeCompare(normalizeVN(b.name));
+      });
+
+      unranked.sort((a, b) => {
+        const ua = normalizeVN(a.unit);
+        const ub = normalizeVN(b.unit);
+        if (ua !== ub) return ua.localeCompare(ub);
+
+        const pa = normalizeVN(a.code);
+        const pb = normalizeVN(b.code);
+        if (pa !== pb) return pa.localeCompare(pb);
+
+        return normalizeVN(a.name).localeCompare(normalizeVN(b.name));
+      });
+
+      const out = [];
+      let currentRank = 0;
+
+      for (let i = 0; i < ranked.length; i++) {
+        if (i === 0) {
+          currentRank = 1;
+        } else if (!equalIndividualRankKey(ranked[i], ranked[i - 1])) {
+          currentRank = i + 1;
+        }
+
+        out.push({
+          row: ranked[i],
+          rank: currentRank,
+          rankText: String(currentRank)
+        });
+      }
+
+      unranked.forEach(r => {
+        out.push({
+          row: r,
+          rank: null,
+          rankText: ""
+        });
+      });
+
+      return out;
+    }
+
+    function teamMembersShotCount(members) {
+      let count = 0;
+      members.forEach(m => {
+        [m.s1, m.s2, m.s3, m.s4, m.s5, m.s6].forEach(v => {
+          if (shotOptional(v) != null) count++;
+        });
+      });
+      return count;
+    }
+
+    function teamTotal(members) {
+      return members.reduce((sum, m) => sum + (calcTotal(m) ?? 0), 0);
+    }
+
+    function teamAvg(members) {
+      const count = teamMembersShotCount(members);
+      if (!count) return null;
+      return teamTotal(members) / count;
+    }
+
+    function teamXTotal(members) {
+      return members.reduce((sum, m) => sum + xValue(m), 0);
+    }
+
+    function teamSumShot(members, k) {
+      const idx = k - 1;
+      let sum = 0;
+      members.forEach(m => {
+        const arr = [m.s1, m.s2, m.s3, m.s4, m.s5, m.s6];
+        if (idx >= 0 && idx < arr.length) {
+          const v = shotOptional(arr[idx]);
+          if (v != null) sum += v;
+        }
+      });
+      return sum;
+    }
+
+    function isRankedTeam(group) {
+      const avg = teamAvg(group.members);
+      return avg != null && teamTotal(group.members) > 0.0001;
+    }
+
+    function equalTeamRankKey(a, b) {
+      const aa = teamAvg(a.members) ?? -Number.MAX_VALUE;
+      const ba = teamAvg(b.members) ?? -Number.MAX_VALUE;
+      if (Math.abs(aa - ba) > 0.0001) return false;
+
+      const ax = teamXTotal(a.members);
+      const bx = teamXTotal(b.members);
+      if (ax !== bx) return false;
+
+      for (let k = 6; k >= 1; k--) {
+        const av = teamSumShot(a.members, k);
+        const bv = teamSumShot(b.members, k);
+        if (Math.abs(av - bv) > 0.0001) return false;
+      }
+      return true;
+    }
+
+    function buildRankedTeamGroups(rows) {
+      const teamRows = rows
+        .filter(hasRealName)
+        .filter(r => isTeam(r.code));
+
+      const map = new Map();
+
+      teamRows.forEach(r => {
+        const key = `${safe(r.unit)}__${normTeamCodeKey(r.code)}`;
+        if (!map.has(key)) {
+          map.set(key, {
+            unit: safe(r.unit),
+            code: safe(r.code),
+            members: []
+          });
+        }
+        map.get(key).members.push(r);
+      });
+
+      const groups = Array.from(map.values());
+
+      groups.forEach(g => {
+        g.members.sort((a, b) => {
+          const ta = calcTotal(a) ?? -Number.MAX_VALUE;
+          const tb = calcTotal(b) ?? -Number.MAX_VALUE;
+          if (Math.abs(ta - tb) > 0.0001) return tb - ta;
+
+          const xa = xValue(a);
+          const xb = xValue(b);
+          if (xa !== xb) return xb - xa;
+
+          return normalizeVN(a.name).localeCompare(normalizeVN(b.name));
+        });
+      });
+
+      const ranked = groups.filter(isRankedTeam);
+      const unranked = groups.filter(g => !isRankedTeam(g));
+
+      ranked.sort((a, b) => {
+        const aa = teamAvg(a.members) ?? -Number.MAX_VALUE;
+        const ba = teamAvg(b.members) ?? -Number.MAX_VALUE;
+        if (Math.abs(aa - ba) > 0.0001) return ba - aa;
+
+        const ax = teamXTotal(a.members);
+        const bx = teamXTotal(b.members);
+        if (ax !== bx) return bx - ax;
+
+        for (let k = 6; k >= 1; k--) {
+          const av = teamSumShot(a.members, k);
+          const bv = teamSumShot(b.members, k);
+          if (Math.abs(av - bv) > 0.0001) return bv - av;
+        }
+
+        const u = normalizeVN(a.unit).localeCompare(normalizeVN(b.unit));
+        if (u !== 0) return u;
+
+        return normalizeVN(a.code).localeCompare(normalizeVN(b.code));
+      });
+
+      unranked.sort((a, b) => {
+        const u = normalizeVN(a.unit).localeCompare(normalizeVN(b.unit));
+        if (u !== 0) return u;
+
+        const c = normalizeVN(a.code).localeCompare(normalizeVN(b.code));
+        if (c !== 0) return c;
+
+        const an = normalizeVN(a.members[0]?.name || "");
+        const bn = normalizeVN(b.members[0]?.name || "");
+        return an.localeCompare(bn);
+      });
+
+      const out = [];
+      let currentRank = 0;
+
+      for (let i = 0; i < ranked.length; i++) {
+        if (i === 0) {
+          currentRank = 1;
+        } else if (!equalTeamRankKey(ranked[i], ranked[i - 1])) {
+          currentRank = i + 1;
+        }
+
+        out.push({
+          ...ranked[i],
+          rank: currentRank,
+          rankText: String(currentRank)
+        });
+      }
+
+      unranked.forEach(g => {
+        out.push({
+          ...g,
+          rank: null,
+          rankText: ""
+        });
+      });
+
+      return out;
+    }
+
+    function attachExpandableRows(scope) {
+      scope.querySelectorAll("[data-expand-id]").forEach(row => {
+        row.addEventListener("click", () => {
+          const id = row.getAttribute("data-expand-id");
+          const detail = scope.querySelector(`[data-detail-id="${id}"]`);
+          if (!detail) return;
+          detail.classList.toggle("hidden");
+        });
+      });
+    }
+
+    function renderAllView(rows) {
+      const wrap = document.getElementById("allView");
+      const visibleRows = rows.filter(hasRealName);
+
+      wrap.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <colgroup>
+              <col style="width: 8%">
+              <col style="width: 8%">
+              <col style="width: 8%">
+              <col style="width: 14%">
+              <col style="width: 40%">
+              <col style="width: 10%">
+              <col style="width: 12%">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="rank">TT</th>
+                <th>Đợt</th>
+                <th>Bệ</th>
+                <th class="num">Số</th>
+                <th class="name">Họ và tên</th>
+                <th class="unit">Đ.vị</th>
+                <th class="code">C/D</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${visibleRows.map((r, idx) => `
+                <tr class="row-click" data-expand-id="all-${idx}">
+                  <td>${safe(r.tt)}</td>
+                  <td>${safe(r.dot)}</td>
+                  <td>${safe(r.be)}</td>
+                  <td>${safe(r.number)}</td>
+                  <td class="name"><span class="name-text">${safe(r.name)}</span></td>
+                  <td class="unit">${safe(r.unit)}</td>
+                  <td class="code">${safe(r.code)}</td>
+                </tr>
+                <tr class="detail-row hidden" data-detail-id="all-${idx}">
+                  <td colspan="7">${detailBoxHTML(r)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+      attachExpandableRows(wrap);
+    }
+
+    function renderIndividualView(rows) {
+      const rankedRows = buildRankedIndividualRows(rows);
+
+      const wrap = document.getElementById("individualView");
+      wrap.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <colgroup>
+              <col style="width: 10%">
+              <col style="width: 40%">
+              <col style="width: 12%">
+              <col style="width: 12%">
+              <col style="width: 12%">
+              <col style="width: 14%">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>XH</th>
+                <th class="name">Họ và tên</th>
+                <th>Đ.vị</th>
+                <th>Đội</th>
+                <th>Cộng</th>
+                <th>G.chú</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rankedRows.map((item, idx) => {
+                const r = item.row;
+                return `
+                  <tr class="row-click" data-expand-id="ind-${idx}">
+                    <td>${item.rankText}</td>
+                    <td class="name"><span class="name-text">${safe(r.name)}</span></td>
+                    <td>${safe(r.unit)}</td>
+                    <td>${safe(r.code).toUpperCase()}</td>
+                    <td>${formatScore(calcTotal(r))}</td>
+                    <td class="note">${safe(r.note)}</td>
+                  </tr>
+                  <tr class="detail-row hidden" data-detail-id="ind-${idx}">
+                    <td colspan="6">${detailBoxHTML(r)}</td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+      attachExpandableRows(wrap);
+    }
+
+    function renderTeamView(rows) {
+      const groups = buildRankedTeamGroups(rows);
+      const wrap = document.getElementById("teamView");
+
+      if (!groups.length) {
+        wrap.innerHTML = `<div class="empty">Không có dữ liệu đồng đội</div>`;
+        return;
+      }
+
+      wrap.innerHTML = `
+        <div class="cards-wrap">
+          ${groups.map((g, gi) => {
+            const total = teamTotal(g.members);
+
+            return `
+              <div class="team-card">
+                <div class="team-head">
+                  <div class="team-unit">${g.rankText ? `${g.rankText}. ` : ""}${g.unit || "-"}</div>
+                  <div class="team-name">${teamLabel(g.code)}</div>
+                </div>
+                <div class="team-total">Tổng: ${formatScore(total) || "0"}</div>
+
+                ${g.members.map((m, mi) => `
+                  <div class="athlete-line" data-expand-id="team-${gi}-${mi}">
+                    <div class="athlete-order">${mi + 1}</div>
+                    <div class="athlete-name">${safe(m.name)}</div>
+                  </div>
+                  <div class="team-athlete-detail hidden" data-detail-id="team-${gi}-${mi}">
+                    ${detailBoxHTML(m)}
+                  </div>
+                `).join("")}
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+
+      attachExpandableRows(wrap);
+    }
+
+    function renderAllTabs(data) {
+      renderAllView(data);
+      renderIndividualView(data);
+      renderTeamView(data);
+      document.getElementById("summaryBar").innerText = buildSummary(data, currentTab);
+      showTab(currentTab);
+      updateStickyMetrics();
+    }
+
+    function showTab(tab) {
+      document.querySelectorAll(".tab-btn").forEach(x => {
+        x.classList.toggle("active", x.dataset.tab === tab);
+      });
+
+      document.getElementById("allView").classList.toggle("hidden", tab !== "all");
+      document.getElementById("individualView").classList.toggle("hidden", tab !== "individual");
+      document.getElementById("teamView").classList.toggle("hidden", tab !== "team");
+    }
+
+    function buildDataFromRows(rows) {
+      const data = [];
+
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        const content = r[5] || "";
+
+        if (!content) continue;
+        if (norm(content) !== norm(eventName)) continue;
+
+        const ho = r[11] || "";
+        const ten = r[12] || "";
+
+        const item = {
+          tt: r[16] || "",
+          dot: r[6] || "",
+          be: r[7] || "",
+          number: r[8] || "",
+          name: `${ho} ${ten}`.trim(),
+          unit: r[14] || "",
+          code: r[15] || "",
+          s1: r[17] || "",
+          s2: r[18] || "",
+          s3: r[19] || "",
+          s4: r[20] || "",
+          s5: r[21] || "",
+          s6: r[22] || "",
+          x: r[23] || "",
+          note: r[24] || ""
+        };
+
+        if (!item.name) continue;
+
+        data.push(item);
+      }
+
+      data.sort((a, b) => {
+        const tta = parseInt(a.tt || "999999", 10);
+        const ttb = parseInt(b.tt || "999999", 10);
+        return tta - ttb;
+      });
+
+      return data;
+    }
+
+    async function fetchAndRender(force = false) {
+      try {
+        const res = await fetch(`${url}&ts=${Date.now()}`, { cache: "no-store" });
+        const text = await res.text();
+
+        const signature = text;
+        if (!force && signature === latestSignature) return;
+
+        const rows = text
+          .split(/\r?\n/)
+          .filter(r => r.trim())
+          .map(r => splitCSVRow(r));
+
+        latestSignature = signature;
+        latestData = buildDataFromRows(rows);
+        renderAllTabs(latestData);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function startPolling() {
+      if (pollingTimer) clearInterval(pollingTimer);
+      pollingTimer = setInterval(() => {
+        fetchAndRender(false);
+      }, 5000);
+    }
+
+    async function load() {
+      await fetchAndRender(true);
+
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          currentTab = btn.dataset.tab;
+          showTab(currentTab);
+          document.getElementById("summaryBar").innerText = buildSummary(latestData, currentTab);
+          updateStickyMetrics();
+        });
+      });
+
+      requestAnimationFrame(updateStickyMetrics);
+      setTimeout(updateStickyMetrics, 50);
+      setTimeout(updateStickyMetrics, 150);
+
+      window.addEventListener("resize", updateStickyMetrics);
+      window.addEventListener("orientationchange", () => {
+        setTimeout(updateStickyMetrics, 50);
+        setTimeout(updateStickyMetrics, 180);
+      });
+
+      startPolling();
+    }
+
+    load();
+  </script>
+</body>
+</html>

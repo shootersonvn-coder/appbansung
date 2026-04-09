@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>PDF Viewer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #eef3fb;
+      --green-dark: #005f37;
+      --text-white: #ffffff;
+      --line: #dbe3ee;
+      --font-main: "Roboto Condensed", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      --footer-h: 74px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: var(--font-main);
+      background: var(--bg);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    button, a, div {
+      font-family: var(--font-main);
+    }
+
+    .app-head {
+      background: linear-gradient(180deg, #0b7f3b 0%, var(--green-dark) 100%);
+      color: var(--text-white);
+      padding: calc(env(safe-area-inset-top, 0px) + 14px) 14px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 0 0 auto;
+    }
+
+    .back-btn {
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.95);
+      color: #1f2d3d;
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex: 0 0 48px;
+      padding: 0;
+    }
+
+    .head-text {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .head-title {
+      margin: 0;
+      color: #fff;
+      font-size: 27px;
+      font-weight: 800;
+      line-height: 1.08;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .head-subtitle {
+      margin-top: 4px;
+      color: rgba(255,255,255,0.92);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .viewer-wrap {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 0;
+      background: #fff;
+    }
+
+    .loading,
+    .error-box {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      background: #fff;
+      color: #4b5563;
+      font-size: 20px;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    .error-box {
+      flex-direction: column;
+      gap: 16px;
+      display: none;
+    }
+
+    .error-btn {
+      border: none;
+      border-radius: 16px;
+      background: var(--green-dark);
+      color: white;
+      padding: 12px 18px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .bottom-bar {
+      flex: 0 0 auto;
+      height: calc(var(--footer-h) + env(safe-area-inset-bottom, 0px));
+      padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+      background: #fff;
+      border-top: 1px solid var(--line);
+      display: flex;
+      gap: 12px;
+    }
+
+    .bottom-btn {
+      flex: 1;
+      border: none;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #0b7f3b 0%, var(--green-dark) 100%);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="app-head">
+    <button class="back-btn" type="button" onclick="history.back()">&lt;</button>
+    <div class="head-text">
+      <h1 class="head-title" id="pageTitle">PDF</h1>
+      <div class="head-subtitle">Tài liệu giải đấu</div>
+    </div>
+  </header>
+
+  <main class="viewer-wrap">
+    <div class="loading" id="loadingBox">Đang mở tài liệu...</div>
+    <div class="error-box" id="errorBox">
+      <div>Không mở được tài liệu.</div>
+      <button class="error-btn" type="button" id="openDirectBtn">Mở trực tiếp</button>
+    </div>
+  </main>
+
+  <footer class="bottom-bar">
+    <button class="bottom-btn" type="button" id="shareBtn">Gửi</button>
+    <button class="bottom-btn" type="button" id="downloadBtn">Tải về</button>
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const title = params.get("title") || "PDF";
+    const pdfUrl = params.get("url") || "";
+
+    document.getElementById("pageTitle").textContent = title;
+
+    const loadingBox = document.getElementById("loadingBox");
+    const errorBox = document.getElementById("errorBox");
+    const openDirectBtn = document.getElementById("openDirectBtn");
+    const shareBtn = document.getElementById("shareBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    function hideLoading() {
+      loadingBox.style.display = "none";
+    }
+
+    function showError() {
+      hideLoading();
+      errorBox.style.display = "flex";
+    }
+
+    openDirectBtn.onclick = () => {
+      if (pdfUrl) {
+        window.location.href = pdfUrl;
+      }
+    };
+
+    shareBtn.onclick = async () => {
+      if (!pdfUrl) return;
+
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: title,
+            url: pdfUrl
+          });
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(pdfUrl);
+          alert("Đã sao chép link tài liệu");
+        }
+      } catch (e) {}
+    };
+
+    downloadBtn.onclick = () => {
+      if (pdfUrl) {
+        window.open(pdfUrl, "_blank");
+      }
+    };
+
+    if (!pdfUrl) {
+      showError();
+    } else {
+      setTimeout(() => {
+        window.location.href = pdfUrl;
+      }, 150);
+    }
+  </script>
+
+</body>
+</html>

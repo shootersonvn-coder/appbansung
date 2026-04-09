@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competition</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #e8f0ea;
+}
+
+button,
+input,
+textarea,
+select,
+a,
+div {
+  font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
+}
+
+/* HEADER */
+.header {
+  background: #0b5d2a;
+  color: white;
+  padding: 12px 16px 14px;
+}
+
+
+
+/* BACK */
+.back {
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+/* TITLE */
+.title-main {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.title-sub {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.85;
+  margin-top: 4px;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px 8px;
+  background: #e8f0ea;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  flex: 1;                  /* ✅ chia đều lại */
+  max-width: 20%;           /* ✅ mỗi tab = 1/5 màn hình */
+
+  height: 38px;
+  padding: 0 6px;           /* ✅ giảm padding */
+
+  border-radius: 12px;
+
+  font-weight: 700;
+  font-size: 14px;          /* ✅ giảm size chữ */
+
+  color: #2f6c48;
+  background: #dfe9e2;
+  border: 1px solid rgba(47,108,72,0.08);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  line-height: 1.1;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* DATE */
+.date {
+  color: #e53935;
+  font-weight: 600;
+  font-size: 18px;
+  width: calc(100% - 40px);
+  margin: 14px auto 8px;
+  text-align: left;
+}
+
+/* CARD */
+.schedule-card {
+  background: white;
+  width: calc(100% - 40px);
+  margin: 0 auto 12px;
+  padding: 14px 18px 15px;
+  border-radius: 18px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.04);
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.schedule-card:active {
+  transform: scale(0.995);
+}
+
+.time {
+  color: #9a9aa0;
+  font-size: 16px;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.event {
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.12;
+  color: #111;
+}
+
+.top-fixed {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #e8f0ea;
+}
+
+@media (min-width: 768px) {
+  .header {
+    padding: 22px 0 26px;
+  }
+
+  .back {
+    width: 64px;
+    height: 64px;
+    margin-left: 40px;
+    font-size: 36px;
+  }
+
+  .title-main {
+    font-size: 28px;
+    margin-left: 46px;
+    margin-right: 24px;
+  }
+
+  .title-year {
+    font-size: 30px;
+    margin-left: 46px;
+    margin-right: 24px;
+    margin-top: 8px;
+  }
+
+  .tabs {
+    padding: 18px 32px 12px;
+    gap: 12px;
+  }
+
+  .tab {
+    height: 54px;
+    font-size: 18px;
+  }
+
+  .date {
+    width: calc(100% - 64px);
+    margin: 16px auto 10px;
+    font-size: 22px;
+  }
+
+  .schedule-card {
+    width: calc(100% - 64px);
+    padding: 22px 22px 24px;
+    margin-bottom: 18px;
+    border-radius: 20px;
+  }
+
+  .time {
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+
+  .event {
+    font-size: 22px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="top-fixed">
+  <div class="header">
+    <div class="back" onclick="history.back()">&lt;</div>
+    <div class="title-main" id="name"></div>
+    <div class="title-sub">Lịch đấu</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab">Tài liệu</div>
+    <div class="tab">Đăng ký</div>
+    <div class="tab">Danh sách</div>
+    <div class="tab">Đẳng cấp</div>
+    <div class="tab">Kỷ lục</div>
+  </div>
+</div>
+
+<div class="content">
+  <div id="schedule"></div>
+</div>
+
+<script>
+const url =
+  "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=311114195";
+
+function splitCSVRow(row) {
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for (let i = 0; i < row.length; i++) {
+    const char = row[i];
+    const next = row[i + 1];
+
+    if (char === '"') {
+      if (insideQuotes && next === '"') {
+        current += '"';
+        i++;
+      } else {
+        insideQuotes = !insideQuotes;
+      }
+    } else if (char === "," && !insideQuotes) {
+      result.push(current);
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+
+  result.push(current);
+  return result.map(v => v.trim());
+}
+
+function extractTimeAndDate(raw) {
+  const text = (raw || "").trim();
+  const match = text.match(/(\d{1,2}:\d{2})\s+(\d{2}\.\d{2}\.\d{4})/);
+
+  if (match) {
+    return {
+      time: match[1],
+      date: match[2]
+    };
+  }
+
+  return {
+    time: text,
+    date: ""
+  };
+}
+
+function normalizeText(s) {
+  return (s || "")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function toSortableNumber(dateStr, timeStr) {
+  const [dd, mm, yyyy] = (dateStr || "").split(".");
+  const [hh, min] = (timeStr || "").split(":");
+
+  if (!dd || !mm || !yyyy) return Number.MAX_SAFE_INTEGER;
+
+  return Number(
+    `${yyyy}${mm.padStart(2, "0")}${dd.padStart(2, "0")}${(hh || "00").padStart(2, "0")}${(min || "00").padStart(2, "0")}`
+  );
+}
+
+async function load() {
+  const res = await fetch(url, { cache: "no-store" });
+  const text = await res.text();
+
+  const rows = text
+    .split(/\r?\n/)
+    .filter(r => r.trim())
+    .map(r => splitCSVRow(r));
+
+  if (rows.length < 2) return;
+
+  let yearText = "";
+  let nameText = "";
+
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i] || [];
+    const y = String(r[0] || "").trim(); // cột A
+    const n = String(r[3] || "").trim(); // cột D
+
+    if (!yearText && y) yearText = y;
+    if (!nameText && n) nameText = n;
+
+    if (yearText && nameText) break;
+  }
+
+  document.getElementById("name").innerText =
+  [nameText, yearText].filter(Boolean).join(" ");
+
+  const container = document.getElementById("schedule");
+  container.innerHTML = "";
+
+  const seen = new Set();
+  const items = [];
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+
+    const rawTime = normalizeText(r[4]);   // cột E
+    const content = normalizeText(r[5]);   // cột F
+
+    if (!rawTime || !content) continue;
+
+    const parsed = extractTimeAndDate(rawTime);
+    const time = parsed.time;
+    const date = parsed.date;
+
+    const uniqueKey = `${time}__${date}__${content}`;
+    if (seen.has(uniqueKey)) continue;
+    seen.add(uniqueKey);
+
+    items.push({
+      time,
+      date,
+      content
+    });
+  }
+
+  items.sort((a, b) => {
+    return toSortableNumber(a.date, a.time) - toSortableNumber(b.date, b.time);
+  });
+
+  let currentDate = "";
+
+  items.forEach(item => {
+    if (item.date && item.date !== currentDate) {
+      currentDate = item.date;
+
+      const d = document.createElement("div");
+      d.className = "date";
+      d.innerText = item.date;
+      container.appendChild(d);
+    }
+
+    const card = document.createElement("a");
+    card.className = "schedule-card";
+    card.href =
+      "event.html?name=" + encodeURIComponent(item.content) +
+      "&date=" + encodeURIComponent(item.date) +
+      "&time=" + encodeURIComponent(item.time) +
+      "&year=" + encodeURIComponent(yearText) +
+      "&competition=" + encodeURIComponent(nameText);
+
+    card.innerHTML = `
+      <div class="time">${item.time}</div>
+      <div class="event">${item.content}</div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+load();
+</script>
+
+</body>
+</html>
