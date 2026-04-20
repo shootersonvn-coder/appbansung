@@ -10,10 +10,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+:root {
+  --bg: #e8f0ea;
+  --green-dark: #0b5d2a;
+  --tab-bg: #dfe9e2;
+  --tab-text: #2f6c48;
+  --date-red: #e53935;
+  --card-bg: #ffffff;
+  --time-gray: #9a9aa0;
+  --text-main: #111111;
+  --pdf-on: rgba(80, 80, 85, 0.85);
+  --pdf-off: rgba(80, 80, 85, 0.28);
+  --line-green: #006400;
+}
+
 body {
   margin: 0;
   font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #e8f0ea;
+  background: var(--bg);
 }
 
 button,
@@ -21,21 +35,18 @@ input,
 textarea,
 select,
 a,
-div {
+div,
+span {
   font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, sans-serif;
   box-sizing: border-box;
 }
 
-/* HEADER */
 .header {
-  background: #0b5d2a;
+  background: var(--green-dark);
   color: white;
   padding: 12px 16px 14px;
 }
 
-
-
-/* BACK */
 .back {
   font-size: 22px;
   font-weight: 600;
@@ -43,9 +54,9 @@ div {
   color: white;
   line-height: 1;
   margin-bottom: 6px;
+  user-select: none;
 }
 
-/* TITLE */
 .title-main {
   font-size: 16px;
   font-weight: 800;
@@ -59,12 +70,11 @@ div {
   margin-top: 4px;
 }
 
-/* TABS */
 .tabs {
   display: flex;
   gap: 6px;
   padding: 10px 12px 8px;
-  background: #e8f0ea;
+  background: var(--bg);
 }
 
 .tabs::-webkit-scrollbar {
@@ -72,46 +82,37 @@ div {
 }
 
 .tab {
-  flex: 1;                  /* ✅ chia đều lại */
-  max-width: 20%;           /* ✅ mỗi tab = 1/5 màn hình */
-
+  flex: 1;
+  max-width: 20%;
   height: 38px;
-  padding: 0 6px;           /* ✅ giảm padding */
-
+  padding: 0 6px;
   border-radius: 12px;
-
   font-weight: 700;
-  font-size: 14px;          /* ✅ giảm size chữ */
-
-  color: #2f6c48;
-  background: #dfe9e2;
+  font-size: 14px;
+  color: var(--tab-text);
+  background: var(--tab-bg);
   border: 1px solid rgba(47,108,72,0.08);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   text-align: center;
   line-height: 1.1;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* DATE */
 .date {
-  color: #e53935;
+  color: var(--date-red);
   font-weight: 600;
-  font-size: 18px;
+  font-size: 16px;
   width: calc(100% - 40px);
   margin: 14px auto 8px;
   text-align: left;
 }
 
-/* CARD */
 .schedule-card {
-  background: white;
+  background: var(--card-bg);
   width: calc(100% - 40px);
   margin: 0 auto 12px;
   padding: 14px 18px 15px;
@@ -128,25 +129,110 @@ div {
   transform: scale(0.995);
 }
 
-.time {
-  color: #9a9aa0;
+.card-main-time {
+  color: var(--time-gray);
   font-size: 16px;
   margin-bottom: 8px;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
-.event {
+.card-main-title {
   font-weight: 800;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.12;
-  color: #111;
+  color: var(--text-main);
+}
+
+.schedule-card.is-green .card-main-title,
+.schedule-card.is-green .sub-label {
+  color: var(--line-green);
+}
+
+.schedule-card.is-red .card-main-title,
+.schedule-card.is-red .card-main-time,
+.schedule-card.is-red .sub-label,
+.schedule-card.is-red .sub-time {
+  color: var(--date-red);
+}
+
+.sub-list {
+  margin-top: 8px;
+}
+
+.sub-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 28px;
+  gap: 10px;
+  align-items: center;
+  padding: 2px 0;
+  min-height: 32px;
+}
+
+.sub-time {
+  color: var(--time-gray);
+  font-size: 15px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.sub-label {
+  color: var(--text-main);
+  font-size: 16px;
+  line-height: 1.15;
+  word-break: break-word;
+}
+
+.sub-pdf-wrap {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.sub-pdf {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.sub-pdf svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.sub-pdf.on {
+  color: var(--pdf-on);
+}
+
+.sub-pdf.off {
+  color: var(--pdf-off);
+}
+
+.sub-pdf.loading {
+  color: var(--pdf-on);
+  animation: spin 0.85s linear infinite;
+  transform-origin: center;
+}
+
+.hidden {
+  display: none !important;
 }
 
 .top-fixed {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: #e8f0ea;
+  background: var(--bg);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @media (min-width: 768px) {
@@ -165,13 +251,6 @@ div {
     font-size: 28px;
     margin-left: 46px;
     margin-right: 24px;
-  }
-
-  .title-year {
-    font-size: 30px;
-    margin-left: 46px;
-    margin-right: 24px;
-    margin-top: 8px;
   }
 
   .tabs {
@@ -197,16 +276,38 @@ div {
     border-radius: 20px;
   }
 
-  .time {
+  .card-main-time {
     font-size: 22px;
     margin-bottom: 14px;
   }
 
-  .event {
+  .card-main-title {
     font-size: 22px;
   }
-}
 
+  .sub-row {
+    grid-template-columns: 92px 1fr 34px;
+    min-height: 42px;
+  }
+
+  .sub-time {
+    font-size: 22px;
+  }
+
+  .sub-label {
+    font-size: 22px;
+  }
+
+  .sub-pdf-wrap {
+    width: 34px;
+    height: 34px;
+  }
+
+  .sub-pdf svg {
+    width: 26px;
+    height: 26px;
+  }
+}
 </style>
 </head>
 
@@ -233,8 +334,16 @@ div {
 </div>
 
 <script>
-const url =
+const scheduleUrl =
   "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=311114195";
+
+const PDF_CONFIG_SHEET_ID = "1FGODmdWeOkX6E-miSpLt2wGgzyPwyCzVIqLhnYMOMlY";
+const pdfConfigUrl =
+  `https://docs.google.com/spreadsheets/d/${PDF_CONFIG_SHEET_ID}/export?format=csv&gid=1681603430`;
+
+let expandedCardId = null;
+let openingPDFLink = null;
+let pdfConfigMap = new Map();
 
 function splitCSVRow(row) {
   const result = [];
@@ -264,32 +373,41 @@ function splitCSVRow(row) {
   return result.map(v => v.trim());
 }
 
-function extractTimeAndDate(raw) {
-  const text = (raw || "").trim();
-  const match = text.match(/(\d{1,2}:\d{2})\s+(\d{2}\.\d{2}\.\d{4})/);
-
-  if (match) {
-    return {
-      time: match[1],
-      date: match[2]
-    };
-  }
-
-  return {
-    time: text,
-    date: ""
-  };
+function trim(s) {
+  return (s || "").trim();
 }
 
 function normalizeText(s) {
-  return (s || "")
-    .trim()
-    .replace(/\s+/g, " ");
+  return (s || "").trim().replace(/\s+/g, " ");
+}
+
+function norm(s) {
+  return trim(s)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .toLowerCase();
+}
+
+function extractTimeAndDate(raw) {
+  const text = trim(raw);
+  const dateMatch = text.match(/(\d{1,2}\.\d{1,2}\.\d{4})/);
+  const timeMatch = text.match(/(\d{1,2}[:h]\d{2})/);
+
+  const date = dateMatch ? dateMatch[1] : "";
+  let time = timeMatch ? timeMatch[1] : "";
+
+  if (time.includes("h")) {
+    time = time.replace("h", ":");
+  }
+
+  return { time, date };
 }
 
 function toSortableNumber(dateStr, timeStr) {
-  const [dd, mm, yyyy] = (dateStr || "").split(".");
-  const [hh, min] = (timeStr || "").split(":");
+  const [dd, mm, yyyy] = trim(dateStr).split(".");
+  const [hh, min] = trim(timeStr).split(":");
 
   if (!dd || !mm || !yyyy) return Number.MAX_SAFE_INTEGER;
 
@@ -298,95 +416,463 @@ function toSortableNumber(dateStr, timeStr) {
   );
 }
 
-async function load() {
-  const res = await fetch(url, { cache: "no-store" });
-  const text = await res.text();
+function isFinalTitle(title) {
+  return norm(title).includes("c.ket");
+}
 
-  const rows = text
+function baseTitle(title) {
+  const s = trim(title);
+  const lower = norm(s);
+
+  const idx1 = lower.indexOf(" - c.ket");
+  if (idx1 >= 0) return trim(s.slice(0, idx1));
+
+  const idx2 = lower.indexOf("- c.ket");
+  if (idx2 >= 0) return trim(s.slice(0, idx2));
+
+  return s;
+}
+
+function hasAnyDigitsToken(p) {
+  return /\d/.test(trim(p).toUpperCase());
+}
+
+function hasIndividualOrTeamCode(p) {
+  const up = trim(p).toUpperCase();
+  return up.includes("C") || up.includes("K") || /\d/.test(up);
+}
+
+function hasTeamCode(p) {
+  return hasAnyDigitsToken(p);
+}
+
+function isGreenKeywordLine(s) {
+  const t = norm(s);
+  return t.includes("kiem tra")
+    || t.includes("don tiep")
+    || t.includes("trong tai")
+    || t.includes("btc")
+    || t.includes("to chuc")
+    || t.includes("chuan bi")
+    || t.includes("ky thuat")
+    || t.includes("tap luyen")
+    || t.includes("ve")
+    || t.includes("doan");
+}
+
+function isRedKeywordLine(s) {
+  const t = norm(s);
+  return t.includes("mac") || t.includes("thuong");
+}
+
+function pdfIcon(className = "off") {
+  return `
+    <span class="sub-pdf ${className}">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M14 2v5h5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M9 12h6M9 16h6M9 8h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </span>
+  `;
+}
+
+function boolFromSheet(v, fallback = true) {
+  const t = norm(v);
+  if (!t) return fallback;
+  if (["true", "1", "yes", "y"].includes(t)) return true;
+  if (["false", "0", "no", "n"].includes(t)) return false;
+  return fallback;
+}
+
+function marginValue(v, fallback) {
+  const t = trim(v).replace(",", ".");
+  return t || fallback;
+}
+
+function buildGooglePdfUrl(cfg) {
+  const gid = trim(cfg.gid);
+  if (!gid) return "";
+
+  const orientationRaw = norm(cfg.orientation);
+  const portrait = orientationRaw === "landscape" ? "false" : "true";
+
+  const size = trim(cfg.size) || "A4";
+  const fitw = boolFromSheet(cfg.fitw, true) ? "true" : "false";
+  const scale = trim(cfg.scale) || "1";
+  const top = marginValue(cfg.top, "0.25");
+  const bottom = marginValue(cfg.bottom, "0.25");
+  const left = marginValue(cfg.left, "0.25");
+  const right = marginValue(cfg.right, "0.25");
+
+  return `https://docs.google.com/spreadsheets/d/${PDF_CONFIG_SHEET_ID}/export?format=pdf`
+    + `&gid=${encodeURIComponent(gid)}`
+    + `&size=${encodeURIComponent(size)}`
+    + `&portrait=${portrait}`
+    + `&fitw=${fitw}`
+    + `&sheetnames=false`
+    + `&printtitle=false`
+    + `&pagenum=UNDEFINED`
+    + `&gridlines=false`
+    + `&fzr=false`
+    + `&scale=${encodeURIComponent(scale)}`
+    + `&top_margin=${encodeURIComponent(top)}`
+    + `&bottom_margin=${encodeURIComponent(bottom)}`
+    + `&left_margin=${encodeURIComponent(left)}`
+    + `&right_margin=${encodeURIComponent(right)}`;
+}
+
+function normalizeDocTypeLabel(label) {
+  const t = norm(label);
+  if (t.includes("danh sach")) return "danh sach";
+  if (t.includes("ca nhan")) return "ca nhan";
+  if (t.includes("dong doi")) return "dong doi";
+  if (t.includes("hon hop")) return "hon hop";
+  if (t.includes("chung ket")) return "chung ket";
+  return t;
+}
+
+function buildPdfConfigMap(rows) {
+  const map = new Map();
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i] || [];
+
+    const content = trim(r[1]);
+    const docType = trim(r[2]);
+    const gid = trim(r[3]);
+    const orientation = trim(r[4]);
+    const size = trim(r[6]);
+    const fitw = trim(r[7]);
+    const scale = trim(r[8]);
+    const top = trim(r[9]);
+    const bottom = trim(r[10]);
+    const left = trim(r[11]);
+    const right = trim(r[12]);
+
+    if (!content || !docType || !gid) continue;
+
+    const key = `${norm(baseTitle(content))}|${normalizeDocTypeLabel(docType)}`;
+
+    map.set(key, buildGooglePdfUrl({
+      gid,
+      orientation,
+      size,
+      fitw,
+      scale,
+      top,
+      bottom,
+      left,
+      right
+    }));
+  }
+
+  return map;
+}
+
+function getPdfFromConfig(title, docType) {
+  const key = `${norm(baseTitle(title))}|${normalizeDocTypeLabel(docType)}`;
+  return pdfConfigMap.get(key) || "";
+}
+
+function teamSubLabelForTitle(title) {
+  const t = norm(title);
+  const hasHonHop = t.includes("hon hop");
+  const hasDongDoi = t.includes("dong doi");
+
+  if (hasHonHop && hasDongDoi) return "Hỗn hợp";
+  return "Đồng đội";
+}
+
+function buildGroupedItems(rows) {
+  let yearText = "";
+  let nameText = "";
+  const filtered = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i] || [];
+    const y = trim(r[0]);
+    const n = trim(r[3]);
+    if (!yearText && y) yearText = y;
+    if (!nameText && n) nameText = n;
+    if (yearText && nameText) break;
+  }
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i] || [];
+    const competition = trim(r[3]);
+    const rawTime = normalizeText(r[4]);
+    const content = normalizeText(r[5]);
+
+    if (!competition || !rawTime || !content) continue;
+
+    filtered.push({
+      year: trim(r[0]),
+      competition,
+      timeRaw: rawTime,
+      contentRaw: content,
+      baseTitle: baseTitle(content),
+      baseKey: norm(baseTitle(content)),
+      isFinal: isFinalTitle(content),
+      pCode: trim(r[15]),
+      k: trim(r[25])
+    });
+  }
+
+  const map = new Map();
+
+  filtered.forEach(row => {
+    if (!row.baseKey) return;
+
+    if (!map.has(row.baseKey)) {
+      map.set(row.baseKey, {
+        id: `${norm(row.competition)}|${row.baseKey}`,
+        title: row.baseTitle,
+        competition: row.competition,
+        year: row.year,
+        rows: []
+      });
+    }
+
+    map.get(row.baseKey).rows.push(row);
+  });
+
+  const items = Array.from(map.values()).map(group => {
+    const parsedTimes = group.rows.map(r => {
+      const p = extractTimeAndDate(r.timeRaw);
+      return {
+        row: r,
+        date: p.date,
+        time: p.time,
+        sort: toSortableNumber(p.date, p.time)
+      };
+    }).sort((a, b) => a.sort - b.sort);
+
+    const first = parsedTimes[0] || {
+      date: "",
+      time: "",
+      sort: Number.MAX_SAFE_INTEGER
+    };
+
+    const pJoined = group.rows.map(x => x.pCode).filter(Boolean).join(" ");
+    const allowIndividual = hasIndividualOrTeamCode(pJoined);
+    const allowTeam = allowIndividual && hasTeamCode(pJoined);
+
+    const teamLabel = teamSubLabelForTitle(group.title);
+
+    const pdfDanhSach = getPdfFromConfig(group.title, "Danh sách");
+    const pdfCaNhan = getPdfFromConfig(group.title, "Cá nhân");
+    const pdfDongDoi = getPdfFromConfig(group.title, teamLabel);
+    const pdfChungKet = getPdfFromConfig(group.title, "Chung kết");
+
+    let finalTime = "";
+    for (const pt of parsedTimes) {
+      if (pt.row.isFinal && trim(pt.time)) {
+        finalTime = trim(pt.time);
+        break;
+      }
+    }
+
+    const hasFinal = !!pdfChungKet || group.rows.some(x => !!trim(x.k)) || group.rows.some(x => x.isFinal);
+
+    const subLines = [];
+
+    if (allowIndividual) {
+      subLines.push({
+        label: "Danh sách",
+        time: "",
+        link: pdfDanhSach
+      });
+
+      subLines.push({
+        label: "Cá nhân",
+        time: trim(first.time) || " ",
+        link: pdfCaNhan
+      });
+
+      if (allowTeam) {
+        subLines.push({
+          label: teamLabel,
+          time: trim(first.time) || " ",
+          link: pdfDongDoi
+        });
+      }
+
+      if (hasFinal) {
+        subLines.push({
+          label: "Chung kết",
+          time: finalTime || " ",
+          link: pdfChungKet
+        });
+      }
+    }
+
+    return {
+      id: group.id,
+      title: group.title,
+      date: trim(first.date),
+      time: trim(first.time),
+      sort: first.sort,
+      subLines,
+      isGreen: isGreenKeywordLine(group.title) || isGreenKeywordLine(first.time),
+      isRed: isRedKeywordLine(group.title) || isRedKeywordLine(first.time),
+      hasFinal,
+      pdfFinal: pdfChungKet
+    };
+  });
+
+  items.sort((a, b) => a.sort - b.sort);
+
+  return { items, yearText, nameText };
+}
+
+function render() {
+  const container = document.getElementById("schedule");
+  const data = window.__SCHEDULE_DATA__;
+  container.innerHTML = "";
+
+  let currentDate = "";
+
+  data.items.forEach(item => {
+    if (item.date && item.date !== currentDate) {
+      currentDate = item.date;
+      const d = document.createElement("div");
+      d.className = "date";
+      d.textContent = item.date;
+      container.appendChild(d);
+    }
+
+    const isExpanded = expandedCardId === item.id;
+    const card = document.createElement("div");
+    card.className = "schedule-card" + (item.isGreen ? " is-green" : (item.isRed ? " is-red" : ""));
+
+    const subHtml = isExpanded
+      ? `
+          <div class="sub-list">
+            ${item.subLines.map(line => {
+              const isLoading = openingPDFLink && openingPDFLink === line.link;
+              const icon = line.link
+                ? pdfIcon(isLoading ? "loading" : "on")
+                : pdfIcon("off");
+
+              return `
+                <div class="sub-row" data-sub-label="${encodeURIComponent(line.label || "")}">
+                  <div class="sub-time">${line.time || " "}</div>
+                  <div class="sub-label">${line.label}</div>
+                  <div class="sub-pdf-wrap" ${line.link ? `data-pdf-link="${encodeURIComponent(line.link)}"` : ""}>
+                    ${icon}
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `
+      : ``;
+
+    card.innerHTML = `
+      <div class="card-main-time">${item.time || " "}</div>
+      <div class="card-main-title">${item.title}</div>
+      ${isExpanded ? subHtml : ``}
+    `;
+
+    card.addEventListener("click", function (e) {
+      if (item.isGreen) {
+        return;
+      }
+
+      const pdfHit = e.target.closest("[data-pdf-link]");
+      const subRow = e.target.closest(".sub-row");
+
+      if (pdfHit) {
+        e.stopPropagation();
+
+        const link = decodeURIComponent(pdfHit.getAttribute("data-pdf-link") || "");
+        const subRowEl = pdfHit.closest(".sub-row");
+        const subLabel = decodeURIComponent(subRowEl?.getAttribute("data-sub-label") || "");
+
+        if (!link) return;
+
+        openingPDFLink = link;
+        render();
+
+        setTimeout(() => {
+          window.location.href =
+            "pdfviewer.html?title=" + encodeURIComponent(item.title + " - " + subLabel) +
+            "&url=" + encodeURIComponent(link);
+        }, 120);
+
+        return;
+      }
+
+      if (subRow) {
+        e.stopPropagation();
+
+        const subLabel = decodeURIComponent(subRow.getAttribute("data-sub-label") || "");
+
+        window.location.href =
+          "event.html?name=" + encodeURIComponent(item.title) +
+          "&date=" + encodeURIComponent(item.date) +
+          "&time=" + encodeURIComponent(item.time) +
+          "&year=" + encodeURIComponent(data.yearText) +
+          "&competition=" + encodeURIComponent(data.nameText) +
+          "&hasFinal=" + encodeURIComponent(item.hasFinal ? "1" : "0") +
+          "&pdfFinal=" + encodeURIComponent(item.pdfFinal || "") +
+          "&openTab=" + encodeURIComponent(subLabel);
+
+        return;
+      }
+
+      if (expandedCardId !== item.id) {
+        expandedCardId = item.id;
+        render();
+      } else {
+        window.location.href =
+          "event.html?name=" + encodeURIComponent(item.title) +
+          "&date=" + encodeURIComponent(item.date) +
+          "&time=" + encodeURIComponent(item.time) +
+          "&year=" + encodeURIComponent(data.yearText) +
+          "&competition=" + encodeURIComponent(data.nameText) +
+          "&hasFinal=" + encodeURIComponent(item.hasFinal ? "1" : "0") +
+          "&pdfFinal=" + encodeURIComponent(item.pdfFinal || "");
+      }
+    });
+
+    container.appendChild(card);
+  });
+}
+
+async function load() {
+  const [scheduleRes, pdfRes] = await Promise.all([
+    fetch(scheduleUrl, { cache: "no-store" }),
+    fetch(pdfConfigUrl, { cache: "no-store" })
+  ]);
+
+  const [scheduleText, pdfText] = await Promise.all([
+    scheduleRes.text(),
+    pdfRes.text()
+  ]);
+
+  const scheduleRows = scheduleText
     .split(/\r?\n/)
     .filter(r => r.trim())
     .map(r => splitCSVRow(r));
 
-  if (rows.length < 2) return;
+  const pdfRows = pdfText
+    .split(/\r?\n/)
+    .filter(r => r.trim())
+    .map(r => splitCSVRow(r));
 
-  let yearText = "";
-  let nameText = "";
+  pdfConfigMap = buildPdfConfigMap(pdfRows);
 
-  for (let i = 0; i < rows.length; i++) {
-    const r = rows[i] || [];
-    const y = String(r[0] || "").trim(); // cột A
-    const n = String(r[3] || "").trim(); // cột D
+  if (scheduleRows.length < 2) return;
 
-    if (!yearText && y) yearText = y;
-    if (!nameText && n) nameText = n;
-
-    if (yearText && nameText) break;
-  }
+  const grouped = buildGroupedItems(scheduleRows);
 
   document.getElementById("name").innerText =
-  [nameText, yearText].filter(Boolean).join(" ");
+    [grouped.nameText, grouped.yearText].filter(Boolean).join(" ");
 
-  const container = document.getElementById("schedule");
-  container.innerHTML = "";
-
-  const seen = new Set();
-  const items = [];
-
-  for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-
-    const rawTime = normalizeText(r[4]);   // cột E
-    const content = normalizeText(r[5]);   // cột F
-
-    if (!rawTime || !content) continue;
-
-    const parsed = extractTimeAndDate(rawTime);
-    const time = parsed.time;
-    const date = parsed.date;
-
-    const uniqueKey = `${time}__${date}__${content}`;
-    if (seen.has(uniqueKey)) continue;
-    seen.add(uniqueKey);
-
-    items.push({
-      time,
-      date,
-      content
-    });
-  }
-
-  items.sort((a, b) => {
-    return toSortableNumber(a.date, a.time) - toSortableNumber(b.date, b.time);
-  });
-
-  let currentDate = "";
-
-  items.forEach(item => {
-    if (item.date && item.date !== currentDate) {
-      currentDate = item.date;
-
-      const d = document.createElement("div");
-      d.className = "date";
-      d.innerText = item.date;
-      container.appendChild(d);
-    }
-
-    const card = document.createElement("a");
-    card.className = "schedule-card";
-    card.href =
-      "event.html?name=" + encodeURIComponent(item.content) +
-      "&date=" + encodeURIComponent(item.date) +
-      "&time=" + encodeURIComponent(item.time) +
-      "&year=" + encodeURIComponent(yearText) +
-      "&competition=" + encodeURIComponent(nameText);
-
-    card.innerHTML = `
-      <div class="time">${item.time}</div>
-      <div class="event">${item.content}</div>
-    `;
-
-    container.appendChild(card);
-  });
+  window.__SCHEDULE_DATA__ = grouped;
+  render();
 }
 
 load();

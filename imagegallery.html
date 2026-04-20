@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Hình ảnh</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f1f1f1;
+      --card: #ffffff;
+      --green-dark: #005f37;
+      --line: rgba(0,0,0,0.06);
+      --text-main: #111111;
+      --text-soft: #7f7f86;
+      --font-main: "Roboto Condensed", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: var(--font-main);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      background: #fff;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: var(--green-dark);
+      color: #fff;
+      padding-top: max(12px, env(safe-area-inset-top));
+    }
+
+    .header-inner {
+      padding: 12px 16px 14px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .back-btn {
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 34px;
+      line-height: 1;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .header-text {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .header-title {
+  margin: 0;
+  font-size: 18px;   /* ↓ nhỏ lại */
+  font-weight: 700;  /* ↓ nhẹ hơn */
+  color: #fff;
+  line-height: 1.2;
+}
+
+    .content {
+      padding: 10px;
+      background: var(--bg);
+      min-height: calc(100vh - 90px);
+    }
+
+    .loading-wrap,
+    .empty-wrap {
+      min-height: calc(100vh - 110px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      color: var(--text-soft);
+      font-size: 16px;
+      background: var(--bg);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .gallery-card {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 14px;
+      padding: 8px;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      min-height: 125px;
+    }
+
+    .gallery-thumb-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(53, 114, 239, 0.08);
+    }
+
+    .gallery-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-title {
+      margin-top: 8px;
+      min-height: 28px;
+      max-height: 28px;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.35;
+      color: #111;
+      overflow: hidden;
+      text-align: left;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .viewer-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding: 0 0 8px;
+    }
+
+    .viewer-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      scroll-margin-top: 90px;
+    }
+
+    .viewer-image-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .viewer-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .viewer-title {
+      margin: 12px 0 0;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: #111;
+      text-align: left;
+    }
+
+    .viewer-index {
+      margin: 8px 0 0;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: var(--text-soft);
+      text-align: left;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 700px) {
+      .header-title {
+        font-size: 18px;
+      }
+
+      .back-btn {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="header-top">
+          <button class="back-btn" onclick="goBack()"><</button>
+          <div class="header-text">
+            <h1 class="header-title" id="headerTitle">Hình ảnh</h1>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <div id="loadingView" class="loading-wrap">Đang tải hình ảnh…</div>
+      <div id="emptyView" class="empty-wrap hidden">Chưa có hình ảnh</div>
+      <section id="gridView" class="grid hidden"></section>
+      <section id="viewerView" class="viewer-list hidden"></section>
+    </main>
+  </div>
+
+  <script>
+    const CSV_URL =
+      "https://docs.google.com/spreadsheets/d/12ZhbKYiDgXBT5ALCfjJBoVrh3cUS8Wbmy4lVRDRoGg8/gviz/tq?tqx=out:csv&gid=0";
+
+    const params = new URLSearchParams(location.search);
+    const competitionTitle = params.get("competitionTitle") || "Hình ảnh";
+    const mode = params.get("mode") || "grid";
+    const startIndex = Math.max(0, parseInt(params.get("start") || "0", 10) || 0);
+
+    let items = [];
+
+    function qs(id) {
+      return document.getElementById(id);
+    }
+
+    function clean(s) {
+      return (s || "")
+        .replace(/\uFEFF/g, "")
+        .replace(/\r/g, "")
+        .trim()
+        .replace(/^"+|"+$/g, "");
+    }
+
+    function splitCSVRow(line) {
+      const result = [];
+      let current = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        const next = line[i + 1];
+
+        if (ch === '"') {
+          if (inQuotes && next === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === "," && !inQuotes) {
+          result.push(current);
+          current = "";
+        } else {
+          current += ch;
+        }
+      }
+
+      result.push(current);
+      return result.map(clean);
+    }
+
+    function extractDriveFileId(s) {
+      const text = clean(s);
+      if (!text) return "";
+
+      const fileMatch = text.match(/\/file\/d\/([^\/\?\&]+)/);
+      if (fileMatch && fileMatch[1]) return fileMatch[1];
+
+      try {
+        const url = new URL(text);
+
+        if (url.searchParams.get("id")) {
+          return url.searchParams.get("id");
+        }
+
+        if (url.pathname.includes("/d/")) {
+          const match = url.pathname.match(/\/d\/([^\/\?\&]+)/);
+          if (match && match[1]) return match[1];
+        }
+      } catch (_) {}
+
+      return "";
+    }
+
+    function normalizeDriveImage(raw) {
+      const s = clean(raw);
+      if (!s) return "";
+
+      const id = extractDriveFileId(s);
+      if (id) {
+        return `https://drive.google.com/thumbnail?id=${id}&sz=w1600`;
+      }
+
+      return s;
+    }
+
+    function escapeHtml(str) {
+      return (str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function getDisplayTitle(item) {
+      const t = clean(item.title);
+      return t || "Hình ảnh";
+    }
+
+    function goBack() {
+  if (mode === "full") {
+    const query =
+      "?mode=grid&competitionTitle=" + encodeURIComponent(competitionTitle);
+    window.location.href = "imagegallery.html" + query;
+  } else {
+    window.location.href = "index.html";
+  }
+}
+
+    function openViewer(index) {
+      const query =
+        "?mode=full&start=" + index +
+        "&competitionTitle=" + encodeURIComponent(competitionTitle);
+
+      window.location.href = "imagegallery.html" + query;
+    }
+
+    async function fetchItems() {
+      const res = await fetch(`${CSV_URL}&cb=${Date.now()}`, { cache: "no-store" });
+      if (!res.ok) throw new Error("Fetch CSV failed");
+
+      const csv = await res.text();
+      const lower = csv.toLowerCase();
+      if (lower.includes("<html") || lower.includes("<!doctype html")) {
+        throw new Error("CSV trả về HTML");
+      }
+
+      const lines = csv
+        .split("\n")
+        .map(line => line.replace(/\r/g, ""))
+        .filter(line => clean(line) !== "");
+
+      if (lines.length < 2) return [];
+
+      const parsed = [];
+
+      for (const line of lines.slice(1)) {
+        const cols = splitCSVRow(line);
+        if (cols.length < 6) continue;
+
+        const title = clean(cols[2] || "");
+        const image = normalizeDriveImage(cols[3] || "");
+        const thumb = normalizeDriveImage(cols[4] || "");
+        const enabled = clean(cols[5] || "") === "1";
+
+        if (!enabled || !image) continue;
+
+        parsed.push({
+          title,
+          imageURL: image,
+          displayURL: thumb || image
+        });
+      }
+
+      return parsed;
+    }
+
+    function renderGrid() {
+      const grid = qs("gridView");
+      grid.innerHTML = "";
+      grid.classList.remove("hidden");
+      qs("viewerView").classList.add("hidden");
+
+      items.forEach((item, index) => {
+        const card = document.createElement("button");
+        card.className = "gallery-card";
+        card.type = "button";
+        card.innerHTML = `
+          <div class="gallery-thumb-wrap">
+            <img class="gallery-thumb" src="${escapeHtml(item.displayURL)}" alt="${escapeHtml(getDisplayTitle(item))}" loading="lazy">
+          </div>
+          <div class="gallery-title">${escapeHtml(getDisplayTitle(item))}</div>
+        `;
+        card.onclick = () => openViewer(index);
+        grid.appendChild(card);
+      });
+    }
+
+    function renderViewerList() {
+      const viewer = qs("viewerView");
+      viewer.innerHTML = "";
+      viewer.classList.remove("hidden");
+      qs("gridView").classList.add("hidden");
+
+      items.forEach((item, index) => {
+        const card = document.createElement("article");
+        card.className = "viewer-card";
+        card.id = `item-${index}`;
+        card.innerHTML = `
+          <div class="viewer-image-wrap">
+            <img class="viewer-image" src="${escapeHtml(item.imageURL)}" alt="${escapeHtml(getDisplayTitle(item))}" loading="lazy">
+          </div>
+          <div class="viewer-title">${escapeHtml(getDisplayTitle(item))}</div>
+          <div class="viewer-index">${index + 1} / ${items.length}</div>
+        `;
+        viewer.appendChild(card);
+      });
+
+      requestAnimationFrame(() => {
+        const target = document.getElementById(`item-${Math.min(startIndex, items.length - 1)}`);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+    }
+
+    async function init() {
+      try {
+        qs("headerTitle").textContent = "Hình ảnh";
+        qs("loadingView").classList.remove("hidden");
+        qs("emptyView").classList.add("hidden");
+        qs("gridView").classList.add("hidden");
+        qs("viewerView").classList.add("hidden");
+
+        items = await fetchItems();
+
+        if (!items.length) {
+          qs("loadingView").classList.add("hidden");
+          qs("emptyView").classList.remove("hidden");
+          return;
+        }
+
+        qs("loadingView").classList.add("hidden");
+
+        if (mode === "full") {
+          renderViewerList();
+        } else {
+          renderGrid();
+        }
+      } catch (err) {
+        console.error(err);
+        qs("loadingView").classList.add("hidden");
+        qs("emptyView").classList.remove("hidden");
+        qs("emptyView").textContent = "Không tải được dữ liệu hình ảnh.";
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

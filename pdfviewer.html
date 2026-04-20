@@ -12,22 +12,24 @@
   <style>
     :root {
       --bg: #eef3fb;
-      --green-dark: #005f37;
-      --text-white: #ffffff;
-      --line: #dbe3ee;
-      --font-main: "Roboto Condensed", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      --green-dark: #0b5d2a;
+      --line: #d8dde5;
+      --white: #ffffff;
+      --text-main: #111111;
+      --text-soft: rgba(255,255,255,0.88);
       --footer-h: 74px;
+      --font-main: "Roboto Condensed", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
     }
 
     * {
       box-sizing: border-box;
+      font-family: var(--font-main);
     }
 
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: var(--font-main);
       background: var(--bg);
     }
 
@@ -37,63 +39,46 @@
       overflow: hidden;
     }
 
-    button, a, div {
-      font-family: var(--font-main);
-    }
-
-    .app-head {
-      background: linear-gradient(180deg, #0b7f3b 0%, var(--green-dark) 100%);
-      color: var(--text-white);
-      padding: calc(env(safe-area-inset-top, 0px) + 14px) 14px 14px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+    .header {
+      background: var(--green-dark);
+      color: var(--white);
+      padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 14px;
       flex: 0 0 auto;
     }
 
-    .back-btn {
-      width: 48px;
-      height: 48px;
-      border: none;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.95);
-      color: #1f2d3d;
-      font-size: 32px;
-      font-weight: 800;
+    .back {
+      font-size: 24px;
+      font-weight: 700;
       line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: fit-content;
+      color: var(--white);
       cursor: pointer;
-      flex: 0 0 48px;
+      user-select: none;
+      margin-bottom: 8px;
       padding: 0;
+      border: none;
+      background: transparent;
+      appearance: none;
+      -webkit-appearance: none;
+      box-shadow: none;
+      border-radius: 0;
     }
 
-    .head-text {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .head-title {
-      margin: 0;
-      color: #fff;
-      font-size: 27px;
-      font-weight: 800;
-      line-height: 1.08;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .head-subtitle {
-      margin-top: 4px;
-      color: rgba(255,255,255,0.92);
-      font-size: 14px;
+    .title-main {
+      font-size: 16px;
       font-weight: 500;
-      line-height: 1.15;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.2;
+      word-break: break-word;
+      color: var(--white);
+    }
+
+    .title-sub {
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-top: 4px;
+      word-break: break-word;
+      color: var(--text-soft);
     }
 
     .viewer-wrap {
@@ -101,10 +86,10 @@
       flex: 1 1 auto;
       min-height: 0;
       background: #fff;
+      overflow: hidden;
     }
 
-    .loading,
-    .error-box {
+    .message-box {
       position: absolute;
       inset: 0;
       display: flex;
@@ -114,25 +99,21 @@
       text-align: center;
       background: #fff;
       color: #4b5563;
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 600;
       z-index: 2;
-    }
-
-    .error-box {
       flex-direction: column;
       gap: 16px;
-      display: none;
     }
 
-    .error-btn {
+    .open-btn {
       border: none;
-      border-radius: 16px;
-      background: var(--green-dark);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #0b7f3b 0%, #005f37 100%);
       color: white;
       padding: 12px 18px;
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
     }
 
@@ -146,33 +127,60 @@
       gap: 12px;
     }
 
-    .bottom-btn {
-      flex: 1;
-      border: none;
-      border-radius: 18px;
-      background: linear-gradient(180deg, #0b7f3b 0%, var(--green-dark) 100%);
-      color: #fff;
-      font-size: 22px;
-      font-weight: 700;
-      cursor: pointer;
+ .bottom-btn {
+  flex: 1;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #0b7f3b 0%, #005f37 100%);
+  color: #fff;
+  font-size: 16px;   /* ✅ giảm thêm */
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+}
+    @media (min-width: 768px) {
+      .header {
+        padding: calc(env(safe-area-inset-top, 0px) + 18px) 24px 18px;
+      }
+
+      .back {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+
+      .title-main {
+        font-size: 16px;
+      }
+
+      .title-sub {
+        font-size: 16px;
+        margin-top: 6px;
+      }
+
+      .open-btn {
+        font-size: 16px;
+        border-radius: 16px;
+        padding: 14px 22px;
+      }
+
+      .bottom-btn {
+        font-size: 16px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <header class="app-head">
-    <button class="back-btn" type="button" onclick="history.back()">&lt;</button>
-    <div class="head-text">
-      <h1 class="head-title" id="pageTitle">PDF</h1>
-      <div class="head-subtitle">Tài liệu giải đấu</div>
-    </div>
+  <header class="header">
+    <button class="back" type="button" onclick="history.back()">&lt;</button>
+    <div class="title-main" id="pageTitle">PDF</div>
+    <div class="title-sub">Tài liệu giải đấu</div>
   </header>
 
   <main class="viewer-wrap">
-    <div class="loading" id="loadingBox">Đang mở tài liệu...</div>
-    <div class="error-box" id="errorBox">
-      <div>Không mở được tài liệu.</div>
-      <button class="error-btn" type="button" id="openDirectBtn">Mở trực tiếp</button>
+    <div class="message-box" id="messageBox">
+      <div>Đang mở tài liệu...</div>
+      <button class="open-btn" type="button" id="openDirectBtn">Mở trực tiếp</button>
     </div>
   </main>
 
@@ -188,26 +196,16 @@
 
     document.getElementById("pageTitle").textContent = title;
 
-    const loadingBox = document.getElementById("loadingBox");
-    const errorBox = document.getElementById("errorBox");
     const openDirectBtn = document.getElementById("openDirectBtn");
     const shareBtn = document.getElementById("shareBtn");
     const downloadBtn = document.getElementById("downloadBtn");
 
-    function hideLoading() {
-      loadingBox.style.display = "none";
+    function openDirect() {
+      if (!pdfUrl) return;
+      window.location.href = pdfUrl;
     }
 
-    function showError() {
-      hideLoading();
-      errorBox.style.display = "flex";
-    }
-
-    openDirectBtn.onclick = () => {
-      if (pdfUrl) {
-        window.location.href = pdfUrl;
-      }
-    };
+    openDirectBtn.onclick = openDirect;
 
     shareBtn.onclick = async () => {
       if (!pdfUrl) return;
@@ -226,17 +224,14 @@
     };
 
     downloadBtn.onclick = () => {
-      if (pdfUrl) {
-        window.open(pdfUrl, "_blank");
-      }
+      if (!pdfUrl) return;
+      window.open(pdfUrl, "_blank");
     };
 
-    if (!pdfUrl) {
-      showError();
-    } else {
+    if (pdfUrl) {
       setTimeout(() => {
-        window.location.href = pdfUrl;
-      }, 150);
+        openDirect();
+      }, 250);
     }
   </script>
 

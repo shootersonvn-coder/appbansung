@@ -106,6 +106,46 @@
       text-align: center;
     }
 
+    .medal-scroll {
+      max-height: 286px; /* ≈ 10 dòng */
+      overflow-y: auto;
+    }
+
+    .medal-card #medalTableBody .medal-row {
+      height: 26px !important;
+      min-height: 26px !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .medal-card #medalTableBody .medal-row .unit,
+    .medal-card #medalTableBody .medal-row .medal {
+      height: 26px !important;
+      min-height: 26px !important;
+      line-height: 26px !important;
+      font-size: 13px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .medal-card #medalTableBody .medal-row.empty-row .unit,
+    .medal-card #medalTableBody .medal-row.empty-row .medal {
+      color: transparent;
+    }
+
+    .medal-card #medalTotalRow {
+      height: 32px !important;
+      min-height: 32px !important;
+    }
+
+    .medal-card #medalTotalRow .unit,
+    .medal-card #medalTotalRow .medal {
+      height: 32px !important;
+      min-height: 32px !important;
+      line-height: 32px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
     @media (max-width: 700px) {
       .home-lower-grid {
         grid-template-columns: minmax(0, 1.6fr) minmax(150px, 0.95fr);
@@ -197,7 +237,7 @@
       border-radius: 16px;
       background: #fff;
       box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-      padding: 14px 16px;
+      padding: 8px 14px;
       text-align: left;
       cursor: pointer;
       display: flex;
@@ -245,48 +285,54 @@
 
     <main class="main-content">
       <section class="tabs-row">
-        <button class="pill-tab">sfs</button>
-        <button class="pill-tab" onclick="window.open('http://sfs.vn/?p=35285', '_blank')">
-  Giải đấu
-</button>
+        <button class="pill-tab" onclick="location.href=withRefreshParam('sfs.html')">sfs</button>
+        <button class="pill-tab" onclick="window.open(withRefreshParam('http://sfs.vn/?p=35285'), '_blank')">
+          Giải đấu
+        </button>
         <button class="pill-tab">Tài liệu</button>
         <button class="pill-tab">Tin tức</button>
       </section>
 
       <section class="hero-grid">
-        <a href="competition.html" class="hero-main card">
+        <a id="hero-main-link" href="competition.html" class="hero-main card">
           <img
             id="main-banner-image"
             src=""
-            alt="Đang load giải đấu này"
+            alt="     Load"
           />
         </a>
 
         <div class="hero-side">
-  <a
-    href="https://www.youtube.com/@phamcaoson9472"
-    target="_blank"
-    class="video-link"
-  >
-    <div class="side-card card video-card">
-      <img
-        src="images/logoyoutube.png"
-        alt="Video"
-        onerror="this.onerror=null; this.src='images/logo.png';"
-      />
-      <div class="youtube-badge">
-        <span>▶</span>
-      </div>
-    </div>
-  </a>
+          <a
+            href="https://www.youtube.com/@phamcaoson9472"
+            target="_blank"
+            class="video-link"
+          >
+            <div class="side-card card video-card">
+              <img
+                src="images/logoyoutube.png"
+                alt="Video"
+                onerror="this.onerror=null; this.src='images/logo.png';"
+              />
+              <div class="youtube-badge">
+                <span>▶</span>
+              </div>
+            </div>
+          </a>
 
-  <div class="side-card card">
-    <img
-      src="https://drive.google.com/thumbnail?id=1nuYdNvKGkqrnXSPwsfnZ27ruci9RnMUm&sz=w900"
-      alt="Ảnh"
-    />
-  </div>
-</div>
+          <a
+            id="side-banner-link"
+            href="imagegallery.html"
+            class="side-card card"
+            style="display:block;"
+          >
+            <img
+              id="side-banner-image"
+              src=""
+              alt="    Load"
+            />
+          </a>
+        </div>
       </section>
 
       <section class="home-lower-grid">
@@ -299,94 +345,16 @@
             <div class="medal">💥</div>
           </div>
 
-          <div class="medal-total medal-grid five-cols">
-            <div class="unit">11</div>
-            <div class="medal">0</div>
-            <div class="medal">0</div>
-            <div class="medal">0</div>
-            <div class="medal">0</div>
-          </div>
-
-          <div class="medal-row medal-grid five-cols">
-            <div class="unit linkish">DAL</div>
+          <div id="medalTotalRow" class="medal-total medal-grid five-cols">
+            <div class="unit"></div>
             <div class="medal"></div>
             <div class="medal"></div>
             <div class="medal"></div>
             <div class="medal"></div>
           </div>
 
-          <div class="medal-row medal-grid five-cols">
-            <div class="unit linkish">DAN</div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-          </div>
-
-          <div class="medal-row medal-grid five-cols">
-            <div class="unit linkish">DON</div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-          </div>
-
-          <div class="medal-row medal-grid five-cols">
-            <div class="unit linkish">CAN</div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-          </div>
-
-          <div class="medal-row medal-grid five-cols">
-            <div class="unit linkish">HAN</div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-          </div>
-
-          <div class="medal-row medal-grid five-cols">
-            <div class="unit linkish">HAP</div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-          </div>
-
-          
-
-          <div class="medal-row medal-grid five-cols">
-            <div class="unit linkish">QNI</div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-          </div>
-
-          <div class="medal-row medal-grid five-cols">
-            <div class="unit linkish">PHT</div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-          </div>
-
-          <div class="medal-row medal-grid five-cols">
-            <div class="unit linkish">HCM</div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-          </div>
-
-          <div class="medal-row medal-grid five-cols">
-            <div class="unit linkish">THH</div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
-            <div class="medal"></div>
+          <div class="medal-scroll">
+            <div id="medalTableBody"></div>
           </div>
         </section>
 
@@ -417,13 +385,13 @@
           </button>
 
           <button class="main-action"
-            onclick="openSingleLink('https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=116305899&single=true&output=pdf')">
+            onclick="openSingleLink('https://docs.google.com/spreadsheets/d/e/2PACX-1vQrvfattOcw8vie_Ka3VeyyNhFzyTunNHVHU_C1tJU0iBoAC5J5suvIRuNND3T7iT9mb5vQt2iaHHN6/pub?gid=1237830&single=true&output=pdf')">
             Thẻ thi đấu
           </button>
 
           <button class="main-action"
             onclick="openTaiLieuMenu()">
-            Tài liệu trọng tài
+            Họp KT / Trọng tài
           </button>
         </section>
       </section>
@@ -478,45 +446,30 @@
     </div>
   </div>
 
-  <script>
+<script>
 const latestBannerCSV =
   "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=311114195";
 
-const dangKyLinks = [
-  { title: "Công an nhân dân", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=1723060023&single=true&output=pdf" },
-  { title: "Đà Nẵng", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=603217805&single=true&output=pdf" },
-  { title: "Đắk Lắk", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=486724803&single=true&output=pdf" },
-  { title: "Đồng Nai", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=1959244350&single=true&output=pdf" },
-  { title: "Hà Nội", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=141422022&single=true&output=pdf" },
-  { title: "Hải Phòng", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=10418944&single=true&output=pdf" },
-  { title: "TP Hồ Chí Minh", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=397127405&single=true&output=pdf" },
-  { title: "Phú Thọ", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=1057563954&single=true&output=pdf" },
-  { title: "Quân đội", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=802253602&single=true&output=pdf" },
-  { title: "Quảng Ninh", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=1025073822&single=true&output=pdf" },
-  { title: "Thanh Hóa", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pubhtml?gid=815894742&single=true" }
-];
+const medalSheetUrl =
+  "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=1974758112";
 
-const taiLieuLinks = [
-  {
-    title: "Lượt đấu",
-    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=419654162&single=true&output=pdf"
-  },
-  
-  {
-    title: "Số đeo",
-    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=165539880&single=true&output=pdf"
-  },
+const AUTO_REFRESH_MS = 15000;
+const MEDAL_MIN_ROWS = 11;
 
-{
-    title: "Số lượng từng nội dung (Làm bia)",
-    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=329133971&single=true&output=pdf"
-  },
+let sideBannerItems = [];
+let sideBannerIndex = 0;
+let sideBannerTimer = null;
+let autoRefreshTimer = null;
+let lastMainBannerURL = localStorage.getItem("lastMainBannerURL") || "";
+let lastMedalSnapshot = "";
 
-  {
-    title: "Biên bản",
-    url: "bienban.html"
-  }
-];
+/* ===== ĐÃ ĐĂNG KÝ THI ĐẤU: đọc từ sheet GID ===== */
+let dangKyLinks = [];
+
+const dangKySheetId = "1UJ4P9d1SAnC78Gl8qLVsBrHJuAwPRxfhGdO7wei0hcc";
+const dangKySheetGid = "1219760877";
+const dangKyCsvUrl =
+  `https://docs.google.com/spreadsheets/d/${dangKySheetId}/export?format=csv&gid=${dangKySheetGid}`;
 
 function splitCSVRow(row) {
   const result = [];
@@ -535,65 +488,428 @@ function splitCSVRow(row) {
         insideQuotes = !insideQuotes;
       }
     } else if (char === "," && !insideQuotes) {
-      result.push(current);
+      result.push(current.trim());
       current = "";
     } else {
       current += char;
     }
   }
 
-  result.push(current);
-  return result.map(v => v.trim());
+  result.push(current.trim());
+  return result;
 }
+
+function parseCSV(text) {
+  return text
+    .trim()
+    .split(/\r?\n/)
+    .map(splitCSVRow);
+}
+
+function buildDangKyPdfUrl(gid, orientation, top, bottom, left, right) {
+  const portrait =
+    String(orientation || "portrait").trim().toLowerCase() !== "landscape";
+
+  return `https://docs.google.com/spreadsheets/d/${dangKySheetId}/export?format=pdf&gid=${gid}&size=A4&portrait=${portrait}&fitw=true&scale=2&top_margin=${top || 0.25}&bottom_margin=${bottom || 0.25}&left_margin=${left || 0.50}&right_margin=${right || 0.25}&gridlines=false&sheetnames=false&printtitle=false&fzr=false`;
+}
+
+async function refreshDangKyLinks() {
+  const res = await fetch(withRefreshParam(dangKyCsvUrl), { cache: "no-store" });
+  if (!res.ok) throw new Error("Không tải được danh sách đăng ký");
+
+  const text = await res.text();
+  const rows = parseCSV(text);
+
+  dangKyLinks = rows
+    .slice(1)
+    .map((row) => {
+      const title = (row[0] || "").trim();
+      const gidCell = (row[1] || "").trim();
+      const orientation = (row[2] || "portrait").trim();
+      const top = (row[3] || "0.25").trim();
+      const bottom = (row[4] || "0.25").trim();
+      const left = (row[5] || "0.50").trim();
+      const right = (row[6] || "0.25").trim();
+
+      if (!title || !gidCell) return null;
+
+      const gids = gidCell
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      if (!gids.length) return null;
+
+      return {
+        title,
+        gids,
+        orientation,
+        top,
+        bottom,
+        left,
+        right
+      };
+    })
+    .filter(Boolean);
+}
+
+/* ===== TÀI LIỆU: giữ nguyên ===== */
+const taiLieuLinks = [
+  {
+    title: "Tờ Bìa",
+    url: "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=2136684607&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Điều lệ chung",
+    url: "https://drive.google.com/uc?export=download&id=1EowW1bNRIcsWYhM1GMJ9UfZJD_oWzHvt"
+  },
+  {
+    title: "Điều lệ riêng",
+    url: "https://drive.google.com/file/d/1OYsn2wHalT46VAxAnX2Fy3d0v6QJUqgx"
+  },
+  {
+    title: "Ban điều hành",
+    url: "https://docs.google.com/spreadsheets/d/1LQk6udf4WhlTV7Zsd5WXg1w25vMkKPv9DBXYS-BLErk/export?format=pdf&gid=1290859406&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Lịch đấu",
+    url: "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=104581244&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Đã đăng ký thi đấu",
+    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2cZ8LqAOnP6qDttYoSOcXVEYwOCOmMTtPln42b_bM9aHQRKII31Y-YsSkGdVUDEEm3S75YRiWTXwa/pub?output=pdf"
+  },
+  {
+    title: "Thành viên tham dự",
+    url: "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=1612478114&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  
+  {
+    title: "Lượt đấu",
+    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=419654162&single=true&output=pdf"
+  },
+  {
+    title: "Số đeo",
+    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=165539880&single=true&output=pdf"
+  },
+  {
+    title: "Hồ sơ Vận động viên",
+    url: "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=1177269630&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Số lượng từng nội dung (Làm bia)",
+    url: "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=329133971&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  
+  {
+    title: "VĐV Tuyên thệ",
+    url: "https://docs.google.com/spreadsheets/d/1LQk6udf4WhlTV7Zsd5WXg1w25vMkKPv9DBXYS-BLErk/export?format=pdf&gid=1045981659&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Trọng tài Tuyên thệ",
+    url: "https://docs.google.com/spreadsheets/d/1LQk6udf4WhlTV7Zsd5WXg1w25vMkKPv9DBXYS-BLErk/export?format=pdf&gid=1470590981&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Biên bản",
+    url: "bienban.html"
+  }
+];
 
 function normalizeDriveImage(url) {
   if (!url) return "";
 
-  const trimmed = url.trim();
+  const s = url.trim();
 
-  if (trimmed.includes("/file/d/")) {
-    const match = trimmed.match(/\/d\/([^/]+)/);
-    if (match && match[1]) {
-      return "https://drive.google.com/thumbnail?id=" + match[1] + "&sz=w1600";
+  const fileMatch = s.match(/\/file\/d\/([^/]+)/);
+  if (fileMatch && fileMatch[1]) {
+    return "https://drive.google.com/thumbnail?id=" + fileMatch[1] + "&sz=w1600";
+  }
+
+  if (s.includes("open?id=")) {
+    const id = new URL(s).searchParams.get("id");
+    if (id) {
+      return "https://drive.google.com/thumbnail?id=" + id + "&sz=w1600";
     }
   }
 
-  if (trimmed.includes("drive.google.com") && trimmed.includes("id=")) {
-    return trimmed;
+  if (s.includes("uc?")) {
+    const id = new URL(s).searchParams.get("id");
+    if (id) {
+      return "https://drive.google.com/thumbnail?id=" + id + "&sz=w1600";
+    }
   }
 
-  return trimmed;
+  if (s.includes("thumbnail?id=")) {
+    return s;
+  }
+
+  return s;
+}
+
+function withRefreshParam(url) {
+  if (!url) return url;
+  const joiner = url.includes("?") ? "&" : "?";
+  return `${url}${joiner}app_refresh=${Date.now()}`;
+}
+
+function refreshAppLinks() {
+  const heroMainLink = document.getElementById("hero-main-link");
+  if (heroMainLink) {
+    heroMainLink.href = withRefreshParam("competition.html");
+  }
+
+  const sideBannerLink = document.getElementById("side-banner-link");
+  if (sideBannerLink && !sideBannerLink.href.includes("competitionKey=")) {
+    sideBannerLink.href = withRefreshParam("imagegallery.html?mode=grid");
+  }
 }
 
 async function loadMainBanner() {
+  const img = document.getElementById("main-banner-image");
+
+  if (img && lastMainBannerURL) {
+    img.src = lastMainBannerURL;
+  }
+
   try {
-    const res = await fetch(latestBannerCSV, { cache: "no-store" });
+    const res = await fetch(latestBannerCSV + "&cb=" + Date.now(), { cache: "no-store" });
     const text = await res.text();
 
-    const firstLine = text.split(/\r?\n/)[0];
+    const firstLine = text.split(/\r?\n/).find(line => line.trim() !== "") || "";
     const cols = splitCSVRow(firstLine);
+
+    const latestYear = (cols[0] || "").trim();
+    const latestCompetitionKey = (cols[3] || "").trim();
+    const latestCompetitionTitle = latestCompetitionKey;
+
+    const heroMainLink = document.getElementById("hero-main-link");
+    if (heroMainLink) {
+      heroMainLink.href = withRefreshParam("competition.html");
+    }
+
+    const sideBannerLink = document.getElementById("side-banner-link");
+    if (sideBannerLink) {
+      sideBannerLink.href =
+        "imagegallery.html?year=" + encodeURIComponent(latestYear) +
+        "&competitionKey=" + encodeURIComponent(latestCompetitionKey) +
+        "&competitionTitle=" + encodeURIComponent(latestCompetitionTitle) +
+        "&mode=grid" +
+        "&app_refresh=" + Date.now();
+    }
 
     const rawURL = cols[27] || "";
     const finalURL = normalizeDriveImage(rawURL);
 
-    const img = document.getElementById("main-banner-image");
     if (img && finalURL) {
-      img.src = finalURL;
-      img.onerror = function () {
-        console.log("Banner load lỗi:", finalURL);
+      const preloader = new Image();
+
+      preloader.onload = function () {
+        img.src = finalURL;
+        lastMainBannerURL = finalURL;
+        localStorage.setItem("lastMainBannerURL", finalURL);
       };
+
+      preloader.onerror = function () {
+        if (lastMainBannerURL) {
+          img.src = lastMainBannerURL;
+        }
+      };
+
+      preloader.src = finalURL;
     }
 
-    console.log("AB1 raw =", rawURL);
-    console.log("Banner final =", finalURL);
+    await loadSideBannerImages();
   } catch (e) {
     console.log("Lỗi banner", e);
+
+    if (img && lastMainBannerURL) {
+      img.src = lastMainBannerURL;
+    }
   }
+}
+
+async function loadSideBannerImages() {
+  try {
+    const url =
+      "https://docs.google.com/spreadsheets/d/12ZhbKYiDgXBT5ALCfjJBoVrh3cUS8Wbmy4lVRDRoGg8/gviz/tq?tqx=out:csv&gid=0&cb=" +
+      Date.now();
+
+    const res = await fetch(url, { cache: "no-store" });
+    const text = await res.text();
+
+    const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+    if (lines.length < 2) return;
+
+    const matched = [];
+
+    for (const line of lines.slice(1)) {
+      const cols = splitCSVRow(line);
+      if (cols.length < 6) continue;
+
+      const image = normalizeDriveImage((cols[3] || "").trim());
+      const thumb = normalizeDriveImage((cols[4] || "").trim());
+      const enabled = (cols[5] || "").trim() === "1";
+
+      if (!enabled || !image) continue;
+
+      matched.push(thumb || image);
+    }
+
+    sideBannerItems = matched.slice(0, 10);
+
+    const img = document.getElementById("side-banner-image");
+    const link = document.getElementById("side-banner-link");
+    if (!img || !link || !sideBannerItems.length) return;
+
+    sideBannerIndex = 0;
+    img.src = sideBannerItems[0];
+
+    if (!link.href.includes("app_refresh=")) {
+      link.href = withRefreshParam("imagegallery.html?mode=grid");
+    }
+
+    if (sideBannerTimer) {
+      clearInterval(sideBannerTimer);
+    }
+
+    sideBannerTimer = setInterval(() => {
+      if (!sideBannerItems.length) return;
+      sideBannerIndex = (sideBannerIndex + 1) % sideBannerItems.length;
+      img.src = sideBannerItems[sideBannerIndex];
+    }, 5000);
+  } catch (e) {
+    console.log("Lỗi side banner", e);
+  }
+}
+
+function toInt(value) {
+  const n = parseInt(String(value || "").trim(), 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function buildEmptyMedalRow() {
+  return `
+    <div class="medal-row medal-grid five-cols empty-row">
+      <div class="unit">&nbsp;</div>
+      <div class="medal">&nbsp;</div>
+      <div class="medal">&nbsp;</div>
+      <div class="medal">&nbsp;</div>
+      <div class="medal">&nbsp;</div>
+    </div>
+  `;
+}
+
+function renderMedalRows(data) {
+  const filledRows = data.map((d) => `
+    <div class="medal-row medal-grid five-cols">
+      <div class="unit linkish">${d.unit}</div>
+      <div class="medal">${d.gold || ""}</div>
+      <div class="medal">${d.silver || ""}</div>
+      <div class="medal">${d.bronze || ""}</div>
+      <div class="medal">${d.kl || ""}</div>
+    </div>
+  `);
+
+  const emptyCount = Math.max(0, MEDAL_MIN_ROWS - data.length);
+  for (let i = 0; i < emptyCount; i++) {
+    filledRows.push(buildEmptyMedalRow());
+  }
+
+  return filledRows.join("");
+}
+
+async function loadMedalBoard(force = false) {
+  try {
+    const res = await fetch(medalSheetUrl + "&cb=" + Date.now(), { cache: "no-store" });
+    const text = await res.text();
+
+    const normalized = text.replace(/^\uFEFF/, "").trim();
+    if (!force && normalized === lastMedalSnapshot) {
+      return;
+    }
+    lastMedalSnapshot = normalized;
+
+    const lines = normalized.split(/\r?\n/).filter(line => line.trim() !== "");
+    const medalTable = document.getElementById("medalTableBody");
+    const totalRow = document.getElementById("medalTotalRow");
+    if (!medalTable || !totalRow) return;
+
+    if (lines.length < 2) {
+      medalTable.innerHTML = renderMedalRows([]);
+      totalRow.innerHTML = `
+        <div class="unit">0</div>
+        <div class="medal">0</div>
+        <div class="medal">0</div>
+        <div class="medal">0</div>
+        <div class="medal">0</div>
+      `;
+      return;
+    }
+
+    const data = lines.slice(1).map(line => {
+      const c = splitCSVRow(line);
+      return {
+        unit: (c[0] || "").trim(),
+        gold: toInt(c[1]),
+        silver: toInt(c[2]),
+        bronze: toInt(c[3]),
+        kl: toInt(c[4])
+      };
+    }).filter(x => x.unit);
+
+    data.sort((a, b) =>
+      b.gold - a.gold ||
+      b.silver - a.silver ||
+      b.bronze - a.bronze ||
+      b.kl - a.kl ||
+      a.unit.localeCompare(b.unit, "vi")
+    );
+
+    medalTable.innerHTML = renderMedalRows(data);
+
+    const totalGold = data.reduce((s, x) => s + x.gold, 0);
+    const totalSilver = data.reduce((s, x) => s + x.silver, 0);
+    const totalBronze = data.reduce((s, x) => s + x.bronze, 0);
+    const totalKL = data.reduce((s, x) => s + x.kl, 0);
+
+    totalRow.innerHTML = `
+      <div class="unit">${data.length}</div>
+      <div class="medal">${totalGold}</div>
+      <div class="medal">${totalSilver}</div>
+      <div class="medal">${totalBronze}</div>
+      <div class="medal">${totalKL}</div>
+    `;
+
+    console.log("Bảng HC đã cập nhật");
+  } catch (err) {
+    console.log("Lỗi bảng HC", err);
+
+    const medalTable = document.getElementById("medalTableBody");
+    const totalRow = document.getElementById("medalTotalRow");
+    if (medalTable) {
+      medalTable.innerHTML = renderMedalRows([]);
+    }
+    if (totalRow) {
+      totalRow.innerHTML = `
+        <div class="unit">0</div>
+        <div class="medal">0</div>
+        <div class="medal">0</div>
+        <div class="medal">0</div>
+        <div class="medal">0</div>
+      `;
+    }
+  }
+}
+
+function refreshHomeAndAppLinks() {
+  refreshAppLinks();
+  loadMainBanner();
+  loadMedalBoard(false);
 }
 
 function openSingleLink(link) {
   if (!link || link.startsWith("LINK_")) return;
-  window.location.href = link;
+  window.location.href = withRefreshParam(link);
 }
 
 function renderList(targetId, items, openFnName, emptyText) {
@@ -635,17 +951,23 @@ function closeTaiLieuMenu() {
 function openTaiLieuLink(index) {
   const item = taiLieuLinks[index];
   if (!item || !item.url || item.url.startsWith("LINK_")) return;
-  window.location.href = item.url;
+  window.location.href = withRefreshParam(item.url);
 }
 
-function openDangKyMenu() {
+async function openDangKyMenu() {
   const panel = document.getElementById("dangKyPanel");
   if (!panel) return;
 
-  renderList("dangKyList", dangKyLinks, "openDangKyLink", "Chưa có link đăng ký.");
-  panel.classList.add("show");
-  panel.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
+  try {
+    await refreshDangKyLinks();
+    renderList("dangKyList", dangKyLinks, "openDangKyLink", "Chưa có link đăng ký.");
+    panel.classList.add("show");
+    panel.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  } catch (err) {
+    console.error("openDangKyMenu error:", err);
+    alert("Không tải được danh sách đăng ký.");
+  }
 }
 
 function closeDangKyMenu() {
@@ -659,11 +981,51 @@ function closeDangKyMenu() {
 
 function openDangKyLink(index) {
   const item = dangKyLinks[index];
-  if (!item || !item.url || item.url.startsWith("LINK_")) return;
-  window.location.href = item.url;
+  if (!item || !Array.isArray(item.gids) || !item.gids.length) return;
+
+  if (item.gids.length === 1) {
+    const url = buildDangKyPdfUrl(
+      item.gids[0],
+      item.orientation,
+      item.top,
+      item.bottom,
+      item.left,
+      item.right
+    );
+    window.location.href = withRefreshParam(url);
+    return;
+  }
+
+  item.gids.forEach((gid, i) => {
+    const url = buildDangKyPdfUrl(
+      gid,
+      item.orientation,
+      item.top,
+      item.bottom,
+      item.left,
+      item.right
+    );
+
+    setTimeout(() => {
+      window.open(withRefreshParam(url), "_blank");
+    }, i * 300);
+  });
 }
 
+refreshAppLinks();
 loadMainBanner();
-  </script>
+loadMedalBoard(true);
+
+if (autoRefreshTimer) {
+  clearInterval(autoRefreshTimer);
+}
+autoRefreshTimer = setInterval(refreshHomeAndAppLinks, AUTO_REFRESH_MS);
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    refreshHomeAndAppLinks();
+  }
+});
+</script>
 </body>
 </html>
