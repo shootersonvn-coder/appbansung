@@ -40,47 +40,31 @@ async function loadISSF(){
       .replace(/\s+/g, " - ")
       || "ISSF Result";
 
-  const text = doc.body.innerText;
-  const lines = text.split("\n").map(x => x.trim()).filter(Boolean);
-
   const rows = [];
 
-for(let i = 0; i < lines.length; i++){
+const table = doc.querySelector("table");
+const trs = table ? [...table.querySelectorAll("tr")] : [];
 
-  const line = lines[i];
+trs.forEach(tr => {
+  const tds = [...tr.querySelectorAll("td")];
 
-  if(!/^\d+\s+\d+/.test(line)) continue;
-
-  const parts = line.split(/\s+/);
-
-  if(parts.length < 12) continue;
-
-  const rank = parts[0];
-  const bib  = parts[1];
-
-  const nocIndex = parts.findIndex(x => /^[A-Z]{3}$/.test(x));
-  if(nocIndex < 0) continue;
-
-  const name = parts.slice(2, nocIndex).join(" ");
-  const noc  = parts[nocIndex];
-
-  const scores = parts.slice(nocIndex + 1);
+  if (tds.length < 11) return;
 
   rows.push({
-    rank,
-    bib,
-    name,
-    noc,
-    s1:scores[0] || "",
-    s2:scores[1] || "",
-    s3:scores[2] || "",
-    s4:scores[3] || "",
-    s5:scores[4] || "",
-    s6:scores[5] || "",
-    total:scores[6] || "",
-    note:scores.slice(7).join(" ")
+    rank: tds[0]?.innerText.trim() || "",
+    bib: tds[1]?.innerText.trim() || "",
+    name: tds[2]?.innerText.trim() || "",
+    noc: tds[3]?.innerText.trim() || "",
+    s1: tds[4]?.innerText.trim() || "",
+    s2: tds[5]?.innerText.trim() || "",
+    s3: tds[6]?.innerText.trim() || "",
+    s4: tds[7]?.innerText.trim() || "",
+    s5: tds[8]?.innerText.trim() || "",
+    s6: tds[9]?.innerText.trim() || "",
+    total: tds[10]?.innerText.trim() || "",
+    note: tds[11]?.innerText.trim() || ""
   });
-}
+});
 
     
   }
