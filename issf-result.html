@@ -3,11 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <title>ISSF Result</title>
+
+<style>
+body{
+  margin:0;
+  background:#eef3fb;
+  font-family:Arial,sans-serif;
+  color:#111;
+}
+
+h3{
+  margin:0;
+  padding:12px 14px;
+  font-size:20px;
+  font-weight:700;
+}
+
+.table-wrap{
+  width:100%;
+  overflow:auto;
+  padding:0 10px 20px;
+}
+
+table{
+  border-collapse:collapse;
+  width:max-content;
+  min-width:100%;
+  background:#fff;
+}
+
+th{
+  background:#0b5d2a;
+  color:#fff;
+  font-size:14px;
+  padding:8px;
+  border:1px solid #d8dde5;
+  white-space:nowrap;
+}
+
+td{
+  font-size:14px;
+  padding:6px 8px;
+  border:1px solid #d8dde5;
+  white-space:nowrap;
+}
+
+tr:nth-child(even){
+  background:#f7f9fc;
+}
+
+td:nth-child(1),
+td:nth-child(2),
+td:nth-child(4){
+  text-align:center;
+}
+
+td:nth-child(11){
+  font-weight:700;
+}
+</style>
 </head>
+
 <body>
 
 <h3 id="title">Đang tải ISSF...</h3>
-<table border="1" cellpadding="6">
+
+<div class="table-wrap">
+<table>
   <thead>
     <tr>
       <th>Hạng</th>
@@ -26,6 +88,7 @@
   </thead>
   <tbody id="body"></tbody>
 </table>
+</div>
 
 <script>
 const ISSF_URL = "https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30";
@@ -42,32 +105,29 @@ async function loadISSF(){
 
   const rows = [];
 
-const table = doc.querySelector("table");
-const trs = table ? [...table.querySelectorAll("tr")] : [];
+  const table = doc.querySelector("table");
+  const trs = table ? [...table.querySelectorAll("tr")] : [];
 
-trs.forEach(tr => {
-  const tds = [...tr.querySelectorAll("td")];
+  trs.forEach(tr => {
+    const tds = [...tr.querySelectorAll("td")];
 
-  if (tds.length < 11) return;
+    if(tds.length < 11) return;
 
-  rows.push({
-    rank: tds[0]?.innerText.trim() || "",
-    bib: tds[1]?.innerText.trim() || "",
-    name: tds[2]?.innerText.trim() || "",
-    noc: tds[3]?.innerText.trim() || "",
-    s1: tds[4]?.innerText.trim() || "",
-    s2: tds[5]?.innerText.trim() || "",
-    s3: tds[6]?.innerText.trim() || "",
-    s4: tds[7]?.innerText.trim() || "",
-    s5: tds[8]?.innerText.trim() || "",
-    s6: tds[9]?.innerText.trim() || "",
-    total: tds[10]?.innerText.trim() || "",
-    note: tds[11]?.innerText.trim() || ""
+    rows.push({
+      rank: tds[0]?.innerText.trim() || "",
+      bib: tds[1]?.innerText.trim() || "",
+      name: tds[2]?.innerText.trim() || "",
+      noc: tds[3]?.innerText.trim() || "",
+      s1: tds[4]?.innerText.trim() || "",
+      s2: tds[5]?.innerText.trim() || "",
+      s3: tds[6]?.innerText.trim() || "",
+      s4: tds[7]?.innerText.trim() || "",
+      s5: tds[8]?.innerText.trim() || "",
+      s6: tds[9]?.innerText.trim() || "",
+      total: tds[10]?.innerText.trim() || "",
+      note: tds[11]?.innerText.trim() || ""
+    });
   });
-});
-
-    
-  
 
   document.getElementById("body").innerHTML = rows.map(r => `
     <tr>
@@ -81,7 +141,7 @@ trs.forEach(tr => {
       <td>${r.s4}</td>
       <td>${r.s5}</td>
       <td>${r.s6}</td>
-      <td><b>${r.total}</b></td>
+      <td>${r.total}</td>
       <td>${r.note}</td>
     </tr>
   `).join("");
