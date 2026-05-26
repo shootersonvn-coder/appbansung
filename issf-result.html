@@ -25,18 +25,12 @@ h3{
   padding:0 10px 20px;
 }
 
-table{
-  border-collapse:collapse;
-  width:100%;
-  table-layout:fixed;
-  background:#fff;
-}
 
 th{
   background:#0b5d2a;
   color:#fff;
-  font-size:14px;
-  padding:8px;
+  font-size:12px;
+  padding:4px 3px;
   border:1px solid #d8dde5;
   white-space:nowrap;
 }
@@ -45,18 +39,45 @@ th,td{
   overflow:hidden;
   text-overflow:ellipsis;
 }
-
-th:nth-child(1),td:nth-child(1){width:45px;}
-th:nth-child(2),td:nth-child(2){width:55px;}
-th:nth-child(3),td:nth-child(3){width:180px;}
+table{
+  width:auto;
+  border-collapse:collapse;
+  table-layout:fixed;
+  background:#fff;
+}
+th:nth-child(1),td:nth-child(1){width:40px;}
+th:nth-child(2),td:nth-child(2){width:50px;}
+th:nth-child(3),td:nth-child(3){width:120px;}
 th:nth-child(4),td:nth-child(4){width:45px;}
-th:nth-child(n+5),td:nth-child(n+5){width:60px;}
+
+th:nth-child(5),
+th:nth-child(6),
+th:nth-child(7),
+th:nth-child(8),
+th:nth-child(9),
+th:nth-child(10),
+td:nth-child(5),
+td:nth-child(6),
+td:nth-child(7),
+td:nth-child(8),
+td:nth-child(9),
+td:nth-child(10){
+  width:55px;
+}
+
+th:nth-child(11),td:nth-child(11){width:50px;}
+th:nth-child(12),td:nth-child(12){width:45px;}
 
 td{
-  font-size:14px;
-  padding:6px 8px;
+  font-size:12px;
+  padding:3px 4px;
   border:1px solid #d8dde5;
   white-space:nowrap;
+}
+
+table{
+  table-layout:fixed;
+  width:100%;
 }
 
 tr:nth-child(even){
