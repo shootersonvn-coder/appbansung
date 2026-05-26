@@ -110,7 +110,12 @@ async function loadISSF(){
 
   const rows = [];
 
-  const table = doc.querySelector("table");
+  const tables = [...doc.querySelectorAll("table")];
+
+const table = tables.find(t =>
+  t.innerText.includes("Rank") &&
+  t.innerText.includes("Total")
+);
 
   const trs =
     table
