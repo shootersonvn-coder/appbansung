@@ -128,7 +128,7 @@ const params = new URLSearchParams(location.search);
 
 const ISSF_URL =
   params.get("url") ||
-  https://appbansung.vercel.app/issf-result.html?url=https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30&title=10m Air Rifle Men
+  "https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30";
 
 const WANTED_TITLE =
   params.get("title") || "";
@@ -156,14 +156,12 @@ let table = null;
 if (WANTED_TITLE) {
   table = tables.find(t =>
     t.innerText.includes(WANTED_TITLE) &&
-    t.innerText.includes("Rank") &&
     t.innerText.includes("Total")
   );
 }
 
 if (!table) {
   table = tables.find(t =>
-    t.innerText.includes("Rank") &&
     t.innerText.includes("Total")
   );
 }
