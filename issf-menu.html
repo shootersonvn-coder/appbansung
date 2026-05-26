@@ -62,27 +62,31 @@ body{
 <div class="list">
 
   <div class="card"
-       onclick="openISSF(
-'https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30'
+onclick="openISSF(
+'https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30',
+'10m Air Rifle Men'
 )">
-    10m Air Rifle Men
-  </div>
+  10m Air Rifle Men
+</div>
 
   <div class="card"
-       onclick="openISSF(
-'https://www.issf-sports.org/competitions/3284/results/3b3b303b42524d3b313b513b493b313b303b30'
+onclick="openISSF(
+'https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30',
+'10m Air Pistol Men'
 )">
-    10m Air Pistol Men
-  </div>
+  10m Air Pistol Men
+</div>
 
 </div>
 
 <script>
-function openISSF(url){
+function openISSF(url, title){
 
   location.href =
     "issf-result.html?url=" +
-    encodeURIComponent(url);
+    encodeURIComponent(url) +
+    "&title=" +
+    encodeURIComponent(title);
 
 }
 </script>
