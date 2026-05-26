@@ -27,8 +27,8 @@ h3{
 
 table{
   border-collapse:collapse;
-  width:max-content;
-  min-width:100%;
+  width:100%;
+  table-layout:fixed;
   background:#fff;
 }
 
@@ -40,6 +40,17 @@ th{
   border:1px solid #d8dde5;
   white-space:nowrap;
 }
+
+th,td{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+th:nth-child(1),td:nth-child(1){width:45px;}
+th:nth-child(2),td:nth-child(2){width:55px;}
+th:nth-child(3),td:nth-child(3){width:180px;}
+th:nth-child(4),td:nth-child(4){width:45px;}
+th:nth-child(n+5),td:nth-child(n+5){width:60px;}
 
 td{
   font-size:14px;
