@@ -133,6 +133,15 @@ const ISSF_URL =
 const WANTED_TITLE =
   params.get("title") || "";
 
+
+
+const SAVE_API = "https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30";
+
+let ISSF_ROWS = [];
+let hasSaved = false;
+
+
+
 const PROXY =
   "/api/issf?url=" + encodeURIComponent(ISSF_URL);
 
@@ -212,7 +221,29 @@ if (!table) {
         <td>${r.note}</td>
       </tr>
     `).join("");
+      ISSF_ROWS = rows;
+  autoSaveToSheet();
 
+}
+
+async function autoSaveToSheet(){
+
+  if(hasSaved) return;
+  if(!ISSF_ROWS || ISSF_ROWS.length === 0) return;
+  if(SAVE_API === "LINK_APPS_SCRIPT_WEB_APP") return;
+
+  hasSaved = true;
+
+  await fetch(SAVE_API, {
+    method: "POST",
+    body: JSON.stringify({
+      title: WANTED_TITLE || "ISSF Result",
+      url: ISSF_URL,
+      rows: ISSF_ROWS
+    })
+  });
+
+  console.log("Đã tự động lưu ISSF vào Sheet");
 }
 
 loadISSF();
