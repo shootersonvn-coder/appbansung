@@ -124,7 +124,11 @@ td:nth-child(11){
 </div>
 
 <script>
-const ISSF_URL = "https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30";
+const params = new URLSearchParams(location.search);
+
+const ISSF_URL =
+  params.get("url") ||
+  "https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30";
 
 const PROXY =
   "/api/issf?url=" + encodeURIComponent(ISSF_URL);
