@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tài liệu</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --card:#ffffff;
+  --blue:#294b96;
+  --red:#e53935;
+  --line:#d8dde5;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  font-family:"Roboto Condensed",-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:#111;
+  font-size:14px;
+}
+
+/* KHÔNG CHUI VÀO HEAD */
+.page{
+  width:100%;
+  margin-top:22px;/*Thay đổi độ cao của các card*/
+  padding:0 0 30px;
+}
+
+/* CARD GỌN */
+.menu-card{
+  width:95%;
+  height:40px;
+  margin:0 auto 10px;
+  padding:0 16px;
+
+  background:var(--card);
+  border-radius:14px;
+  border:1px solid var(--line);
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+.menu-card:active{
+  transform:scale(.992);
+}
+
+.menu-title{
+  flex:1;
+  padding-right:10px;
+
+  color:var(--blue);
+  font-size:14px;
+  font-weight:800;
+  line-height:1.15;
+}
+
+.menu-arrow{
+  color:var(--red);
+  font-size:20px;
+  font-weight:800;
+  line-height:1;
+  flex-shrink:0;
+}
+
+.loading{
+  padding:40px 20px;
+  text-align:center;
+  color:#666;
+  font-size:14px;
+  font-weight:700;
+}
+
+@media (min-width:768px){
+  .page{
+    padding:16px 0 40px;
+  }
+
+  .menu-card{
+    width:95%;
+    height:60px;
+    margin-bottom:12px;
+    padding:0 20px;
+    border-radius:16px;
+  }
+
+  .menu-title{
+    font-size:18px;
+  }
+
+  .menu-arrow{
+    font-size:14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <a href="javascript:history.back()" class="page-back">
+      ← Quay lại
+    </a>
+
+    <div class="page-title-wrap">
+      <div class="page-title">Tài liệu</div>
+      <div class="page-subtitle" id="subTitle"></div>
+    </div>
+
+  </div>
+</header>
+
+<div class="page">
+  <div id="list">
+    <div class="loading">Đang tải...</div>
+  </div>
+</div>
+
+<script>
+const CSV_URL =
+"https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=1956332859";
+
+const DEFAULT_SHEET_ID =
+"1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+
+const params = new URLSearchParams(window.location.search);
+
+const yearParam = (params.get("year") || "").trim();
+const competitionParam = (params.get("competition") || "").trim();
+
+document.getElementById("subTitle").innerText =
+  [competitionParam, yearParam].filter(Boolean).join(" ");
+
+function trim(s){
+  return (s || "").toString().trim();
+}
+
+function norm(s){
+  return trim(s)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d")
+    .replace(/Đ/g,"D")
+    .toLowerCase()
+    .replace(/\s+/g," ");
+}
+
+function splitCSVRow(row){
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for(let i=0;i<row.length;i++){
+    const char = row[i];
+    const next = row[i+1];
+
+    if(char === '"'){
+      if(insideQuotes && next === '"'){
+        current += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+    }else if(char === "," && !insideQuotes){
+      result.push(current);
+      current = "";
+    }else{
+      current += char;
+    }
+  }
+
+  result.push(current);
+  return result.map(v => v.trim());
+}
+
+function isEmptyLink(link){
+  const t = trim(link).toLowerCase();
+  return !t || t === "ko" || t === "không" || t === "none";
+}
+
+function buildPdfLink(raw){
+  const t = trim(raw);
+  if(isEmptyLink(t)) return "";
+
+  if(t.toLowerCase().startsWith("gid:")){
+    const gid = trim(t.replace(/gid:/i,""));
+    return `https://docs.google.com/spreadsheets/d/${DEFAULT_SHEET_ID}/export?format=pdf&gid=${gid}`;
+  }
+
+  if(/^\d+$/.test(t)){
+    return `https://docs.google.com/spreadsheets/d/${DEFAULT_SHEET_ID}/export?format=pdf&gid=${t}`;
+  }
+
+  return t;
+}
+
+function openItem(link, title){
+  const finalLink = buildPdfLink(link);
+  if(!finalLink) return;
+
+  window.location.href =
+    "../pdfviewer.html"
+    + "?title=" + encodeURIComponent(title)
+    + "&url=" + encodeURIComponent(finalLink);
+}
+
+function render(rows){
+  const list = document.getElementById("list");
+
+  const viewYearN = norm(yearParam);
+  const viewCompN = norm(competitionParam);
+
+  const titleMap = {
+    doi_tuyen:"Đội tuyển Việt Nam tham dự",
+    dieu_le_chung:"Điều lệ chung",
+    dieu_le_rieng:"Điều lệ riêng",
+    lich_dau:"Lịch đấu",
+    dang_ky:"Đã đăng ký thi đấu",
+    luot_dau:"Lượt đấu",
+    thanh_vien:"Thành viên tham dự",
+    danh_sach:"Danh sách thi đấu",
+    nhat_ky:"Nhật ký huy chương",
+    huy_chuong:"Huy chương",
+    dang_cap:"Đẳng cấp",
+    ky_luc:"Phá Kỷ lục",
+    thanh_tich:"Thành tích",
+    so_deo:"Số đeo",
+    the_dau:"Thẻ đấu",
+    hinh_anh:"Hình ảnh",
+    tai_lieu_hop:"Trọng tài"
+  };
+
+  const order = [
+    "doi_tuyen",
+    "dieu_le_chung",
+    "dieu_le_rieng",
+    "lich_dau",
+    "dang_ky",
+    "luot_dau",
+    "thanh_vien",
+    "danh_sach",
+    "nhat_ky",
+    "huy_chuong",
+    "dang_cap",
+    "ky_luc",
+    "thanh_tich",
+    "so_deo",
+    "the_dau",
+    "hinh_anh",
+    "tai_lieu_hop"
+  ];
+
+  const linkMap = new Map();
+
+  rows.slice(1).forEach(r => {
+    const y = trim(r[0]);
+    const comp = trim(r[1]);
+    const cat = trim(r[2]);
+    const link = trim(r[3]);
+    const enabledRaw = trim(r[4]);
+
+    if(!cat) return;
+    if(enabledRaw && enabledRaw !== "1") return;
+
+    const yN = norm(y);
+    const cN = norm(comp);
+
+    if(viewYearN && yN && yN !== viewYearN) return;
+
+    if(viewCompN && cN){
+      const ok =
+        viewCompN === cN ||
+        viewCompN.includes(cN) ||
+        cN.includes(viewCompN);
+
+      if(!ok) return;
+    }
+
+    linkMap.set(cat, link);
+  });
+
+  const data = order
+    .filter(key => linkMap.has(key))
+    .map(key => ({
+      key,
+      title:titleMap[key] || key,
+      link:linkMap.get(key)
+    }));
+
+  if(!data.length){
+    list.innerHTML = `<div class="loading">Không có dữ liệu</div>`;
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "menu-card";
+
+    card.innerHTML = `
+      <div class="menu-title">${item.title}</div>
+      <div class="menu-arrow"></div>
+    `;
+
+    card.onclick = function(){
+      openItem(item.link, item.title);
+    };
+
+    list.appendChild(card);
+  });
+}
+
+async function load(){
+  const list = document.getElementById("list");
+  list.innerHTML = `<div class="loading">Đang tải...</div>`;
+
+  try{
+    const res = await fetch(CSV_URL + "&t=" + Date.now(), {
+      cache:"no-store"
+    });
+
+    if(!res.ok){
+      throw new Error("HTTP " + res.status);
+    }
+
+    const text = await res.text();
+
+    const rows = text
+      .split(/\r?\n/)
+      .filter(r => r.trim())
+      .map(r => splitCSVRow(r));
+
+    render(rows);
+
+  }catch(e){
+    console.error(e);
+    list.innerHTML = `<div class="loading">Không tải được dữ liệu</div>`;
+  }
+}
+
+load();
+</script>
+</body>
+</html>

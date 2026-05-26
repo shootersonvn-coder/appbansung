@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>All Competitions</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --card:#ffffff;
+  --blue:#2d84ea;
+  --line:#d8dde5;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:"Roboto Condensed",-apple-system,BlinkMacSystemFont,sans-serif;
+  color:#111;
+  font-size:14px;
+}
+
+/* CHỈ STYLE RIÊNG PHẦN NỘI DUNG */
+.content{
+  width:100%;
+  padding:75px 14px 40px;
+}
+
+.comp-card{
+  background:var(--card);
+  border-radius:18px;
+  border:1px solid rgba(0,0,0,.05);
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  padding:10px 14px;
+  margin-bottom:12px;
+  cursor:pointer;
+}
+
+.comp-name{
+  text-align:center;
+  color:var(--blue);
+  font-size:14px;
+  font-weight:800;
+  line-height:1.15;
+}
+
+.loading{
+  padding:40px 20px;
+  text-align:center;
+  color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <a href="../index.html" class="page-back">
+      ← Quay lại
+    </a>
+
+    <div class="page-title-wrap">
+      <div class="page-title">Giải đấu</div>
+      <div class="page-subtitle">Năm</div>
+    </div>
+
+  </div>
+</header>
+
+<div class="content">
+  <div id="list">
+    <div class="loading">Đang tải...</div>
+  </div>
+</div>
+
+<script>
+const url =
+"https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=1558133737";
+
+function trim(s){
+  return (s || "").trim();
+}
+
+function splitCSVRow(row){
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for(let i=0;i<row.length;i++){
+    const char = row[i];
+    const next = row[i+1];
+
+    if(char === '"'){
+      if(insideQuotes && next === '"'){
+        current += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+    }
+    else if(char === "," && !insideQuotes){
+      result.push(current);
+      current = "";
+    }
+    else{
+      current += char;
+    }
+  }
+
+  result.push(current);
+  return result.map(v => v.trim());
+}
+
+function buildData(rows){
+  const yearSet = new Set();
+
+  for(let i=1;i<rows.length;i++){
+    const r = rows[i] || [];
+    const year = trim(r[0]);
+
+    if(!/^\d{4}$/.test(year)) continue;
+
+    yearSet.add(year);
+  }
+
+  return Array.from(yearSet)
+    .map(year => ({year}))
+    .sort((a,b) => Number(b.year) - Number(a.year));
+}
+
+function openYear(year){
+  window.location.href =
+    "all-competition.html?year=" + encodeURIComponent(year);
+}
+
+function openOldCompetitions(){
+  window.location.href = "old-competitions.html";
+}
+
+function render(data){
+  const container = document.getElementById("list");
+
+  if(!data.length){
+    container.innerHTML = `<div class="loading">Không có dữ liệu</div>`;
+    return;
+  }
+
+  const currentYear = new Date().getFullYear();
+
+  container.innerHTML =
+    data.map(item => `
+      <div class="comp-card" onclick="openYear('${item.year}')">
+        <div class="comp-name"
+          style="color:${Number(item.year) === currentYear ? '#e53935' : '#2d84ea'}">
+          ${item.year}
+        </div>
+      </div>
+    `).join("")
+    + `
+      <div class="comp-card" onclick="openOldCompetitions()">
+        <div class="comp-name">
+          Giải đấu khác <span style="color:#e53935;">pdf</span>
+        </div>
+      </div>
+    `;
+}
+
+async function load(){
+  const res = await fetch(
+    url + "&t=" + Date.now(),
+    {cache:"no-store"}
+  );
+
+  const text = await res.text();
+
+  const rows = text
+    .split(/\r?\n/)
+    .filter(r => r.trim())
+    .map(r => splitCSVRow(r));
+
+  const data = buildData(rows);
+
+  render(data);
+}
+
+load();
+</script>
+
+</body>
+</html>

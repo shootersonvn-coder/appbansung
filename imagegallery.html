@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css?v=2">
+
 
   <style>
     :root {
@@ -43,55 +45,20 @@
       background: #fff;
     }
 
-    .app-header {
-      position: sticky;
-      top: 0;
-      z-index: 999;
-      background: var(--green-dark);
-      color: #fff;
-      padding-top: max(12px, env(safe-area-inset-top));
-    }
-
-    .header-inner {
-      padding: 12px 16px 14px;
-    }
-
-    .header-top {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .back-btn {
-      border: none;
-      background: transparent;
-      color: #fff;
-      font-size: 34px;
-      line-height: 1;
-      padding: 0;
-      margin: 0;
-      cursor: pointer;
-      flex: 0 0 auto;
-    }
-
-    .header-text {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .header-title {
-  margin: 0;
-  font-size: 18px;   /* ↓ nhỏ lại */
-  font-weight: 700;  /* ↓ nhẹ hơn */
-  color: #fff;
-  line-height: 1.2;
-}
 
     .content {
-      padding: 10px;
-      background: var(--bg);
-      min-height: calc(100vh - 90px);
-    }
+  padding: calc(80px + env(safe-area-inset-top)) 10px 10px;/* Thay đổi di chuyển cao thấp cho page*/
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+.page-header{
+  position:fixed !important;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+}
 
     .loading-wrap,
     .empty-wrap {
@@ -208,30 +175,36 @@
     .hidden {
       display: none !important;
     }
-
-    @media (max-width: 700px) {
-      .header-title {
-        font-size: 18px;
-      }
-
-      .back-btn {
-        font-size: 32px;
-      }
+    .page-back-button{
+      border:none;
+      background:transparent;
+      padding:0;
     }
   </style>
 </head>
 <body>
   <div class="app-shell">
-    <header class="app-header">
-      <div class="header-inner">
-        <div class="header-top">
-          <button class="back-btn" onclick="goBack()"><</button>
-          <div class="header-text">
-            <h1 class="header-title" id="headerTitle">Hình ảnh</h1>
-          </div>
-        </div>
+    <header class="page-header">
+  <div class="page-header-inner">
+
+    <button
+      class="page-back page-back-button"
+      onclick="goBack()"
+    >
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div
+        class="page-title"
+        id="headerTitle"
+      >
+        Hình ảnh
       </div>
-    </header>
+    </div>
+
+  </div>
+</header>
 
     <main class="content">
       <div id="loadingView" class="loading-wrap">Đang tải hình ảnh…</div>

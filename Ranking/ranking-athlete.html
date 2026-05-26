@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+<title>Ranking Athlete</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --card:#ffffff;
+  --green:#005f37;
+  --line:#d8dde5;
+  --blue:#294b96;
+  --red:#d72d2d;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  color:#111827;
+  font-size:14px;
+}
+
+.page{
+  padding:12px 0 30px;
+}
+
+.info{
+  width:95%;
+  margin:0 auto 12px;
+  background:#fff;
+  border-radius:16px;
+  padding:12px 14px;
+}
+
+.name{
+  font-size:18px;
+  font-weight:800;
+  line-height:1.2;
+}
+
+.event{
+  margin-top:5px;
+  color:#666;
+  font-size:13px;
+  font-weight:600;
+}
+
+.list{
+  width:95%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:12px 14px;
+  box-shadow:0 2px 10px rgba(15,23,42,0.06);
+}
+
+.row-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.date{
+  color:var(--red);
+  font-size:14px;
+  font-weight:800;
+}
+
+.score{
+  color:var(--blue);
+  font-size:20px;
+  font-weight:800;
+}
+
+.meta{
+  margin-top:8px;
+  color:#666;
+  font-size:13px;
+  font-weight:600;
+}
+
+.loading{
+  padding:40px 16px;
+  text-align:center;
+  color:#294b96;
+  font-weight:700;
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <button class="page-back page-back-button"
+      onclick="history.back()">
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div class="page-title">
+        Thành tích VĐV
+      </div>
+
+      <div class="page-subtitle">
+        4 giải gần nhất
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="info">
+    <div class="name" id="athleteName">
+      Hãy đợi một lát . . .
+    </div>
+
+    <div class="event" id="eventNameBox"></div>
+  </div>
+
+  <div id="list" class="list">
+    <div class="loading">
+      Hãy đợi một lát . . .
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID =
+"1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+
+const SHEET_GID = "1558133737";
+
+const CSV_URL =
+`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+
+const params = new URLSearchParams(window.location.search);
+
+const athleteId =
+decodeURIComponent(params.get("id") || "");
+
+const athleteName =
+decodeURIComponent(params.get("name") || "");
+
+const eventName =
+decodeURIComponent(params.get("event") || "");
+
+const latestDateText =
+decodeURIComponent(params.get("date") || "");
+
+const COL_TIME = 4;
+const COL_EVENT = 5;
+const COL_ID = 10;
+const COL_TOTAL = 32;
+const COL_COMPETITION = 3;
+
+function splitCSVRow(row){
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for(let i=0;i<row.length;i++){
+
+    const char = row[i];
+    const next = row[i+1];
+
+    if(char === '"'){
+      if(insideQuotes && next === '"'){
+        current += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+    }else if(char === "," && !insideQuotes){
+      result.push(current.trim());
+      current = "";
+    }else{
+      current += char;
+    }
+  }
+
+  result.push(current.trim());
+
+  return result;
+}
+
+function clean(v){
+  return String(v || "").trim();
+}
+
+function norm(s){
+  return clean(s)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d")
+    .replace(/Đ/g,"D")
+    .toLowerCase()
+    .replace(/\s+/g," ");
+}
+
+function baseEventName(s){
+
+  const raw = clean(s);
+  const t = norm(raw);
+
+  const keys = [
+    " - c.ket",
+    "- c.ket",
+    " - chung ket",
+    "- chung ket"
+  ];
+
+  for(const k of keys){
+
+    const idx = t.indexOf(k);
+
+    if(idx >= 0){
+      return raw.slice(0,idx).trim();
+    }
+  }
+
+  return raw;
+}
+
+function parseScore(v){
+
+  const s = clean(v).replace(",", ".");
+  const n = parseFloat(s);
+
+  return Number.isFinite(n)
+    ? n
+    : null;
+}
+
+function extractDate(text){
+
+  const m =
+    clean(text)
+    .match(/(\d{2}\.\d{2}\.\d{4})/);
+
+  return m ? m[1] : "";
+}
+
+function parseDate(text){
+
+  const m =
+    clean(text)
+    .match(/(\d{2})\.(\d{2})\.(\d{4})/);
+
+  if(!m) return null;
+
+  return new Date(
+    `${m[3]}-${m[2]}-${m[1]}T00:00:00`
+  );
+}
+
+async function load(){
+
+  document.getElementById("athleteName")
+    .innerText = athleteName;
+
+  document.getElementById("eventNameBox")
+    .innerText = eventName;
+
+  try{
+
+    const res =
+      await fetch(
+        CSV_URL + "&t=" + Date.now(),
+        { cache:"no-store" }
+      );
+
+    const text = await res.text();
+
+    const rows =
+      text
+      .replace(/^\uFEFF/, "")
+      .split(/\r?\n/)
+      .filter(r => r.trim())
+      .map(splitCSVRow);
+
+    const result = [];
+
+    rows.slice(1).forEach(r => {
+
+      const id = clean(r[COL_ID]);
+
+      if(id !== athleteId) return;
+
+      const rowEvent =
+        baseEventName(r[COL_EVENT]);
+
+      if(norm(rowEvent) !== norm(eventName))
+        return;
+
+      const score =
+        parseScore(r[COL_TOTAL]);
+        if(score <= 0) return;
+
+      if(score == null) return;
+
+      const rawTime =
+        clean(r[COL_TIME]);
+
+      const date =
+        extractDate(rawTime);
+
+      result.push({
+        date,
+        score,
+        competition:
+          clean(r[COL_COMPETITION]),
+        sort:
+          parseDate(date)?.getTime() || 0
+      });
+    });
+
+    const top4 = [...result]
+  .sort((a,b) =>
+    b.score - a.score ||
+    b.sort - a.sort
+  )
+  .slice(0,4);
+
+const topKeys = new Set(
+  top4.map(r =>
+    `${r.date}_${r.score}_${r.match}`
+  )
+);
+
+const finalRows = [
+  ...top4.sort((a,b) => b.sort - a.sort),
+
+  ...result
+    .filter(r =>
+      !topKeys.has(
+        `${r.date}_${r.score}_${r.match}`
+      )
+    )
+    .sort((a,b) => b.sort - a.sort)
+];
+
+render(finalRows);
+
+  }catch(err){
+    console.error(err);
+  }
+}
+
+function render(rows){
+
+  const list =
+    document.getElementById("list");
+
+  if(!rows.length){
+
+    list.innerHTML = `
+      <div class="loading">
+        Không có dữ liệu
+      </div>
+    `;
+
+    return;
+  }
+
+  list.innerHTML =
+    rows.map(r => `
+      <div class="card">
+
+        <div class="row-top">
+
+          <div class="date">
+            ${r.date}
+          </div>
+
+          <div class="score">
+            ${r.score}
+          </div>
+
+        </div>
+
+        <div class="meta">
+          ${r.competition}
+        </div>
+
+      </div>
+    `).join("");
+}
+
+load();
+</script>
+
+</body>
+</html>

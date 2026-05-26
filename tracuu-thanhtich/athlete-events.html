@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+<title>Nội dung thi đấu</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --card:#ffffff;
+  --green:#005f37;
+  --blue:#294b96;
+  --line:#d8dde5;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  color:#111827;
+  font-size:14px;
+}
+
+.page-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:2000;
+}
+
+.page{
+  padding-top:88px !important;
+}
+
+
+.info-card{
+  width:95%;
+
+  margin:22px auto 32px !important;
+
+  background:#fff;
+  border-radius:18px;
+ top:70px;
+  padding:14px;
+
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+
+
+.info-name{
+  font-size:14px;
+  font-weight:800;
+  color:#294b96;
+}
+
+.info-sub{
+  margin-top:4px;
+  font-size:14px;
+  font-weight:600;
+  color:#666;
+}
+
+.event-list{
+  width:95%;
+  margin:0 auto;
+  display:grid;
+  gap:8px;
+}
+
+.event-card{
+  width:100%;
+  border:none;
+  background:#fff;
+  border-radius:18px;
+  padding:14px;/*Chiều cao của Card*/
+  text-align:left;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+.event-title{
+  font-size:14px;
+  font-weight:800;
+  line-height:1.3;
+  color:#111827;
+}
+
+.event-sub{
+  margin-top:5px;
+  font-size:14px;
+  color:#666;
+  font-weight:600;
+}
+
+.loading{
+  padding:40px 16px;
+  text-align:center;
+  color:#294b96;
+  font-weight:700;
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <button class="page-back page-back-button"
+            onclick="history.back()">
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div class="page-title">
+        Nội dung thi đấu
+      </div>
+
+      <div class="page-subtitle">
+        Tra cứu thành tích
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="info-card">
+
+    <div id="athleteName"
+         class="info-name">
+      Đang tải...
+    </div>
+
+    <div id="athleteSub"
+         class="info-sub"></div>
+
+  </div>
+
+  <div id="eventList"
+       class="event-list">
+
+    <div class="loading">
+      Hãy đợi một lát . . .
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID =
+  "1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+
+const SHEET_GID = "1558133737";
+
+const CSV_URL =
+`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+
+const params =
+  new URLSearchParams(window.location.search);
+
+const athleteId =
+  decodeURIComponent(params.get("id") || "");
+  let athleteFullName = "";
+
+const COL_TIME = 4;
+const COL_EVENT = 5;
+const COL_ID = 10;
+const COL_HO = 11;
+const COL_TEN = 12;
+const COL_UNIT = 14;
+
+function splitCSVRow(row){
+
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for(let i=0;i<row.length;i++){
+
+    const char = row[i];
+    const next = row[i+1];
+
+    if(char === '"'){
+
+      if(insideQuotes && next === '"'){
+        current += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+
+    }else if(char === "," && !insideQuotes){
+
+      result.push(current.trim());
+      current = "";
+
+    }else{
+      current += char;
+    }
+  }
+
+  result.push(current.trim());
+
+  return result;
+}
+
+function clean(v){
+  return String(v || "").trim();
+}
+
+function parseDate(text){
+
+  const m =
+    clean(text)
+    .match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+
+  if(!m) return null;
+
+  const dd = m[1].padStart(2,"0");
+  const mm = m[2].padStart(2,"0");
+  const yyyy = m[3];
+
+  return new Date(
+    `${yyyy}-${mm}-${dd}T00:00:00`
+  );
+}
+
+async function load(){
+
+  try{
+
+    const res =
+      await fetch(CSV_URL + "&t=" + Date.now(),{
+        cache:"no-store"
+      });
+
+    const text =
+      await res.text();
+
+    const rows = text
+      .replace(/^\uFEFF/, "")
+      .split(/\r?\n/)
+      .filter(r => r.trim())
+      .map(splitCSVRow);
+
+    let athleteName = "";
+    let athleteUnit = "";
+
+    const eventMap = new Map();
+
+    rows.slice(1).forEach(r => {
+
+      const id = clean(r[COL_ID]);
+
+      if(id !== athleteId) return;
+
+      const ho =
+        clean(r[COL_HO]);
+
+      const ten =
+        clean(r[COL_TEN]);
+
+      athleteFullName =
+  ho + " " + ten;
+
+      athleteUnit =
+        clean(r[COL_UNIT]);
+
+      const eventName =
+        clean(r[COL_EVENT]);
+
+      if(!eventName) return;
+
+      const d =
+        parseDate(r[COL_TIME]);
+
+      const sort =
+        d ? d.getTime() : 0;
+
+      if(
+        !eventMap.has(eventName)
+      ){
+        eventMap.set(eventName,{
+          event:eventName,
+          sort
+        });
+      }else{
+
+        const old =
+          eventMap.get(eventName);
+
+        if(sort > old.sort){
+          old.sort = sort;
+        }
+      }
+
+    });
+
+    document.getElementById(
+  "athleteName"
+).innerText = athleteFullName;
+
+    document.getElementById(
+      "athleteSub"
+    ).innerText =
+      athleteUnit + " • " + athleteId;
+
+    const events =
+      Array.from(eventMap.values())
+      .sort((a,b) => b.sort - a.sort);
+
+    render(events);
+
+  }catch(err){
+
+    console.error(err);
+
+    document.getElementById(
+      "eventList"
+    ).innerHTML = `
+      <div class="loading">
+        Không tải được dữ liệu
+      </div>
+    `;
+  }
+}
+
+function render(events){
+
+  const list =
+    document.getElementById("eventList");
+
+  if(!events.length){
+
+    list.innerHTML = `
+      <div class="loading">
+        Chưa có dữ liệu thi đấu
+      </div>
+    `;
+
+    return;
+  }
+
+  list.innerHTML =
+    events.map(item => `
+
+      <button class="event-card"
+  onclick="openResults(
+  '${encodeURIComponent(athleteId)}',
+  '${encodeURIComponent(athleteName)}',
+  '${encodeURIComponent(item.event)}'
+)"
+
+        <div class="event-title">
+          ${item.event}
+        </div>
+
+        <div class="event-sub">
+          Bấm để xem thành tích
+        </div>
+
+      </button>
+
+    `).join("");
+}
+
+load();
+function openResults(id,name,event){
+
+  window.location.href =
+    "athlete-results.html"
+    + "?id=" + encodeURIComponent(id)
+    + "&name=" + encodeURIComponent(name)
+    + "&event=" + encodeURIComponent(event);
+}
+</script>
+
+</body>
+</html>

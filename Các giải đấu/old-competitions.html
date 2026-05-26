@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Giải đấu khác  pdf</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --green:#0b5d2a;
+  --card:#ffffff;
+  --blue:#2d84ea;
+  --line:#d8dde5;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:"Roboto Condensed",-apple-system,BlinkMacSystemFont,sans-serif;
+  color:#111;
+  font-size:14px;
+}
+
+.content{
+  padding:calc(env(safe-area-inset-top) + 100px) 14px 40px;
+}
+
+.comp-card{
+  background:var(--card);
+  border-radius:18px;
+  border:1px solid rgba(0,0,0,.05);
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  padding:10px 14px;
+  margin-bottom:12px;
+  cursor:pointer;
+}
+
+.comp-name{
+  text-align:center;
+  color:var(--blue);
+  font-size:14px;
+  font-weight:800;
+  line-height:1.15;
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <button class="page-back page-back-button" onclick="history.back()">
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div class="page-title">Giải đấu - pdf</div>
+      <div class="page-subtitle">Năm</div>
+    </div>
+
+  </div>
+</header>
+
+<div class="content">
+  <div id="list"></div>
+</div>
+
+<script>
+const giaiDauLinks = [
+
+  { title: "2026", url: "https://drive.google.com/drive/folders/15cTA5pIR-xAcuS5VpykopDNeH32w2tb2?usp=drive_link" },
+  { title: "2025", url: "https://drive.google.com/drive/folders/1yQUsCzxCCTjdacDATUVCoJRi4FVIlIsp?usp=drive_link" },
+  { title: "2024", url: "https://drive.google.com/drive/folders/1gQjmNfBhq6B55pSz1DE6NNcogev8JjQ-?usp=drive_link" },
+  { title: "2023", url: "https://drive.google.com/drive/folders/1RyA0TkngDtliux2C55Q-8ax2CoJgSMGc?usp=drive_link" },
+  { title: "2022", url: "https://sfs.vn/?p=59194" },
+  { title: "2021", url: "https://sfs.vn/?p=58064" },
+  { title: "2020", url: "https://sfs.vn/?p=54763" },
+  { title: "2019", url: "https://drive.google.com/drive/folders/16OSyhZZucECaacQ9qZK22_Zp8YeCcgD0?usp=drive_link" },
+  { title: "2018", url: "https://drive.google.com/drive/folders/1rgW9-BFHfwA_1uGLrCgOS4cyD-nn_Rck?usp=drive_link" },
+  { title: "2017", url: "https://sfs.vn/?p=45492" },
+  { title: "2016", url: "https://sfs.vn/?p=66019" },
+  { title: "2015", url: "https://sfs.vn/?p=66021" },
+  { title: "2014", url: "https://sfs.vn/?p=66024" },
+  { title: "2013", url: "https://sfs.vn/?p=66026" },
+  { title: "2012", url: "https://sfs.vn/?p=66028" },
+  { title: "2011", url: "https://sfs.vn/?p=66030" },
+  { title: "2010", url: "https://sfs.vn/?p=66032" },
+  { title: "Cũ hơn", url: "https://sfs.vn/?p=35285" }
+];
+
+function openLink(url){
+  window.location.href = url;
+}
+
+function render(){
+  const container = document.getElementById("list");
+
+  container.innerHTML = giaiDauLinks.map(item => `
+    <div class="comp-card" onclick="openLink('${item.url}')">
+      <div
+  class="comp-name"
+  style="color:${Number(item.title) === new Date().getFullYear() ? '#e53935' : '#2d84d8'}"
+>
+  ${item.title}
+</div>
+    </div>
+  `).join("");
+}
+
+render();
+</script>
+
+</body>
+</html>

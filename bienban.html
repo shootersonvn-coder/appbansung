@@ -10,10 +10,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2">
 
   <style>
     * {
@@ -31,17 +29,7 @@
         "Helvetica Neue", Arial, sans-serif;
     }
 
-    body,
-    button,
-    input,
-    textarea,
-    select,
-    a,
-    div,
-    span {
-      font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont,
-        "Helvetica Neue", Arial, sans-serif;
-    }
+   
 
     .docs-panel {
       position: fixed;
@@ -52,44 +40,7 @@
       flex-direction: column;
     }
 
-    .docs-panel-header {
-      background: linear-gradient(180deg, #005f37 0%, #0a6a3e 100%);
-      padding-top: env(safe-area-inset-top);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      flex: 0 0 auto;
-    }
-
-    .docs-panel-header-inner {
-      height: 58px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0 14px;
-    }
-
-    .docs-back-btn {
-      width: 38px;
-      height: 38px;
-      border: none;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.96);
-      color: #1f2937;
-      font-size: 24px;
-      line-height: 1;
-      cursor: pointer;
-      flex: 0 0 auto;
-    }
-
-    .docs-panel-title {
-      color: #fff;
-      font-size: 17px;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      min-width: 0;
-    }
-
+    
     .docs-panel-body {
       flex: 1;
       min-height: 0;
@@ -142,21 +93,32 @@
       font-size: 15px;
       font-weight: 500;
     }
+    .page-back-button{
+      border:none;
+      background:transparent;
+      padding:0;
+    }
   </style>
 </head>
 <body>
   <div class="docs-panel" aria-hidden="false">
-    <div class="docs-panel-header">
-      <div class="docs-panel-header-inner">
-        <button
-          class="docs-back-btn"
-          type="button"
-          onclick="history.back()"
-          aria-label="Quay lại"
-        >&lt;</button>
-        <div class="docs-panel-title">Biên bản</div>
-      </div>
+    <header class="page-header">
+  <div class="page-header-inner">
+
+    <button
+      class="page-back page-back-button"
+      onclick="history.back()"
+      type="button"
+    >
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div class="page-title">Biên bản</div>
     </div>
+
+  </div>
+</header>
 
     <div class="docs-panel-body">
       <div id="bienBanList" class="docs-list"></div>

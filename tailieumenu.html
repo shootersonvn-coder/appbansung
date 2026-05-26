@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tài liệu</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=2">
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+  margin:0;
+  padding:0;
+  background:#eef3fb;
+  font-family:"Roboto Condensed", Arial, sans-serif;
+  color:#111827;
+  font-size:14px;
+}
+
+.page{
+  width:100%;
+  margin-top:22px;/*Thay đổi độ cao của các card*/
+  padding:0 0 30px;
+}
+
+
+.page{
+  width:100%;
+  margin-top:22px;/*Thay đổi độ cao của các card*/
+  padding:14px 0 30px;
+}
+
+.docs-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:0 14px;
+}
+
+.doc-item-btn{
+  width:100%;
+  min-height:40px;
+  border:none;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
+  padding:8px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  text-align:left;
+  cursor:pointer;
+}
+
+.doc-item-title{
+  color:#294b96;
+  font-size:15px;
+  font-weight:600;
+  line-height:1.25;
+}
+
+.doc-item-arrow{
+  color:#d72d2d;
+  font-size:18px;
+  flex:0 0 auto;
+}
+
+.doc-empty{
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+  color:#294b96;
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <button
+      class="page-back page-back-button"
+      onclick="window.location.href='index.html'"
+      type="button"
+    >
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div class="page-title">Tài liệu</div>
+    </div>
+
+  </div>
+</header>
+
+<main class="page">
+  <div id="docsList" class="docs-list"></div>
+</main>
+
+<script>
+/* ===== TÀI LIỆU: giữ nguyên ===== */
+const taiLieuLinks = [
+  {
+    title: "Tờ Bìa",
+    url: "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=2136684607&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Điều lệ chung",
+    url: "https://drive.google.com/uc?export=download&id=1EowW1bNRIcsWYhM1GMJ9UfZJD_oWzHvt"
+  },
+  {
+    title: "Điều lệ riêng",
+    url: "https://drive.google.com/file/d/1OYsn2wHalT46VAxAnX2Fy3d0v6QJUqgx"
+  },
+  {
+    title: "Ban điều hành",
+    url: "https://docs.google.com/spreadsheets/d/1LQk6udf4WhlTV7Zsd5WXg1w25vMkKPv9DBXYS-BLErk/export?format=pdf&gid=1290859406&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Lịch đấu",
+    url: "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=104581244&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Đã đăng ký thi đấu",
+    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2cZ8LqAOnP6qDttYoSOcXVEYwOCOmMTtPln42b_bM9aHQRKII31Y-YsSkGdVUDEEm3S75YRiWTXwa/pub?output=pdf"
+  },
+  {
+    title: "Thành viên tham dự",
+    url: "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=1612478114&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Lượt đấu",
+    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=419654162&single=true&output=pdf"
+  },
+  {
+    title: "Số đeo",
+    url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSodutf3gJKqK4Xb3KEYxbCQBGO9VyM3heKZDhDoKGeQ22TK22QTgy8_cokhvki32OP1MWI3RgNB3gf/pub?gid=165539880&single=true&output=pdf"
+  },
+  {
+    title: "Hồ sơ Vận động viên",
+    url: "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=1177269630&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Số lượng từng nội dung (Làm bia)",
+    url: "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=329133971&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "VĐV Tuyên thệ",
+    url: "https://docs.google.com/spreadsheets/d/1LQk6udf4WhlTV7Zsd5WXg1w25vMkKPv9DBXYS-BLErk/export?format=pdf&gid=1045981659&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Trọng tài Tuyên thệ",
+    url: "https://docs.google.com/spreadsheets/d/1LQk6udf4WhlTV7Zsd5WXg1w25vMkKPv9DBXYS-BLErk/export?format=pdf&gid=1470590981&portrait=true&size=A4&scale=2&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25"
+  },
+  {
+    title: "Biên bản",
+    url: "bienban.html"
+  }
+];
+
+function withRefreshParam(url){
+  if(!url) return url;
+  const joiner = url.includes("?") ? "&" : "?";
+  return `${url}${joiner}app_refresh=${Date.now()}`;
+}
+
+function renderTaiLieu(){
+  const list = document.getElementById("docsList");
+
+  if(!taiLieuLinks.length){
+    list.innerHTML = `<div class="doc-empty">Chưa có tài liệu.</div>`;
+    return;
+  }
+
+  list.innerHTML = taiLieuLinks.map((item,index)=>`
+    <button
+      class="doc-item-btn"
+      type="button"
+      onclick="openTaiLieuLink(${index})"
+    >
+      <div class="doc-item-title">${item.title}</div>
+      <div class="doc-item-arrow">›</div>
+    </button>
+  `).join("");
+}
+
+function openTaiLieuLink(index){
+  const item = taiLieuLinks[index];
+
+  if(!item || !item.url || item.url.startsWith("LINK_")) return;
+
+  window.location.href = withRefreshParam(item.url);
+}
+
+renderTaiLieu();
+</script>
+
+</body>
+</html>

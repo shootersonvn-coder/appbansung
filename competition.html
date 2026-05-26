@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=2">
 
 <style>
 :root {
@@ -39,35 +40,6 @@ div,
 span {
   font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, sans-serif;
   box-sizing: border-box;
-}
-
-.header {
-  background: var(--green-dark);
-  color: white;
-  padding: 12px 16px 14px;
-}
-
-.back {
-  font-size: 22px;
-  font-weight: 600;
-  cursor: pointer;
-  color: white;
-  line-height: 1;
-  margin-bottom: 6px;
-  user-select: none;
-}
-
-.title-main {
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.title-sub {
-  font-size: 13px;
-  font-weight: 500;
-  opacity: 0.85;
-  margin-top: 4px;
 }
 
 .tabs {
@@ -102,13 +74,19 @@ span {
   text-overflow: ellipsis;
 }
 
-.date {
-  color: var(--date-red);
-  font-weight: 600;
-  font-size: 16px;
-  width: calc(100% - 40px);
-  margin: 14px auto 8px;
-  text-align: left;
+.date{
+  color:var(--date-red);
+  font-weight:600;
+  font-size:16px;
+
+  width:calc(100% - 40px);
+
+  margin:6px auto 8px;
+
+  text-align:left;
+
+  position:relative;
+  z-index:1;
 }
 
 .schedule-card {
@@ -234,25 +212,24 @@ span {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+.loading-data{
+  position:fixed;
+  left:0;
+  right:0;
+  top:260px;
+  bottom:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#2f6c48;
+  font-size:16px;
+  font-weight:700;
+}
 
 @media (min-width: 768px) {
-  .header {
-    padding: 22px 0 26px;
-  }
-
-  .back {
-    width: 64px;
-    height: 64px;
-    margin-left: 40px;
-    font-size: 36px;
-  }
-
-  .title-main {
-    font-size: 28px;
-    margin-left: 46px;
-    margin-right: 24px;
-  }
-
+  
   .tabs {
     padding: 18px 32px 12px;
     gap: 12px;
@@ -309,27 +286,68 @@ span {
   }
 }
 </style>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+
+const yearParam =
+  (params.get("year") || "").trim();
+
+const competitionParam =
+  (params.get("competition") || "").trim();
+
+function openMenuCompetitions(){
+
+  const finalYear =
+    (typeof menuYear !== "undefined" && menuYear)
+      ? menuYear
+      : yearParam;
+
+  const finalCompetition =
+    (typeof menuCompetition !== "undefined" && menuCompetition)
+      ? menuCompetition
+      : competitionParam;
+
+  window.location.href =
+    encodeURI("Các giải đấu/menu-competitions.html")
+    + "?year=" + encodeURIComponent(finalYear)
+    + "&competition=" + encodeURIComponent(finalCompetition);
+}
+
+</script>
+
 </head>
 
-<body>
+<body class="fixed-tabs-page">
 
 <div class="top-fixed">
-  <div class="header">
-    <div class="back" onclick="history.back()">&lt;</div>
-    <div class="title-main" id="name"></div>
-    <div class="title-sub">Lịch đấu</div>
+  <header class="page-header">
+  <div class="page-header-inner">
+
+    <a href="index.html" class="page-back">
+      ← Quay lại
+    </a>
+
+    <div class="page-title-wrap">
+      <div class="page-title" id="name"></div>
+      <div class="page-subtitle">Lịch đấu</div>
+    </div>
+
   </div>
+</header>
 
   <div class="tabs">
-    <div class="tab">Tài liệu</div>
-    <div class="tab">Đăng ký</div>
-    <div class="tab">Danh sách</div>
-    <div class="tab">Đẳng cấp</div>
-    <div class="tab">Kỷ lục</div>
-  </div>
+  <div class="tab" onclick="openMenuCompetitions()">Tài liệu</div>
+  <div class="tab">Đăng ký</div>
+  <div class="tab">Danh sách</div>
+  <div class="tab">Đẳng cấp</div>
+  <div class="tab">Kỷ lục</div>
+</div>
 </div>
 
 <div class="content">
+  <div id="loadingData" class="loading-data">Đang tải dữ liệu...</div>
   <div id="schedule"></div>
 </div>
 
@@ -344,6 +362,8 @@ const pdfConfigUrl =
 let expandedCardId = null;
 let openingPDFLink = null;
 let pdfConfigMap = new Map();
+let menuYear = "";
+let menuCompetition = "";
 
 function splitCSVRow(row) {
   const result = [];
@@ -457,7 +477,7 @@ function isGreenKeywordLine(s) {
     || t.includes("ky thuat")
     || t.includes("tap luyen")
     || t.includes("ve")
-    || t.includes("doan");
+    || t.includes("PET");
 }
 
 function isRedKeywordLine(s) {
@@ -842,39 +862,59 @@ function render() {
 }
 
 async function load() {
-  const [scheduleRes, pdfRes] = await Promise.all([
-    fetch(scheduleUrl, { cache: "no-store" }),
-    fetch(pdfConfigUrl, { cache: "no-store" })
-  ]);
+  const loading = document.getElementById("loadingData");
 
-  const [scheduleText, pdfText] = await Promise.all([
-    scheduleRes.text(),
-    pdfRes.text()
-  ]);
+  try {
+    // 1. Load lịch trước
+    const scheduleRes = await fetch(scheduleUrl, { cache: "no-store" });
+    const scheduleText = await scheduleRes.text();
 
-  const scheduleRows = scheduleText
-    .split(/\r?\n/)
-    .filter(r => r.trim())
-    .map(r => splitCSVRow(r));
+    const scheduleRows = scheduleText
+      .split(/\r?\n/)
+      .filter(r => r.trim())
+      .map(r => splitCSVRow(r));
 
-  const pdfRows = pdfText
-    .split(/\r?\n/)
-    .filter(r => r.trim())
-    .map(r => splitCSVRow(r));
+    if (scheduleRows.length < 2) {
+      loading.innerText = "Không có dữ liệu lịch đấu";
+      return;
+    }
 
-  pdfConfigMap = buildPdfConfigMap(pdfRows);
+    // 2. Render lịch ngay, chưa cần PDF
+    pdfConfigMap = new Map();
 
-  if (scheduleRows.length < 2) return;
+    const grouped = buildGroupedItems(scheduleRows);
+    menuYear = grouped.yearText;
+    menuCompetition = grouped.nameText;
 
-  const grouped = buildGroupedItems(scheduleRows);
+    document.getElementById("name").innerText =
+      [grouped.nameText, grouped.yearText].filter(Boolean).join(" ");
 
-  document.getElementById("name").innerText =
-    [grouped.nameText, grouped.yearText].filter(Boolean).join(" ");
+    window.__SCHEDULE_DATA__ = grouped;
 
-  window.__SCHEDULE_DATA__ = grouped;
-  render();
+    if (loading) loading.style.display = "none";
+    render();
+
+    // 3. Load PDF sau
+    const pdfRes = await fetch(pdfConfigUrl, { cache: "no-store" });
+    const pdfText = await pdfRes.text();
+
+    const pdfRows = pdfText
+      .split(/\r?\n/)
+      .filter(r => r.trim())
+      .map(r => splitCSVRow(r));
+
+    pdfConfigMap = buildPdfConfigMap(pdfRows);
+
+    // 4. Render lại để icon PDF/link PDF có dữ liệu
+    const groupedWithPdf = buildGroupedItems(scheduleRows);
+    window.__SCHEDULE_DATA__ = groupedWithPdf;
+    render();
+
+  } catch (err) {
+    console.error(err);
+    if (loading) loading.innerText = "Không tải được dữ liệu";
+  }
 }
-
 load();
 </script>
 

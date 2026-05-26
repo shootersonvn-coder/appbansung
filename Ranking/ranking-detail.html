@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+<title>Ranking Detail</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --green:#005f37;
+  --line:#d8dde5;
+  --gold:#caa000;
+  --silver:#8f98a3;
+  --bronze:#a85f2a;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  color:#111827;
+  font-size:14px;
+}
+
+.page{
+  padding:12px 0 30px;
+}
+
+.info{
+  width:95%;
+  margin:0 auto 4px;
+  background:#fff;
+  border-radius:16px;
+  padding:12px 14px;
+}
+
+.info-title{
+  font-size:16px;
+  font-weight:800;
+  line-height:1.2;
+}
+
+.info-sub{
+  margin-top:5px;
+  color:#666;
+  font-size:13px;
+  font-weight:600;
+}
+
+.table-wrap{
+  width:95%;
+  margin:2px auto 0;
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  background:linear-gradient(180deg,#0b7f3b 0%, #005f37 100%);
+  color:#fff;
+  height:38px;
+  font-size:14px;
+  font-weight:700;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+td{
+  height:38px;
+  border-bottom:1px solid var(--line);
+  font-size:14px;
+  text-align:center;
+  padding:4px 6px;
+}
+
+td.name{
+  text-align:left;
+}
+
+.rank-1{color:var(--gold);font-weight:800}
+.rank-2{color:var(--silver);font-weight:800}
+.rank-3{color:var(--bronze);font-weight:800}
+
+.loading{
+  padding:40px 16px;
+  text-align:center;
+  color:#294b96;
+  font-weight:700;
+}
+
+.tabs{
+  width:95%;
+  margin:2px auto 4px;
+  display:flex;
+  gap:8px;
+}
+
+.tab{
+  flex:1;
+  height:32px;
+  border:none;
+  border-radius:12px;
+  background:#cadbf5;
+  color:#4b7fe2;
+  font-size:14px;
+  font-weight:800;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  line-height:1;
+  padding-top:0;
+}
+
+.tab.active{
+  background:#2f6f45;
+  color:#fff;
+}
+
+.unit-select{
+  flex:1;
+  height:32px;
+  border:none;
+  border-radius:12px;
+  background:#e7edf6;
+  color:#4b7fe2;
+  font-size:14px;
+  font-weight:800;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  text-align:center;
+  text-align-last:center;
+  outline:none;
+}
+
+.unit-select.active{
+  background:#2f6f45;
+  color:#fff;
+}
+
+thead{
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <button class="page-back page-back-button" onclick="history.back()">
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div class="page-title">
+        Ranking
+      </div>
+      <div class="page-subtitle">
+        12 tháng gần nhất
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="info">
+    <div class="info-title" id="eventTitle">
+      Đang tải...
+    </div>
+
+    <div class="info-sub" id="eventSub"></div>
+  </div>
+
+<div class="tabs">
+  <select id="unitSelect" class="unit-select" onchange="selectUnit(this.value)">
+    <option value="all">Đơn vị</option>
+  </select>
+
+  <button class="tab active" onclick="selectAge('all',this)">
+    Tất cả
+  </button>
+
+  <button class="tab" onclick="selectAge('21',this)">
+    21
+  </button>
+
+  <button class="tab" onclick="selectAge('18',this)">
+    18
+  </button>
+
+  <button class="tab" onclick="selectAge('16',this)">
+    16
+  </button>
+</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:10%">XH</th>
+          <th style="width:42%">Họ và tên</th>
+          <th style="width:12%">Sinh</th>
+          <th style="width:12%">Đ.vị</th>
+          <th style="width:12%">Điểm</th>
+          <th style="width:12%">Tuổi</th>
+        </tr>
+      </thead>
+
+      <tbody id="body">
+        <tr>
+          <td colspan="5" class="loading">
+            Đang tải...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID = "1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+const SHEET_GID = "1558133737";
+
+const CSV_URL =
+`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+
+const params = new URLSearchParams(window.location.search);
+
+const eventName = decodeURIComponent(params.get("event") || "");
+const latestDateText = params.get("date") || "";
+
+const COL_TIME = 4;
+const COL_EVENT = 5;
+const COL_ID = 10;
+const COL_HO = 11;
+const COL_TEN = 12;
+const COL_UNIT = 14;
+const COL_TOTAL = 32;
+
+function splitCSVRow(row){
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for(let i=0;i<row.length;i++){
+    const char = row[i];
+    const next = row[i+1];
+
+    if(char === '"'){
+      if(insideQuotes && next === '"'){
+        current += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+    }else if(char === "," && !insideQuotes){
+      result.push(current.trim());
+      current = "";
+    }else{
+      current += char;
+    }
+  }
+
+  result.push(current.trim());
+  return result;
+}
+
+function clean(v){
+  return String(v || "").trim();
+}
+
+function norm(s){
+  return clean(s)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d")
+    .replace(/Đ/g,"D")
+    .toLowerCase()
+    .replace(/\s+/g," ");
+}
+
+function baseEventName(s){
+  const raw = clean(s);
+  const t = norm(raw);
+
+  const keys = [
+    " - c.ket",
+    "- c.ket",
+    " - chung ket",
+    "- chung ket"
+  ];
+
+  for(const k of keys){
+    const idx = t.indexOf(k);
+    if(idx >= 0){
+      return raw.slice(0,idx).trim();
+    }
+  }
+
+  return raw;
+}
+
+function parseDate(text){
+  const m = clean(text).match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+
+  if(!m) return null;
+
+  const dd = m[1].padStart(2,"0");
+  const mm = m[2].padStart(2,"0");
+  const yyyy = m[3];
+
+  return new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+}
+
+function formatDate(date){
+  const dd = String(date.getDate()).padStart(2,"0");
+  const mm = String(date.getMonth() + 1).padStart(2,"0");
+  const yyyy = date.getFullYear();
+
+  return `${dd}.${mm}.${yyyy}`;
+}
+
+function addMonths(date, months){
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + months);
+  return d;
+}
+
+function parseScore(v){
+  const s = clean(v).replace(",", ".");
+  const n = parseFloat(s);
+  return Number.isFinite(n) ? n : null;
+}
+
+function formatScore(v){
+  if(v == null) return "";
+
+  if(String(v).includes(".")){
+    return v.toFixed(1);
+  }
+
+  return String(v);
+}
+
+async function load(){
+
+  document.getElementById("eventTitle").innerText = eventName;
+  document.getElementById("eventSub").innerText =
+    "Tính đến " + latestDateText;
+
+  const latestDate = parseDate(latestDateText);
+
+  if(!latestDate) return;
+
+  const fromDate = addMonths(latestDate, -12);
+
+  try{
+
+    const res = await fetch(CSV_URL + "&t=" + Date.now(), {
+      cache:"no-store"
+    });
+
+    const text = await res.text();
+
+    const rows = text
+      .replace(/^\uFEFF/, "")
+      .split(/\r?\n/)
+      .filter(r => r.trim())
+      .map(splitCSVRow);
+
+    const athleteMap = new Map();
+
+    rows.slice(1).forEach(r => {
+
+      const rowEvent =
+        baseEventName(r[COL_EVENT]);
+
+      if(norm(rowEvent) !== norm(eventName)) return;
+
+      const d = parseDate(r[COL_TIME]);
+
+      if(!d) return;
+
+      if(d < fromDate || d > latestDate) return;
+
+      const id = clean(r[COL_ID]);
+
+      if(!id) return;
+
+      const unit = clean(r[COL_UNIT]);
+
+      const vnUnits = [
+        "HAN","HAP","QUD","HCM","DON","THH","QNI",
+        "CAD","DAL","PHT","DNA","TTH"
+      ];
+
+      if(!vnUnits.includes(unit)) return;
+
+      const score = parseScore(r[COL_TOTAL]);
+
+      if(score == null) return;
+
+      if(score <= 0) return;
+
+      const birthYear =
+  parseInt(id.substring(4,8),10);
+
+const currentYear =
+  new Date().getFullYear();
+
+const athlete = {
+  id,
+  name:
+    clean(r[COL_HO]) + " " +
+    clean(r[COL_TEN]),
+  birthYear,
+  age: currentYear - birthYear,
+  unit,
+  score,
+  sort: d.getTime(),
+};
+
+      if(!athleteMap.has(id)){
+
+        athleteMap.set(id, athlete);
+
+      }else{
+
+        const old = athleteMap.get(id);
+
+        if(
+          score > old.score ||
+          (
+            score === old.score &&
+            athlete.sort > old.sort
+          )
+        ){
+          athleteMap.set(id, athlete);
+        }
+      }
+
+    });
+
+    allRanking = Array.from(athleteMap.values())
+  .sort((a,b) => {
+
+    if(b.score !== a.score){
+      return b.score - a.score;
+    }
+
+    return b.sort - a.sort;
+  });
+
+buildUnitOptions();
+renderFiltered();
+
+  }catch(err){
+    console.error(err);
+
+    document.getElementById("body").innerHTML = `
+      <tr>
+        <td colspan="5" class="loading">
+          Lỗi tải dữ liệu
+        </td>
+      </tr>
+    `;
+  }
+}
+let currentAge = "all";
+let currentUnit = "all";
+let allRanking = [];
+
+function buildUnitOptions(){
+  const select = document.getElementById("unitSelect");
+
+  const units = Array.from(
+    new Set(
+      allRanking
+        .map(r => clean(r.unit))
+        .filter(Boolean)
+    )
+  ).sort((a,b) => a.localeCompare(b,"vi",{numeric:true}));
+
+  select.innerHTML =
+    `<option value="all">Đơn vị</option>` +
+    `<option value="all">Tất cả</option>` +
+    units.map(unit =>
+      `<option value="${unit}">${unit}</option>`
+    ).join("");
+}
+
+function selectUnit(unit){
+  currentUnit = unit;
+
+  const select = document.getElementById("unitSelect");
+
+  if(unit === "all"){
+    select.classList.remove("active");
+    select.selectedIndex = 0;
+  }else{
+    select.classList.add("active");
+  }
+
+  renderFiltered();
+}
+
+function selectAge(type, el){
+
+  currentAge = type;
+
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  el.classList.add("active");
+
+  renderFiltered();
+}
+
+function renderFiltered(){
+
+  let rows = allRanking;
+
+  if(currentUnit !== "all"){
+    rows = rows.filter(r => r.unit === currentUnit);
+  }
+
+  if(currentAge !== "all"){
+
+    const currentYear = new Date().getFullYear();
+    const maxAge = parseInt(currentAge,10);
+
+    rows = rows.filter(r => {
+
+      const id = String(r.id || "");
+
+      const birthYear =
+        parseInt(id.substring(4,8),10);
+
+      if(!birthYear) return false;
+
+      return (currentYear - birthYear) <= maxAge;
+    });
+  }
+
+  render(rows);
+}
+
+function render(rows){
+
+  const body = document.getElementById("body");
+
+  if(!rows.length){
+    body.innerHTML = `
+      <tr>
+        <td colspan="5" class="loading">
+          Không có dữ liệu
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  body.innerHTML =
+    rows.map((r,index) => {
+
+      const rank = index + 1;
+
+      let rankClass = "";
+
+      if(rank === 1) rankClass = "rank-1";
+      else if(rank === 2) rankClass = "rank-2";
+      else if(rank === 3) rankClass = "rank-3";
+
+      return `
+        <tr>
+          <td class="${rankClass}">
+            ${rank}
+          </td>
+
+          <td class="name">
+            <span
+              onclick="openAthlete('${encodeURIComponent(r.id)}','${encodeURIComponent(r.name)}')"
+              style="cursor:pointer;color:#294b96;font-weight:700"
+            >
+              ${r.name}
+            </span>
+          </td>
+
+          <td>
+  ${r.birthYear || ""}
+</td>
+
+<td>
+  ${r.unit}
+</td>
+
+<td>
+  ${formatScore(r.score)}
+</td>
+
+<td>
+  ${r.age || ""}
+</td>
+        </tr>
+      `;
+    }).join("");
+}
+
+load();
+
+function openAthlete(id,name){
+
+  window.location.href =
+    "ranking-athlete.html"
+    + "?event=" + encodeURIComponent(eventName)
+    + "&id=" + id
+    + "&name=" + name
+    + "&date=" + encodeURIComponent(latestDateText);
+}
+</script>
+
+</body>
+</html>

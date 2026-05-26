@@ -1,239 +1,388 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>PDF Viewer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PDF Viewer</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=2">
 
-  <style>
-    :root {
-      --bg: #eef3fb;
-      --green-dark: #0b5d2a;
-      --line: #d8dde5;
-      --white: #ffffff;
-      --text-main: #111111;
-      --text-soft: rgba(255,255,255,0.88);
-      --footer-h: 74px;
-      --font-main: "Roboto Condensed", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: var(--font-main);
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: var(--bg);
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .header {
-      background: var(--green-dark);
-      color: var(--white);
-      padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 14px;
-      flex: 0 0 auto;
-    }
-
-    .back {
-      font-size: 24px;
-      font-weight: 700;
-      line-height: 1;
-      width: fit-content;
-      color: var(--white);
-      cursor: pointer;
-      user-select: none;
-      margin-bottom: 8px;
-      padding: 0;
-      border: none;
-      background: transparent;
-      appearance: none;
-      -webkit-appearance: none;
-      box-shadow: none;
-      border-radius: 0;
-    }
-
-    .title-main {
-      font-size: 16px;
-      font-weight: 500;
-      line-height: 1.2;
-      word-break: break-word;
-      color: var(--white);
-    }
-
-    .title-sub {
-      font-size: 13px;
-      font-weight: 800;
-      line-height: 1.2;
-      margin-top: 4px;
-      word-break: break-word;
-      color: var(--text-soft);
-    }
-
-    .viewer-wrap {
-      position: relative;
-      flex: 1 1 auto;
-      min-height: 0;
-      background: #fff;
-      overflow: hidden;
-    }
-
-    .message-box {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
-      background: #fff;
-      color: #4b5563;
-      font-size: 16px;
-      font-weight: 600;
-      z-index: 2;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .open-btn {
-      border: none;
-      border-radius: 14px;
-      background: linear-gradient(180deg, #0b7f3b 0%, #005f37 100%);
-      color: white;
-      padding: 12px 18px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .bottom-bar {
-      flex: 0 0 auto;
-      height: calc(var(--footer-h) + env(safe-area-inset-bottom, 0px));
-      padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
-      background: #fff;
-      border-top: 1px solid var(--line);
-      display: flex;
-      gap: 12px;
-    }
-
- .bottom-btn {
-  flex: 1;
-  border: none;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #0b7f3b 0%, #005f37 100%);
-  color: #fff;
-  font-size: 16px;   /* ✅ giảm thêm */
-  font-weight: 700;
-  cursor: pointer;
-  line-height: 1;
+<style>
+:root{
+  --green:#0b5d2a;
+  --bg:#eef3fb;
+  --bar:#ffffff;
+  --line:#d8dde5;
+  --text:#111;
+  --blue:#2d84ea;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --top-h:112px;
+  --bottom-h:64px;
 }
-    @media (min-width: 768px) {
-      .header {
-        padding: calc(env(safe-area-inset-top, 0px) + 18px) 24px 18px;
-      }
 
-      .back {
-        font-size: 16px;
-        margin-bottom: 10px;
-      }
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  font-family:"Roboto Condensed",-apple-system,BlinkMacSystemFont,sans-serif;
+}
 
-      .title-main {
-        font-size: 16px;
-      }
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;
+}
 
-      .title-sub {
-        font-size: 16px;
-        margin-top: 6px;
-      }
+/* KHUNG PDF */
+.viewer{
+  position:fixed;
+  top:var(--top-h);
+  left:0;
+  right:0;
+  bottom:calc(var(--bottom-h) + var(--safe-bottom));
 
-      .open-btn {
-        font-size: 16px;
-        border-radius: 16px;
-        padding: 14px 22px;
-      }
+  background:#fff;
+  overflow:hidden;
+}
 
-      .bottom-btn {
-        font-size: 16px;
-      }
-    }
-  </style>
+/* IFRAME PDF */
+#pdfFrame{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+  background:#fff;
+}
+
+/* THÔNG BÁO GIỮA MÀN HÌNH */
+.pdf-message{
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+
+  text-align:center;
+
+  color:#8b8f97;
+  font-size:18px;
+  font-weight:700;
+
+  z-index:2;
+  pointer-events:none;
+}
+
+/* FOOTER */
+.footer{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:20;
+
+  padding:8px 12px calc(8px + var(--safe-bottom));
+
+  background:var(--bar);
+  border-top:1px solid var(--line);
+
+  display:flex;
+  gap:10px;
+}
+
+.btn{
+  flex:1;
+  height:44px;
+
+  border:0;
+  border-radius:14px;
+
+  background:var(--green);
+  color:#fff;
+
+  font-size:15px;
+  font-weight:800;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+}
+
+.btn.secondary{
+  background:#e7eef8;
+  color:var(--blue);
+}
+
+@media (min-width:768px){
+  :root{
+    --top-h:150px;
+    --bottom-h:74px;
+  }
+
+  .footer{
+    padding:10px 24px calc(10px + var(--safe-bottom));
+  }
+
+  .btn{
+    height:54px;
+    font-size:18px;
+  }
+
+  .pdf-message{
+    font-size:20px;
+  }
+}
+</style>
 </head>
-<body>
 
-  <header class="header">
-    <button class="back" type="button" onclick="history.back()">&lt;</button>
-    <div class="title-main" id="pageTitle">PDF</div>
-    <div class="title-sub">Tài liệu giải đấu</div>
-  </header>
+<body class="pdf-viewer-page no-tabs">
 
-  <main class="viewer-wrap">
-    <div class="message-box" id="messageBox">
-      <div>Đang mở tài liệu...</div>
-      <button class="open-btn" type="button" id="openDirectBtn">Mở trực tiếp</button>
+<header class="page-header" id="header">
+  <div class="page-header-inner">
+
+    <a href="javascript:history.back()" class="page-back">
+      ← Quay lại
+    </a>
+
+    <div class="page-title-wrap">
+      <div class="page-title" id="title">PDF</div>
+      <div class="page-subtitle">Tài liệu</div>
     </div>
-  </main>
 
-  <footer class="bottom-bar">
-    <button class="bottom-btn" type="button" id="shareBtn">Gửi</button>
-    <button class="bottom-btn" type="button" id="downloadBtn">Tải về</button>
-  </footer>
+  </div>
+</header>
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const title = params.get("title") || "PDF";
-    const pdfUrl = params.get("url") || "";
+<div class="viewer">
+  <iframe id="pdfFrame"></iframe>
+  <div class="pdf-message" id="pdfMessage">
+    Bấm mở trực tiếp
+  </div>
+</div>
 
-    document.getElementById("pageTitle").textContent = title;
+<div class="footer" id="footer">
+  <button class="btn secondary" onclick="openDirect()">Mở trực tiếp</button>
+  <button class="btn" onclick="downloadPDF()">Tải về</button>
+  <button class="btn" onclick="sharePDF()">Gửi đi</button>
+</div>
 
-    const openDirectBtn = document.getElementById("openDirectBtn");
-    const shareBtn = document.getElementById("shareBtn");
-    const downloadBtn = document.getElementById("downloadBtn");
+<script>
+const params = new URLSearchParams(window.location.search);
 
-    function openDirect() {
-      if (!pdfUrl) return;
-      window.location.href = pdfUrl;
+const title =
+  (params.get("title") || "PDF").trim();
+
+const rawUrl =
+  (params.get("url") || "").trim();
+
+const frame = document.getElementById("pdfFrame");
+const msg = document.getElementById("pdfMessage");
+
+frame.onload = function(){
+  if(frame.src && frame.src.trim() !== ""){
+    msg.style.display = "none";
+  }
+};
+
+document.getElementById("title").innerText = title;
+
+function updateLayout(){
+  const header = document.getElementById("header");
+  const footer = document.getElementById("footer");
+
+  document.documentElement.style.setProperty(
+    "--top-h",
+    Math.ceil(header.offsetHeight) + "px"
+  );
+
+  document.documentElement.style.setProperty(
+    "--bottom-h",
+    Math.ceil(footer.offsetHeight) + "px"
+  );
+}
+
+function buildEmbedUrl(url){
+  if(!url) return "";
+
+  const u = url.trim();
+
+  /*
+    1) Google Drive file link
+    Ví dụ:
+    https://drive.google.com/file/d/FILE_ID/view
+    https://drive.google.com/open?id=FILE_ID
+  */
+  if(u.includes("drive.google.com")){
+    const match =
+      u.match(/\/d\/([^\/]+)/)
+      || u.match(/[?&]id=([^&]+)/);
+
+    if(match && match[1]){
+      return "https://drive.google.com/file/d/"
+        + match[1]
+        + "/preview";
     }
 
-    openDirectBtn.onclick = openDirect;
+    return u;
+  }
 
-    shareBtn.onclick = async () => {
-      if (!pdfUrl) return;
+  /*
+    2) Google Sheets export PDF / GID PDF
+    Ví dụ:
+    https://docs.google.com/spreadsheets/d/.../export?format=pdf&gid=...
+    Ép qua gview để tránh trắng iframe trên iPhone.
+  */
+  if(
+  u.includes("docs.google.com/spreadsheets")
+  &&
+  (
+    u.includes("export?format=pdf")
+    || u.includes("format=pdf")
+  )
+){
 
-      try {
-        if (navigator.share) {
-          await navigator.share({
-            title: title,
-            url: pdfUrl
-          });
-        } else if (navigator.clipboard) {
-          await navigator.clipboard.writeText(pdfUrl);
-          alert("Đã sao chép link tài liệu");
-        }
-      } catch (e) {}
-    };
+  // dùng trực tiếp PDF export
+  return u;
+}
 
-    downloadBtn.onclick = () => {
-      if (!pdfUrl) return;
-      window.open(pdfUrl, "_blank");
-    };
+  /*
+    3) Link PDF trực tiếp
+  */
+  if(
+    u.toLowerCase().includes(".pdf")
+    ||
+    u.includes("format=pdf")
+  ){
+    return "https://docs.google.com/gview?embedded=1&url="
+      + encodeURIComponent(u);
+  }
 
-    if (pdfUrl) {
-      setTimeout(() => {
-        openDirect();
-      }, 250);
+  /*
+    4) Google Docs khác
+  */
+  if(u.includes("docs.google.com")){
+    return "https://docs.google.com/gview?embedded=1&url="
+      + encodeURIComponent(u);
+  }
+
+  return u;
+}
+
+function openDirect(){
+  if(!rawUrl) return;
+  window.location.href = rawUrl;
+}
+
+function downloadPDF(){
+  if(!rawUrl) return;
+
+  const a = document.createElement("a");
+  a.href = rawUrl;
+  a.target = "_blank";
+  a.download = "";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+async function sharePDF(){
+  if(!rawUrl) return;
+
+  try{
+    if(navigator.share){
+      await navigator.share({
+        title:title,
+        url:rawUrl
+      });
     }
-  </script>
+    else if(navigator.clipboard){
+      await navigator.clipboard.writeText(rawUrl);
+      alert("Đã sao chép link PDF");
+    }
+    else{
+      window.location.href = rawUrl;
+    }
+  }catch(e){}
+}
+
+function loadPDF(){
+  updateLayout();
+
+  const frame = document.getElementById("pdfFrame");
+  const loading = document.getElementById("loading");
+
+  if(!rawUrl){
+    loading.innerText = "Không có link PDF";
+    return;
+  }
+
+  const finalUrl = buildEmbedUrl(rawUrl);
+
+  frame.style.display = "block";
+
+  frame.onload = function(){
+    loading.style.display = "none";
+  };
+
+  if(
+  finalUrl.includes("docs.google.com/spreadsheets")
+  &&
+  finalUrl.includes("format=pdf")
+){
+  // iPhone/Safari ổn định hơn với object
+  frame.src =
+    "data:text/html," +
+    encodeURIComponent(`
+      <html>
+      <body style="margin:0;background:#f3f4f6">
+        <embed
+          src="${finalUrl}"
+          type="application/pdf"
+          width="100%"
+          height="100%"
+          style="position:fixed;inset:0;border:0"
+        />
+      </body>
+      </html>
+    `);
+}
+else{
+  if(
+  finalUrl.includes("drive.google.com/file/d/")
+){
+  frame.src =
+  "https://docs.google.com/gview?embedded=1&url=" +
+  encodeURIComponent(finalUrl);
+}
+else{
+  frame.src = finalUrl;
+}
+}
+
+  setTimeout(function(){
+    loading.style.display = "none";
+  }, 3500);
+}
+
+window.addEventListener("resize", updateLayout);
+
+window.addEventListener(
+  "orientationchange",
+  function(){
+    setTimeout(updateLayout,100);
+    setTimeout(updateLayout,300);
+  }
+);
+
+loadPDF();
+</script>
 
 </body>
 </html>

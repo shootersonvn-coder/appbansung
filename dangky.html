@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+<title>Đã đăng ký thi đấu</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=4">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --green1:#0b7f3b;
+  --green2:#005f37;
+  --darkGreen:#005f37;
+  --blue:#294b96;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  color:#111827;
+  font-size:14px;
+}
+
+/* =========================
+   PAGE
+========================= */
+.page{
+  padding:8px 0 28px;
+}
+
+.loading{
+  padding:40px 16px;
+  text-align:center;
+  color:var(--blue);
+  font-size:14px;
+}
+
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.table-inner{
+  width:max-content;
+  min-width:100%;
+}
+
+/* =========================
+   UNIT LIST
+========================= */
+.unit-head{
+  display:grid;
+  grid-template-columns:40px 315px;
+  width:max-content;
+  margin:8px auto 0;
+  background:var(--darkGreen);
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+}
+
+.unit-head div{
+  padding:6px 10px;
+}
+
+.unit-row{
+  display:grid;
+  grid-template-columns:40px 315px;
+  width:max-content;
+  margin:0 auto;
+  border:none;
+  background:#fff;
+  color:var(--blue);
+  font-family:inherit;
+  font-size:14px;
+  font-weight:600;
+  text-align:left;
+  cursor:pointer;
+}
+
+.unit-row:nth-child(even){
+  background:#f3f4f6;
+}
+
+.unit-row div{
+  padding:8px 10px;
+  min-height:34px;
+  display:flex;
+  align-items:center;
+}
+
+.unit-row .tt{
+  justify-content:center;
+}
+
+/* =========================
+   ATHLETE DETAIL
+========================= */
+.athlete-head{
+  display:grid;
+  grid-template-columns:60px 240px 55px 30px;
+  width:max-content;
+  margin:6px auto 6px;
+  background:var(--darkGreen);
+  color:#fff;
+  font-size:14px;
+  font-weight:600;
+}
+
+.athlete-head div{
+  padding:4px 6px;
+  text-align:center;
+}
+
+.athlete-head .name{
+  text-align:left;
+}
+
+.event-block{
+  width:max-content;
+  margin:0 auto 8px;
+}
+
+.event-title{
+  width:385px;
+  background:rgba(255,221,0,0.7);
+  color:#111;
+  font-size:14px;
+  font-weight:700;
+  padding:4px 10px;
+  text-align:left;
+}
+
+.athlete-row{
+  display:grid;
+  grid-template-columns:60px 240px 55px 30px;
+  width:max-content;
+  font-size:14px;
+  font-stretch:condensed;
+}
+
+.athlete-row:nth-child(odd){
+  background:#fff;
+}
+
+.athlete-row:nth-child(even){
+  background:#f3f4f6;
+}
+
+.athlete-row div{
+  padding:4px 6px;
+  min-height:28px;
+  display:flex;
+  align-items:center;
+}
+
+.athlete-row .center{
+  justify-content:center;
+}
+
+.athlete-row .name{
+  justify-content:flex-start;
+}
+
+.hidden{
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <button class="page-back" onclick="handleBack()">
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+
+      <div id="headerTitle" class="page-title">
+        Đơn vị đăng ký
+      </div>
+
+      <div id="headerSubtitle" class="page-subtitle">
+        Đang tải giải đấu...
+      </div>
+
+    </div>
+
+  </div>
+</header>
+
+<div class="page">
+
+  <div id="loading" class="loading">
+    Đang tải dữ liệu...
+  </div>
+
+  <div id="unitScreen" class="hidden">
+    <div class="table-wrap">
+      <div class="table-inner">
+        <div class="unit-head">
+          <div style="text-align:center;">TT</div>
+          <div>Đơn vị</div>
+        </div>
+
+        <div id="unitList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="athleteScreen" class="hidden">
+    <div class="table-wrap">
+      <div class="table-inner">
+        <div class="athlete-head">
+          <div>Số</div>
+          <div class="name">Họ và tên</div>
+          <div>Sinh</div>
+          <div>Đội</div>
+        </div>
+
+        <div id="athleteList"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID = "1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+const SHEET_GID = "311114195";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+
+/*
+  VỊ TRÍ CỘT ĐÚNG
+  A = Năm
+  B = Nội dung
+  D = Tên giải
+  I = Số đeo
+  K = ID VĐV
+  L,M = Họ tên
+  N = Năm sinh
+  O = Đơn vị
+  P = Đội / C-D
+*/
+const COL_YEAR = 0;
+const COL_EVENT = 5;
+const COL_COMPETITION = 3;
+
+const COL_NUMBER = 8;
+const COL_NAME_1 = 11;
+const COL_NAME_2 = 12;
+const COL_BIRTH = 13;
+const COL_UNIT = 14;
+const COL_TEAM = 15;
+
+let allAthletes = [];
+let currentUnit = "";
+
+function splitCSVRow(row){
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for(let i = 0; i < row.length; i++){
+    const char = row[i];
+    const next = row[i + 1];
+
+    if(char === '"'){
+      if(insideQuotes && next === '"'){
+        current += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+    }else if(char === "," && !insideQuotes){
+      result.push(current.trim());
+      current = "";
+    }else{
+      current += char;
+    }
+  }
+
+  result.push(current.trim());
+  return result;
+}
+
+function parseCSV(text){
+  return text
+    .replace(/^\uFEFF/, "")
+    .split(/\r?\n/)
+    .filter(line => line.trim() !== "")
+    .map(splitCSVRow);
+}
+
+function cleanText(v){
+  return String(v || "").trim();
+}
+
+function getFullName(row){
+  return [
+    cleanText(row[COL_NAME_1]),
+    cleanText(row[COL_NAME_2])
+  ].filter(Boolean).join(" ");
+}
+
+function getEventName(row){
+  return cleanText(row[COL_EVENT]);
+}
+
+function normalizeTeam(value){
+  return cleanText(value);
+}
+
+function isValidUnit(unit){
+  const u = cleanText(unit);
+  return u
+    && !u.includes("-")
+    && !u.includes(".")
+    && !u.toLowerCase().includes("btc");
+}
+
+async function loadData(){
+  try{
+    const res = await fetch(CSV_URL + "&cb=" + Date.now(), { cache:"no-store" });
+    const text = await res.text();
+    const rows = parseCSV(text);
+
+    if(!rows.length) throw new Error("No data");
+
+    const first = rows[0];
+    const competitionName = cleanText(first[COL_COMPETITION]);
+    const year = cleanText(first[COL_YEAR]);
+
+    document.getElementById("headerSubtitle").textContent =
+      competitionName ? `${competitionName} - ${year}` : "";
+
+    allAthletes = rows.map(row => {
+      return {
+        id: Math.random().toString(36).slice(2),
+        eventName: getEventName(row),
+        number: cleanText(row[COL_NUMBER]),
+        fullName: getFullName(row),
+        birthYear: cleanText(row[COL_BIRTH]),
+        unit: cleanText(row[COL_UNIT]),
+        team: normalizeTeam(row[COL_TEAM])
+      };
+    }).filter(a =>
+  a.eventName &&
+  a.fullName &&
+  a.number &&
+  a.number !== "0" &&
+  isValidUnit(a.unit)
+);
+
+    renderUnitList();
+
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("unitScreen").classList.remove("hidden");
+
+  }catch(err){
+    console.error(err);
+    document.getElementById("loading").textContent = "Không tải được dữ liệu đăng ký.";
+  }
+}
+
+function renderUnitList(){
+  const units = Array.from(new Set(allAthletes.map(a => a.unit)))
+    .sort((a,b) => a.localeCompare(b, "vi", { sensitivity:"base" }));
+
+  const html = units.map((unit,index) => `
+    <button class="unit-row" onclick="openUnit('${encodeURIComponent(unit)}')">
+      <div class="tt">${index + 1}</div>
+      <div>${unit}</div>
+    </button>
+  `).join("");
+
+  document.getElementById("unitList").innerHTML = html;
+}
+
+function openUnit(encodedUnit){
+  currentUnit = decodeURIComponent(encodedUnit);
+
+  document.getElementById("headerTitle").textContent = `${currentUnit} đăng ký`;
+
+  document.getElementById("unitScreen").classList.add("hidden");
+  document.getElementById("athleteScreen").classList.remove("hidden");
+
+  renderAthleteList(currentUnit);
+}
+
+function renderAthleteList(unit){
+  const athletes = allAthletes.filter(a => a.unit === unit);
+
+  const grouped = {};
+  athletes.forEach(a => {
+    if(!grouped[a.eventName]) grouped[a.eventName] = [];
+    grouped[a.eventName].push(a);
+  });
+
+  function teamOrder(team){
+    const t = String(team || "").trim().toUpperCase();
+
+    if(t === "C1") return 1;
+    if(t === "C2") return 2;
+    if(t === "C3") return 3;
+    if(t === "C")  return 4;
+    if(t === "K")  return 5;
+
+    return 99;
+  }
+
+  const eventNames = Object.keys(grouped)
+    .sort((a,b) => a.localeCompare(b, "vi", { numeric:true }));
+
+  const html = eventNames.map(eventName => {
+    const sortedGroup = grouped[eventName].slice().sort((a,b) =>
+      teamOrder(a.team) - teamOrder(b.team) ||
+      String(a.number).localeCompare(String(b.number), "vi", { numeric:true }) ||
+      a.fullName.localeCompare(b.fullName, "vi")
+    );
+
+    const rows = sortedGroup.map((a,index) => `
+      <div class="athlete-row">
+        <div class="center">${a.number}</div>
+        <div class="name">${a.fullName}</div>
+        <div class="center">${a.birthYear}</div>
+        <div class="center">${a.team}</div>
+      </div>
+    `).join("");
+
+    return `
+      <div class="event-block">
+        <div class="event-title">${eventName}</div>
+        ${rows}
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("athleteList").innerHTML = html;
+}
+
+function handleBack(){
+  const athleteScreen = document.getElementById("athleteScreen");
+
+  if(!athleteScreen.classList.contains("hidden")){
+    athleteScreen.classList.add("hidden");
+    document.getElementById("unitScreen").classList.remove("hidden");
+    document.getElementById("headerTitle").textContent = "Đơn vị đăng ký";
+    return;
+  }
+
+  window.location.href = "index.html";
+}
+
+loadData();
+</script>
+
+</body>
+</html>

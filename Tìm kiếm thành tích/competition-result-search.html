@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+<title>Tìm kiếm thành tích</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --card:#ffffff;
+  --green:#005f37;
+  --blue:#294b96;
+  --line:#d8dde5;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  color:#111827;
+  font-size:14px;
+}
+
+.page-header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+
+.page{
+  padding:20px 0 30px;
+}
+
+.search-wrap{
+  position:sticky;
+  top:88px;
+  z-index:900;
+  width:95%;
+  margin:0 auto;
+  display:grid;
+  gap:8px;
+  padding-bottom:8px;
+  background:var(--bg);
+}
+
+.search-card{
+  position:relative;
+  padding:0 12px;
+}
+
+.field-label{
+  display:none;
+}
+
+.search-input{
+  width:100%;
+  height:34px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:0 12px;
+  background:#fff;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:14px;
+  color:#111827;
+  outline:none;
+}
+
+.search-input:focus{
+  border-color:#2f6f45;
+}
+
+.suggest-list{
+  position:absolute;
+  left:12px;
+  right:12px;
+  top:38px;
+  z-index:999;
+  margin-top:0;
+  display:none;
+  gap:4px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+  overflow:hidden;
+}
+
+.suggest-item{
+  min-height:32px;
+  border:none;
+  border-radius:0;
+  background:#fff;
+  color:var(--blue);
+  text-align:left;
+  padding:6px 12px;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:14px;
+  font-weight:700;
+}
+
+.result-wrap{
+  width:95%;
+  margin:10px auto 0;
+  display:grid;
+  gap:8px;
+}
+
+.result-card{
+  background:#fff;
+  border-radius:18px;
+  padding:12px 14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+.result-title{
+  font-size:14px;
+  font-weight:800;
+  color:var(--blue);
+  line-height:1.25;
+}
+
+.result-sub{
+  margin-top:5px;
+  font-size:14px;
+  font-weight:600;
+  color:#555;
+  line-height:1.3;
+}
+
+.empty{
+  width:95%;
+  margin:14px auto 0;
+  background:#fff;
+  border-radius:18px;
+  padding:36px 14px;
+  text-align:center;
+  color:var(--blue);
+  font-size:14px;
+  font-weight:700;
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <button class="page-back page-back-button" onclick="history.back()">
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div class="page-title">Tìm kiếm thành tích</div>
+      <div class="page-subtitle">Các giải đấu</div>
+    </div>
+
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="search-wrap">
+
+    <div class="search-card">
+      <input id="yearInput" class="search-input" type="text"
+             placeholder="Tất cả hoặc chọn năm" autocomplete="off">
+      <div id="yearSuggest" class="suggest-list"></div>
+    </div>
+
+    <div class="search-card">
+      <input id="competitionInput" class="search-input" type="text"
+             placeholder="Tất cả hoặc chọn giải đấu" autocomplete="off">
+      <div id="competitionSuggest" class="suggest-list"></div>
+    </div>
+
+    <div class="search-card">
+      <input id="eventInput" class="search-input" type="text"
+             placeholder="Tất cả hoặc chọn nội dung" autocomplete="off">
+      <div id="eventSuggest" class="suggest-list"></div>
+    </div>
+
+    <div class="search-card">
+      <input id="typeInput" class="search-input" type="text"
+             placeholder="Bắt buộc chọn" readonly autocomplete="off">
+      <div id="typeSuggest" class="suggest-list"></div>
+    </div>
+
+  </div>
+
+  <div id="resultWrap" class="result-wrap"></div>
+
+  <div id="empty" class="empty">
+    Hãy đợi một lát . . .
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID = "1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+const SHEET_GID = "1558133737";
+const CSV_URL =
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+
+const COL_YEAR = 0;
+const COL_DATE = 1;
+const COL_LOCATION = 2;
+const COL_COMPETITION = 3;
+const COL_TIME = 4;
+const COL_EVENT = 5;
+
+const COL_PDF_LIST = 34;
+const COL_PDF_CA_NHAN = 35;
+const COL_PDF_DONG_DOI = 36;
+const COL_PDF_CHUNG_KET = 37;
+
+let data = [];
+
+const yearInput = document.getElementById("yearInput");
+const competitionInput = document.getElementById("competitionInput");
+const eventInput = document.getElementById("eventInput");
+const typeInput = document.getElementById("typeInput");
+
+const yearSuggest = document.getElementById("yearSuggest");
+const competitionSuggest = document.getElementById("competitionSuggest");
+const eventSuggest = document.getElementById("eventSuggest");
+const typeSuggest = document.getElementById("typeSuggest");
+
+const resultWrap = document.getElementById("resultWrap");
+const empty = document.getElementById("empty");
+
+function splitCSVRow(row){
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for(let i = 0; i < row.length; i++){
+    const char = row[i];
+    const next = row[i + 1];
+
+    if(char === '"'){
+      if(insideQuotes && next === '"'){
+        current += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+    }else if(char === "," && !insideQuotes){
+      result.push(current.trim());
+      current = "";
+    }else{
+      current += char;
+    }
+  }
+
+  result.push(current.trim());
+  return result;
+}
+
+function clean(v){
+  return String(v || "").trim();
+}
+
+function norm(s){
+  return clean(s)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d")
+    .replace(/Đ/g,"D")
+    .toLowerCase();
+}
+
+function searchValue(input){
+  const v = clean(input.value);
+  if(!v || v === "Tất cả") return "";
+  return norm(v);
+}
+
+function typeValue(){
+  const v = clean(typeInput.value);
+
+  if(
+    !v ||
+    v === "Tất cả" ||
+    v === "Chưa có dữ liệu" ||
+    v === "Bắt buộc chọn"
+  ) return "";
+
+  return norm(v);
+}
+
+function hideSuggest(el){
+  el.innerHTML = "";
+  el.style.display = "none";
+}
+
+function hideAllSuggest(){
+  hideSuggest(yearSuggest);
+  hideSuggest(competitionSuggest);
+  hideSuggest(eventSuggest);
+  hideSuggest(typeSuggest);
+}
+
+function renderSuggest(el, items, onClick){
+  if(!items.length){
+    hideSuggest(el);
+    return;
+  }
+
+  el.innerHTML = items.map(item => `
+    <button class="suggest-item" type="button" data-value="${String(item).replace(/"/g,"&quot;")}">
+      ${item}
+    </button>
+  `).join("");
+
+  el.style.display = "grid";
+
+  [...el.querySelectorAll(".suggest-item")].forEach(btn => {
+    btn.onclick = () => onClick(btn.dataset.value || "");
+  });
+}
+
+async function loadData(){
+  try{
+    const res = await fetch(CSV_URL + "&t=" + Date.now(), {
+      cache:"no-store"
+    });
+
+    const text = await res.text();
+
+    const rows = text
+      .replace(/^\uFEFF/, "")
+      .split(/\r?\n/)
+      .filter(r => r.trim())
+      .map(splitCSVRow);
+
+    data = rows.slice(1).map(r => ({
+      year: clean(r[COL_YEAR]),
+      date: clean(r[COL_DATE]),
+      location: clean(r[COL_LOCATION]),
+      competition: clean(r[COL_COMPETITION]),
+      time: clean(r[COL_TIME]),
+      event: clean(r[COL_EVENT]),
+
+      pdfList: clean(r[COL_PDF_LIST]),
+      pdfCaNhan: clean(r[COL_PDF_CA_NHAN]),
+      pdfDongDoi: clean(r[COL_PDF_DONG_DOI]),
+      pdfChungKet: clean(r[COL_PDF_CHUNG_KET])
+    })).filter(r =>
+      /^\d{4}$/.test(r.year) &&
+      (r.competition || r.event)
+    );
+
+    empty.innerText = "Đã tải " + data.length + " dòng thành tích";
+
+    updateTypeState();
+    filterData();
+
+  }catch(err){
+    empty.innerText = "Không tải được dữ liệu: " + err.message;
+  }
+}
+
+loadData();
+
+function uniqueSorted(items){
+  return [...new Set(items.filter(Boolean))]
+    .sort((a,b) => a.localeCompare(b,"vi",{numeric:true}));
+}
+
+function getPdfUrl(r){
+  const type = typeValue();
+
+  if(type.includes("danh sach")){
+    return r.pdfList;
+  }
+
+  if(type.includes("ca nhan")){
+    return r.pdfCaNhan;
+  }
+
+  if(type.includes("chung ket")){
+    return r.pdfChungKet;
+  }
+
+  if(type.includes("dong doi") || type.includes("hon hop")){
+    return r.pdfDongDoi;
+  }
+
+  return "";
+}
+
+function getBaseFilteredRows(){
+  const year = searchValue(yearInput);
+  const competition = searchValue(competitionInput);
+  const event = searchValue(eventInput);
+
+  return data.filter(r => {
+    if(year && !norm(r.year).includes(year)) return false;
+    if(competition && !norm(r.competition).includes(competition)) return false;
+    if(event && !norm(r.event).includes(event)) return false;
+    return true;
+  });
+}
+
+function getFilteredRows(){
+  const type = typeValue();
+
+  const rows = getBaseFilteredRows().filter(r => {
+    if(type && !getPdfUrl(r)) return false;
+    return true;
+  });
+
+  const map = new Map();
+
+  rows.forEach(r => {
+    const key = [
+      r.year,
+      r.competition,
+      r.event,
+      getPdfUrl(r)
+    ].join("|");
+
+    if(!map.has(key)){
+      map.set(key,r);
+    }
+  });
+
+  return Array.from(map.values());
+}
+
+function filterData(){
+  renderResult(getFilteredRows());
+}
+
+function renderResult(rows){
+  if(!rows.length){
+    resultWrap.innerHTML = "";
+    empty.style.display = "block";
+    empty.innerText = "Không tìm thấy thành tích phù hợp";
+    return;
+  }
+
+  empty.style.display = "none";
+
+  resultWrap.innerHTML =
+    rows.map(r => {
+      const eventHtml = r.event
+        ? `<div class="result-sub">${r.event}</div>`
+        : "";
+
+      return `
+        <div class="result-card"
+             onclick="openPDF('${encodeURIComponent(getPdfUrl(r) || "")}')">
+
+          <div class="result-title">
+            ${r.competition || ""}${r.year ? " · " + r.year : ""}
+          </div>
+
+          <div class="result-sub">
+            ${r.location || ""}${r.date ? " · " + r.date : ""}
+          </div>
+
+          ${eventHtml}
+
+        </div>
+      `;
+    }).join("");
+}
+
+/* NĂM */
+yearInput.addEventListener("input", () => {
+  const keyword = searchValue(yearInput);
+
+  const items =
+    [...new Set(
+      data
+        .map(r => r.year)
+        .filter(v => /^\d{4}$/.test(clean(v)))
+        .filter(v => norm(v).includes(keyword))
+    )]
+    .sort((a,b) => Number(b) - Number(a));
+
+  renderSuggest(yearSuggest, items, value => {
+    yearInput.value = value;
+    hideSuggest(yearSuggest);
+
+    typeInput.value = "";
+    updateTypeState();
+    filterData();
+  });
+
+  typeInput.value = "";
+  updateTypeState();
+  filterData();
+});
+
+/* TÊN GIẢI */
+competitionInput.addEventListener("input", () => {
+  const keyword = searchValue(competitionInput);
+  const year = searchValue(yearInput);
+
+  const rows = data.filter(r => {
+    if(year && !norm(r.year).includes(year)) return false;
+    return true;
+  });
+
+  const items =
+    uniqueSorted(
+      rows
+        .map(r => r.competition)
+        .filter(v => v && !v.includes("#"))
+        .filter(v => norm(v).includes(keyword))
+    );
+
+  renderSuggest(competitionSuggest, items, value => {
+    competitionInput.value = value;
+    hideSuggest(competitionSuggest);
+
+    typeInput.value = "";
+    updateTypeState();
+    filterData();
+  });
+
+  typeInput.value = "";
+  updateTypeState();
+  filterData();
+});
+
+/* NỘI DUNG */
+eventInput.addEventListener("input", () => {
+  const keyword = searchValue(eventInput);
+  const year = searchValue(yearInput);
+  const competition = searchValue(competitionInput);
+
+  const rows = data.filter(r => {
+    if(year && !norm(r.year).includes(year)) return false;
+    if(competition && !norm(r.competition).includes(competition)) return false;
+    return true;
+  });
+
+  const items =
+    uniqueSorted(
+      rows
+        .map(r => r.event)
+        .filter(v => v && !v.includes("#"))
+        .filter(v => !/^\d+([,.]\d+)?$/.test(clean(v)))
+        .filter(v => norm(v).includes(keyword))
+    );
+
+  renderSuggest(eventSuggest, items, value => {
+    eventInput.value = value;
+    hideSuggest(eventSuggest);
+
+    typeInput.value = "";
+    updateTypeState();
+    filterData();
+  });
+
+  typeInput.value = "";
+  updateTypeState();
+  filterData();
+});
+
+/* LOẠI KẾT QUẢ */
+function getAvailableTypes(rows){
+  const available = ["Tất cả"];
+
+  if(rows.some(r => clean(r.pdfList))){
+    available.push("Danh sách");
+  }
+
+  if(rows.some(r => clean(r.pdfCaNhan))){
+    available.push("Cá nhân");
+  }
+
+  if(rows.some(r => clean(r.pdfChungKet))){
+    available.push("Chung kết");
+  }
+
+  if(rows.some(r => clean(r.pdfDongDoi))){
+    available.push("Đồng đội");
+  }
+
+  if(rows.some(r => clean(r.pdfDongDoi) && norm(r.event).includes("hon hop"))){
+    available.push("Hỗn hợp");
+  }
+
+  return available;
+}
+
+function updateTypeState(){
+  const rows = getBaseFilteredRows();
+  const available = getAvailableTypes(rows);
+
+  if(available.length){
+    typeInput.placeholder = "Bắt buộc chọn";
+  }else{
+    typeInput.placeholder = "Chưa có dữ liệu";
+    typeInput.value = "";
+    hideSuggest(typeSuggest);
+  }
+}
+
+typeInput.addEventListener("click", () => {
+  const items = getAvailableTypes(getBaseFilteredRows());
+
+  if(!items.length){
+    hideSuggest(typeSuggest);
+    return;
+  }
+
+  renderSuggest(typeSuggest, items, value => {
+    typeInput.value = value;
+    hideSuggest(typeSuggest);
+    filterData();
+  });
+});
+
+document.addEventListener("click", e => {
+  if(!e.target.closest(".search-card")){
+    hideAllSuggest();
+  }
+});
+
+function openPDF(url){
+  if(!url) return;
+
+  let finalUrl = decodeURIComponent(url);
+
+  if(finalUrl.includes("drive.google.com/file/d/")){
+    const match = finalUrl.match(/\/d\/([^\/]+)/);
+
+    if(match && match[1]){
+      finalUrl =
+        "https://drive.google.com/file/d/"
+        + match[1]
+        + "/preview";
+    }
+  }
+
+  window.open(finalUrl, "_blank");
+}
+</script>
+
+</body>
+</html>

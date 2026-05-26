@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nhập điểm</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+.top-fixed {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  padding: 14px 14px 8px;
+}
+
+.back-btn {
+  position: fixed;
+  top: 20px; /* ngang dòng Mật khẩu */
+  right: 14px;
+  z-index: 9999;
+  padding: 6px 10px;
+  font-size: 14px;
+  background: #e6e6e6;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.save-btn {
+  position: fixed;
+  top: 60px; /* ngang dòng Nhập điểm */
+  right: 14px;
+  z-index: 9999;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: normal; /* chữ thường */
+  background: #e6e6e6;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+}
+
+.content-wrap {
+  padding: 0 14px 14px;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+select {
+  font-size: 16px;
+  padding: 6px;
+  min-width: 280px;
+}
+
+.table-wrap {
+  max-height: calc(100vh - 170px);
+  overflow-y: auto;
+  margin-top: 12px;
+}
+
+table {
+  border-collapse: collapse;
+  margin-top: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 4px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+th {
+  background: #e8eef5;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #e8eef5;
+}
+
+input {
+  width: 42px;
+  height: 28px;
+  text-align: center;
+  line-height: 28px;
+  font-size: 14px;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.mavdv {
+  font-weight: bold;
+  width: 80px;
+}
+
+.total {
+  font-weight: bold;
+  min-width: 60px;
+}
+
+button {
+  margin-top: 12px;
+  padding: 10px 22px;
+  font-size: 16px;
+}
+
+.status {
+  margin-top: 10px;
+  font-weight: bold;
+}
+td.total, th.total-col {
+  width: 55px;      /* bạn có thể tăng 90 nếu muốn */
+  min-width: 55px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-fixed">
+  <button class="back-btn" onclick="history.back()"><< Quay lại</button>
+<button class="save-btn" onclick="saveAll()">Lưu</button>
+
+  <div style="margin-bottom:10px;">
+    Mật khẩu:
+    <input type="password" id="password" style="padding:6px;">
+  </div>
+
+  <h3>Nhập điểm</h3>
+
+  <label>Nội dung:</label>
+  <select id="contentSelect">
+    <option value="">Đang tải...</option>
+  </select>
+</div>
+
+<div class="content-wrap">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Mã bia</th>
+          <th>1</th>
+          <th>2</th>
+          <th>3</th>
+          <th>4</th>
+          <th>5</th>
+          <th>6</th>
+          <th>X</th>
+          <th class="total-col">Tổng</th>
+        </tr>
+      </thead>
+      <tbody id="scoreBody"></tbody>
+    </table>
+  </div>
+
+  
+
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjiBV2GdBuakdgwJyrqOg-xXbW2YD1su0wapZCXOUL3hORisfN7D_2gpe9en30W4x2XQ/exec";
+
+let allRows = [];
+
+function toNumber(v) {
+  if (!v) return 0;
+  return Number(String(v).trim().replace(",", "."));
+}
+
+function format1(v) {
+  return Number(v).toFixed(1).replace(".", ",");
+}
+
+function normalize(v) {
+  if (!v) return "";
+  const n = toNumber(v);
+  if (Number.isNaN(n)) return "";
+  return format1(n);
+}
+
+function displayValue(v) {
+  if (v === "" || v == null) return "";
+  return String(v).replace(".", ",");
+}
+
+function calcRow(tr) {
+  const inputs = tr.querySelectorAll(".score");
+  let sum = 0;
+  let hasValue = false;
+  let hasDecimal = false;
+
+  inputs.forEach(input => {
+    const val = input.value.trim();
+    if (val !== "") {
+      hasValue = true;
+      if (val.includes(",") || val.includes(".")) hasDecimal = true;
+      sum += toNumber(val);
+    }
+  });
+
+  const totalCell = tr.querySelector(".total");
+  totalCell.textContent = hasValue
+    ? (hasDecimal ? format1(sum) : String(Math.round(sum)))
+    : "";
+}
+
+function renderRows(noidung) {
+  const body = document.getElementById("scoreBody");
+  body.innerHTML = "";
+
+  const rows = allRows.filter(r => r.noidung === noidung);
+
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+    tr.dataset.noidung = r.noidung;
+    tr.dataset.mavdv = r.mavdv;
+    tr.dataset.dirty = "0";
+
+    tr.innerHTML = `
+      <td class="mavdv">${r.mavdv}</td>
+      <td><input class="score" value="${displayValue(r.c1)}"></td>
+      <td><input class="score" value="${displayValue(r.c2)}"></td>
+      <td><input class="score" value="${displayValue(r.c3)}"></td>
+      <td><input class="score" value="${displayValue(r.c4)}"></td>
+      <td><input class="score" value="${displayValue(r.c5)}"></td>
+      <td><input class="score" value="${displayValue(r.c6)}"></td>
+      <td><input class="x" value="${displayValue(r.x)}"></td>
+      <td class="total"></td>
+    `;
+
+    body.appendChild(tr);
+
+    tr.querySelectorAll(".score, .x").forEach(input => {
+  input.addEventListener("input", () => {
+    input.value = input.value
+      .replace(/\./g, ",")
+      .replace(/[^0-9,]/g, "");
+
+    tr.dataset.dirty = "1";
+    calcRow(tr);
+  });
+
+  input.addEventListener("keydown", e => {
+    const td = input.closest("td");
+    const row = input.closest("tr");
+    if (!td || !row) return;
+
+    const colIndex = [...row.children].indexOf(td);
+    const rows = [...row.parentElement.children];
+    const rowIndex = rows.indexOf(row);
+
+    function focusCell(r, c) {
+      const nextRow = rows[r];
+      if (!nextRow) return;
+
+      const nextCell = nextRow.children[c];
+      if (!nextCell) return;
+
+      const nextInput = nextCell.querySelector("input");
+      if (nextInput) {
+        nextInput.focus();
+        nextInput.select();
+      }
+    }
+
+    if (e.key === "Enter" || e.key === "ArrowDown") {
+      e.preventDefault();
+      focusCell(rowIndex + 1, colIndex);
+    }
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      focusCell(rowIndex - 1, colIndex);
+    }
+
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      focusCell(rowIndex, colIndex + 1);
+    }
+
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      focusCell(rowIndex, colIndex - 1);
+    }
+  });
+});
+
+    calcRow(tr);
+  });
+}
+
+function handleData(data) {
+  if (data.error) {
+    document.getElementById("status").textContent = data.error;
+    return;
+  }
+
+  allRows = data.rows || [];
+
+  const select = document.getElementById("contentSelect");
+  select.innerHTML = `<option value="">-- Chọn nội dung --</option>`;
+
+  (data.contents || []).forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = c;
+    select.appendChild(opt);
+  });
+
+  document.getElementById("status").textContent = "";
+}
+
+function loadData() {
+  document.getElementById("status").textContent = "Đang tải dữ liệu...";
+
+  const old = document.getElementById("jsonpLoader");
+  if (old) old.remove();
+
+  const script = document.createElement("script");
+  script.id = "jsonpLoader";
+  script.src = SCRIPT_URL + "?callback=handleData&t=" + Date.now();
+
+  script.onerror = function() {
+    document.getElementById("status").textContent = "Lỗi tải dữ liệu";
+  };
+
+  document.body.appendChild(script);
+}
+
+document.getElementById("contentSelect").addEventListener("change", e => {
+  renderRows(e.target.value);
+});
+
+function saveAll() {
+  const trs = document.querySelectorAll('#scoreBody tr[data-dirty="1"]');
+
+  if (trs.length === 0) {
+    document.getElementById("status").textContent = "Không có dòng nào thay đổi";
+    return;
+  }
+
+  const items = Array.from(trs).map(tr => {
+    const scores = tr.querySelectorAll(".score");
+
+    return {
+      noidung: tr.dataset.noidung,
+      mavdv: tr.dataset.mavdv,
+      c1: normalize(scores[0].value),
+      c2: normalize(scores[1].value),
+      c3: normalize(scores[2].value),
+      c4: normalize(scores[3].value),
+      c5: normalize(scores[4].value),
+      c6: normalize(scores[5].value),
+      x: tr.querySelector(".x").value.trim(),
+      tong: normalize(tr.querySelector(".total").textContent)
+    };
+  });
+
+  document.getElementById("status").textContent = "Đang lưu...";
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify({
+      password: document.getElementById("password").value,
+      items
+    })
+  })
+  .then(() => {
+    document.getElementById("status").textContent = "Đã gửi dữ liệu. Kiểm tra Sheet.";
+  })
+  .catch(err => {
+    document.getElementById("status").textContent = "Lỗi lưu dữ liệu";
+    console.error(err);
+  });
+}
+loadData();
+</script>
+
+</body>
+</html>

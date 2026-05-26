@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>ISSF Result</title>
+</head>
+<body>
+
+<h3 id="title">Đang tải ISSF...</h3>
+<table border="1" cellpadding="6">
+  <thead>
+    <tr>
+      <th>Hạng</th>
+      <th>Bib</th>
+      <th>VĐV</th>
+      <th>QG</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>Tổng</th>
+      <th>Ghi chú</th>
+    </tr>
+  </thead>
+  <tbody id="body"></tbody>
+</table>
+
+<script>
+const ISSF_URL = "https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30";
+const PROXY = "/api/issf?url=" + encodeURIComponent(ISSF_URL);
+
+async function loadISSF(){
+  const html = await fetch(PROXY).then(r => r.text());
+  const doc = new DOMParser().parseFromString(html, "text/html");
+
+  document.getElementById("title").textContent =
+    doc.body.innerText.match(/10m Air Rifle Men[\s\S]*?Qualification/)?.[0]
+      .replace(/\s+/g, " - ")
+      || "ISSF Result";
+
+  const text = doc.body.innerText;
+  const lines = text.split("\n").map(x => x.trim()).filter(Boolean);
+
+  const rows = [];
+
+  for(const line of lines){
+    const m = line.match(/^(\d+)\s+(\d+)\s+(.+?)\s+([A-Z]{3})\s+(\d+\.\d)\s+(\d+\.\d)\s+(\d+\.\d)\s+(\d+\.\d)\s+(\d+\.\d)\s+(\d+\.\d)\s+(\d+\.\d)(?:\s+(.*))?$/);
+    if(!m) continue;
+
+    rows.push({
+      rank:m[1],
+      bib:m[2],
+      name:m[3],
+      noc:m[4],
+      s1:m[5],
+      s2:m[6],
+      s3:m[7],
+      s4:m[8],
+      s5:m[9],
+      s6:m[10],
+      total:m[11],
+      note:m[12] || ""
+    });
+  }
+
+  document.getElementById("body").innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.rank}</td>
+      <td>${r.bib}</td>
+      <td>${r.name}</td>
+      <td>${r.noc}</td>
+      <td>${r.s1}</td>
+      <td>${r.s2}</td>
+      <td>${r.s3}</td>
+      <td>${r.s4}</td>
+      <td>${r.s5}</td>
+      <td>${r.s6}</td>
+      <td><b>${r.total}</b></td>
+      <td>${r.note}</td>
+    </tr>
+  `).join("");
+}
+
+loadISSF();
+</script>
+
+</body>
+</html>

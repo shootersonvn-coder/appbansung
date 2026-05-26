@@ -4,422 +4,487 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Event</title>
+  <title>Event-all</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="../style.css?v=2">
 
   <style>
-    :root {
-      --bg: #eef3fb;
-      --green-dark: #0b5d2a;
-      --green-head-top: #0a5f34;
-      --green-head-bottom: #083f24;
-      --tab-bg: #dfeaf6;
-      --tab-text: #2d84ea;
-      --tab-active: #1f6a48;
-      --line: #d8dde5;
-      --summary-bg: #e6c161;
-      --card: #ffffff;
-      --muted: #8b8f97;
-      --red: #ff4b57;
-      --blue: #2d84ea;
-      --fixed-bars-h: 240px;
-      --sticky-head-h: 42px;
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-    }
+:root{
+  --bg:#eef3fb;
+  --green-dark:#0b5d2a;
+  --green-head-top:#0a5f34;
+  --green-head-bottom:#083f24;
+  --tab-bg:#dfeaf6;
+  --tab-text:#2d84ea;
+  --tab-active:#1f6a48;
+  --line:#d8dde5;
+  --summary-bg:#e6c161;
+  --card:#ffffff;
+  --muted:#8b8f97;
+  --red:#ff4b57;
+  --blue:#2d84ea;
 
-    html, body {
-      height: 100%;
-      overflow: hidden;
-    }
+  --fixed-bars-h:240px;
+  --sticky-head-h:42px;
 
-    * {
-      box-sizing: border-box;
-      font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    .app-shell {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      overflow: hidden;
-    }
-
-    .fixed-bars {
-      position: absolute;
-      left: 0;
-      right: 0;
-      background: var(--bg);
-      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
-    }
-
-    
-
-    
-
-    .tab-btn {
-  flex: 1;
-  height: 36px;
-  border-radius: 12px;
-  background: var(--tab-bg);
-  color: var(--tab-text);
-  font-size: 14px;
-  font-weight: 700;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  white-space: nowrap;
-  border: 1px solid rgba(47,108,72,0.08);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
 }
 
-.tab-btn.active {
-  background: var(--tab-active);
-  color: #fff;
-  border-color: transparent;
+html,
+body{
+  height:100%;
+  overflow:hidden;
+  margin:0;
+  padding:0;
+  background:var(--bg);
 }
 
-    .summary-bar {
-      background: var(--summary-bg);
-      color: #111;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 10px 14px;
-      white-space: nowrap;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border-top: 1px solid rgba(0,0,0,0.04);
-      border-bottom: 1px solid rgba(0,0,0,0.04);
-    }
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  font-family:"Roboto Condensed",-apple-system,BlinkMacSystemFont,sans-serif;
+}
 
-    .sticky-table-head {
-      background: linear-gradient(180deg, var(--green-head-top) 0%, var(--green-head-bottom) 100%);
-      box-shadow: 0 1px 0 rgba(0,0,0,0.06);
-    }
+/* APP */
+.app-shell{
+  position:fixed;
+  inset:0;
+  background:var(--bg);
+  overflow:hidden;
+}
 
-    .sticky-table-head.hidden {
-      display: none !important;
-    }
+/* TOP */
+.fixed-bars{
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  z-index:1000;
+  background:var(--bg);
+  box-shadow:0 1px 0 rgba(0,0,0,.04);
+}
 
-    .sticky-table-head table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      table-layout: fixed;
-      background: transparent;
-    }
+/* TABS */
+.tabs-wrap{
+  padding:10px 14px 10px;
+  background:var(--bg);
+}
 
-    .sticky-table-head th {
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 8px 6px;
-      text-align: center;
-      white-space: nowrap;
-      height: var(--sticky-head-h);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: transparent;
-    }
+.tabs{
+  display:flex;
+  gap:8px;
+}
 
-    .content-scroll {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: var(--fixed-bars-h);
-      bottom: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      background: #fff;
-      padding-bottom: calc(20px + var(--safe-bottom));
-    }
+.tab-btn{
+  flex:1;
+  height:36px;
 
-    .tab-view {
-      min-height: 100%;
-      background: #fff;
-    }
+  border:none;
+  border-radius:12px;
 
-    .table-wrap {
-      width: 100%;
-      overflow-x: hidden;
-      background: #fff;
-    }
+  background:var(--tab-bg);
+  color:var(--tab-text);
 
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      table-layout: fixed;
-      background: #fff;
-    }
+  font-size:14px;
+  font-weight:700;
 
-    .body-table td {
-      height: 34px;
-      padding: 3px 6px;
-      font-size: 13px;
-      border-bottom: 1px solid var(--line);
-      text-align: center;
-      vertical-align: middle;
-      background: #fff;
-    }
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-    td.name, th.name,
-    td.note, th.note {
-      text-align: left;
-    }
+  white-space:nowrap;
 
-    td.unit, th.unit,
-    td.code, th.code,
-    td.rank, th.rank,
-    td.num, th.num {
-      white-space: nowrap;
-    }
+  border:1px solid rgba(47,108,72,.08);
+}
 
-    .name-text {
-      display: block;
-      line-height: 1.12;
-      word-break: break-word;
-    }
+.tab-btn.active{
+  background:var(--tab-active);
+  color:#fff;
+  border-color:transparent;
+}
 
-    .row-click {
-      cursor: pointer;
-    }
+/* SUMMARY */
+.summary-bar{
+  background:var(--summary-bg);
+  color:#111;
 
-    .detail-row td {
-      background: #f8fafc;
-      padding: 0;
-      border-bottom: 1px solid var(--line);
-      height: auto;
-    }
+  font-size:14px;
+  font-weight:700;
 
-    .detail-box {
-      padding: 10px;
-    }
+  padding:10px 14px;
 
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-    }
+  white-space:nowrap;
+  overflow-x:auto;
 
-    .detail-chip {
-      background: #fff;
-      border: 1px solid #e2e6ec;
-      border-radius: 10px;
-      padding: 7px 6px;
-      text-align: center;
-    }
+  -webkit-overflow-scrolling:touch;
 
-    .detail-chip .label {
-      font-size: 11px;
-      color: #6f7782;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
+  border-top:1px solid rgba(0,0,0,.04);
+  border-bottom:1px solid rgba(0,0,0,.04);
+}
 
-    .detail-chip .value {
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.1;
-      color: #111;
-    }
+/* STICKY TABLE HEAD */
+.sticky-table-head{
+  background:linear-gradient(
+    180deg,
+    var(--green-head-top) 0%,
+    var(--green-head-bottom) 100%
+  );
 
-    .detail-note {
-      margin-top: 8px;
-      font-size: 13px;
-      color: #444;
-      line-height: 1.2;
-    }
+  box-shadow:0 1px 0 rgba(0,0,0,.06);
+}
 
-    .cards-wrap {
-      padding: 10px;
-      display: grid;
-      gap: 12px;
-      background: #fff;
-    }
+.sticky-table-head.hidden{
+  display:none !important;
+}
 
-    .team-card {
-      background: var(--card);
-      border: 1px solid #d7dbe1;
-      border-radius: 18px;
-      padding: 8px 12px 6px;
-      box-shadow: 0 1px 0 rgba(0,0,0,0.02);
-    }
+.sticky-table-head table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  table-layout:fixed;
+  background:transparent;
+}
 
-    .team-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 6px;
-    }
+.sticky-table-head th{
+  color:#fff;
+  font-size:13px;
+  font-weight:700;
 
-    .team-unit {
-      font-size: 14px;
-      font-weight: 800;
-      line-height: 1.1;
-    }
+  padding:8px 6px;
 
-    .team-name {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--blue);
-      line-height: 1.1;
-      white-space: nowrap;
-    }
+  text-align:center;
+  white-space:nowrap;
 
-    .team-total {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--red);
-      margin-bottom: 3px;
-    }
+  height:var(--sticky-head-h);
 
-    .athlete-line {
-      display: grid;
-      grid-template-columns: 22px 1fr;
-      gap: 8px;
-      align-items: center;
-      min-height: 26px;
-      padding: 0;
-      cursor: pointer;
-    }
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
 
-    .athlete-order {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.2;
-      text-align: right;
-    }
+/* CONTENT */
+.content-scroll{
+  position:absolute;
+  left:0;
+  right:0;
+  top:var(--fixed-bars-h);
+  bottom:0;
 
-    .athlete-name {
-      font-size: 14px;
-      line-height: 1.15;
-    }
+  overflow-y:auto;
+  overflow-x:hidden;
 
-    .team-athlete-detail {
-      margin: 4px 0 6px 30px;
-      background: #f8fafc;
-      border: 1px solid #e2e6ec;
-      border-radius: 12px;
-      padding: 8px;
-    }
+  -webkit-overflow-scrolling:touch;
 
-    .final-tools {
-      background: #fff;
-      padding: 10px;
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+  background:#fff;
 
-    .final-tool-btn {
-      border: none;
-      border-radius: 14px;
-      background: linear-gradient(180deg, #0b7f3b 0%, #005f37 100%);
-      color: #fff;
-      padding: 10px 14px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+  padding-bottom:calc(20px + var(--safe-bottom));
+}
 
-    .final-pdf-wrap {
-      position: relative;
-      background: #fff;
-      min-height: 360px;
-      height: calc(100vh - var(--fixed-bars-h) - 120px);
-      border-top: 1px solid var(--line);
-    }
+.tab-view{
+  min-height:100%;
+  background:#fff;
+}
 
-    .final-pdf-frame {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display: block;
-      background: #fff;
-    }
+/* TABLE */
+.table-wrap{
+  width:100%;
+  overflow-x:hidden;
+  background:#fff;
+}
 
-    .final-loading,
-    .final-error {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
-      background: #fff;
-      color: #4b5563;
-      font-size: 14px;
-      font-weight: 600;
-      z-index: 2;
-    }
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  table-layout:fixed;
+  background:#fff;
+}
 
-    .final-error {
-      display: none;
-      flex-direction: column;
-      gap: 14px;
-    }
+.body-table td{
+  height:34px;
+  padding:3px 6px;
 
-    .empty {
-      padding: 20px 16px;
-      font-size: 14px;
-      text-align: center;
-      color: #666;
-      background: #fff;
-    }
+  font-size:13px;
 
-    .hidden {
-      display: none !important;
-    }
+  border-bottom:1px solid var(--line);
 
-    @media (min-width: 768px) {
-      :root {
-        --sticky-head-h: 48px;
-      }
+  text-align:center;
+  vertical-align:middle;
 
-      
-      .tabs-wrap {
-        padding: 14px 24px 12px;
-      }
+  background:#fff;
+}
 
-      .tabs {
-        gap: 12px;
-      }
+td.name,
+th.name,
+td.note,
+th.note{
+  text-align:left;
+}
 
-      .tab-btn {
-        height: 52px;
-        font-size: 14px;
-      }
+td.unit,
+th.unit,
+td.code,
+th.code,
+td.rank,
+th.rank,
+td.num,
+th.num{
+  white-space:nowrap;
+}
 
-      .summary-bar {
-        font-size: 14px;
-        padding: 10px 24px;
-      }
+.name-text{
+  display:block;
+  line-height:1.12;
+  word-break:break-word;
+}
 
-      .sticky-table-head th {
-        font-size: 14px;
-        padding: 10px 8px;
-      }
+.row-click{
+  cursor:pointer;
+}
 
-      .body-table td {
-        height: 36px;
-        font-size: 14px;
-        padding: 3px 8px;
-      }
+/* DETAIL */
+.detail-row td{
+  background:#f8fafc;
+  padding:0;
+  border-bottom:1px solid var(--line);
+  height:auto;
+}
 
-      .final-tool-btn {
-        font-size: 14px;
-      }
-    }
-  </style>
+.detail-box{
+  padding:10px;
+}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+
+.detail-chip{
+  background:#fff;
+  border:1px solid #e2e6ec;
+  border-radius:10px;
+  padding:7px 6px;
+  text-align:center;
+}
+
+.detail-chip .label{
+  font-size:11px;
+  color:#6f7782;
+  line-height:1;
+  margin-bottom:4px;
+}
+
+.detail-chip .value{
+  font-size:14px;
+  font-weight:700;
+  line-height:1.1;
+  color:#111;
+}
+
+.detail-note{
+  margin-top:8px;
+  font-size:13px;
+  color:#444;
+  line-height:1.2;
+}
+
+/* TEAM */
+.cards-wrap{
+  padding:10px;
+  display:grid;
+  gap:12px;
+  background:#fff;
+}
+
+.team-card{
+  background:var(--card);
+  border:1px solid #d7dbe1;
+  border-radius:18px;
+  padding:8px 12px 6px;
+  box-shadow:0 1px 0 rgba(0,0,0,.02);
+}
+
+.team-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  margin-bottom:6px;
+}
+
+.team-unit{
+  font-size:14px;
+  font-weight:800;
+  line-height:1.1;
+}
+
+.team-name{
+  font-size:14px;
+  font-weight:800;
+  color:var(--blue);
+  line-height:1.1;
+  white-space:nowrap;
+}
+
+.team-total{
+  font-size:14px;
+  font-weight:800;
+  color:var(--red);
+  margin-bottom:3px;
+}
+
+.athlete-line{
+  display:grid;
+  grid-template-columns:22px 1fr;
+  gap:8px;
+  align-items:center;
+  min-height:26px;
+  cursor:pointer;
+}
+
+.athlete-order{
+  color:var(--muted);
+  font-size:14px;
+  text-align:right;
+}
+
+.athlete-name{
+  font-size:14px;
+  line-height:1.15;
+}
+
+.team-athlete-detail{
+  margin:4px 0 6px 30px;
+  background:#f8fafc;
+  border:1px solid #e2e6ec;
+  border-radius:12px;
+  padding:8px;
+}
+
+/* FINAL */
+.final-tools{
+  background:#fff;
+  padding:10px;
+  border-bottom:1px solid var(--line);
+
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.final-tool-btn{
+  border:none;
+  border-radius:14px;
+
+  background:linear-gradient(
+    180deg,
+    #0b7f3b 0%,
+    #005f37 100%
+  );
+
+  color:#fff;
+
+  padding:10px 14px;
+
+  font-size:15px;
+  font-weight:700;
+}
+
+.final-pdf-wrap{
+  position:relative;
+  background:#fff;
+  min-height:360px;
+  height:calc(100vh - var(--fixed-bars-h) - 120px);
+  border-top:1px solid var(--line);
+}
+
+.final-pdf-frame{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+  background:#fff;
+}
+
+.final-loading,
+.final-error{
+  position:absolute;
+  inset:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:24px;
+
+  text-align:center;
+
+  background:#fff;
+  color:#4b5563;
+
+  font-size:14px;
+  font-weight:600;
+
+  z-index:2;
+}
+
+.final-error{
+  display:none;
+  flex-direction:column;
+  gap:14px;
+}
+
+.empty{
+  padding:20px 16px;
+  font-size:14px;
+  text-align:center;
+  color:#666;
+  background:#fff;
+}
+
+.hidden{
+  display:none !important;
+}
+
+@media (min-width:768px){
+
+  :root{
+    --sticky-head-h:48px;
+  }
+
+  .tabs-wrap{
+    padding:14px 24px 12px;
+  }
+
+  .tabs{
+    gap:12px;
+  }
+
+  .tab-btn{
+    height:52px;
+    font-size:18px;
+  }
+
+  .summary-bar{
+    font-size:18px;
+    padding:10px 24px;
+  }
+
+  .sticky-table-head th{
+    font-size:14px;
+    padding:10px 8px;
+  }
+
+  .body-table td{
+    height:36px;
+    font-size:14px;
+    padding:3px 8px;
+  }
+}
+</style>
 </head>
 <body class="has-tabs fixed-bars-page">
 
@@ -428,9 +493,9 @@
       <header class="page-header">
   <div class="page-header-inner">
 
-    <a href="competition.html" class="page-back">
-      ← Quay lại
-    </a>
+    <a href="javascript:history.back()" class="page-back">
+  ← Quay lại
+</a>
 
     <div class="page-title-wrap">
       <div class="page-title" id="competition"></div>
@@ -450,6 +515,28 @@
 
       <div class="summary-bar" id="summaryBar">Đang tải...</div>
       <div id="stickyTableHead" class="sticky-table-head hidden"></div>
+      <script>
+function updateLayoutMetrics(){
+  const fixedBars = document.getElementById("fixedBars");
+
+  if(fixedBars){
+    document.documentElement.style.setProperty(
+      "--fixed-bars-h",
+      `${Math.ceil(fixedBars.offsetHeight)}px`
+    );
+  }
+}
+
+requestAnimationFrame(updateLayoutMetrics);
+
+window.addEventListener("resize", updateLayoutMetrics);
+
+window.addEventListener("orientationchange", () => {
+  setTimeout(updateLayoutMetrics,50);
+  setTimeout(updateLayoutMetrics,180);
+  setTimeout(updateLayoutMetrics,320);
+});
+</script>
     </div>
 
     <div class="content-scroll" id="contentScroll">
@@ -461,7 +548,7 @@
   </div>
 
   <script>
-    const url = "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=311114195";
+    const url = "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=1558133737";
 
     const params = new URLSearchParams(window.location.search);
     const eventName = (params.get("name") || "").trim();
@@ -632,23 +719,6 @@
       return vals.reduce((a, b) => a + b, 0);
     }
 
-
-
-    function calcAverage(row) {
-  const vals = [row.s1, row.s2, row.s3, row.s4, row.s5, row.s6]
-    .map(parseNum)
-    .filter(v => v != null);
-
-  if (!vals.length) return null;
-
-  const total = vals.reduce((a, b) => a + b, 0);
-  return total / vals.length;
-}
-
-
-
-
-
     function buildSummary(rows, tab) {
       const listRows = rows.filter(hasRealName);
 
@@ -701,10 +771,12 @@
       const detail = scope.querySelector(`[data-detail-id="${id}"]`);
       if (!detail) return;
 
+      /* ĐÓNG TẤT CẢ PHẦN ĐANG MỞ TRƯỚC */
       scope.querySelectorAll("[data-detail-id]").forEach(x => {
         if (x !== detail) x.classList.add("hidden");
       });
 
+      /* MỞ / ĐÓNG DÒNG VỪA BẤM */
       detail.classList.toggle("hidden");
     });
   });
@@ -747,16 +819,10 @@
       return v == null ? -Number.MAX_VALUE : v;
     }
 
-    
     function equalIndividualRankKey(a, b) {
-  const ta = calcAverage(a) ?? 0;
-  const tb = calcAverage(b) ?? 0;
-  if (Math.abs(ta - tb) > 0.0001) return false;
-
-
-
-
-
+      const ta = calcTotal(a) ?? 0;
+      const tb = calcTotal(b) ?? 0;
+      if (Math.abs(ta - tb) > 0.0001) return false;
 
       const xa = xValue(a);
       const xb = xValue(b);
@@ -776,9 +842,9 @@
       const unranked = base.filter(r => !shouldShowIndividualRank(r));
 
       ranked.sort((a, b) => {
-  const ta = calcAverage(a) ?? -Number.MAX_VALUE;
-  const tb = calcAverage(b) ?? -Number.MAX_VALUE;
-  if (Math.abs(ta - tb) > 0.0001) return tb - ta;
+        const ta = calcTotal(a) ?? -Number.MAX_VALUE;
+        const tb = calcTotal(b) ?? -Number.MAX_VALUE;
+        if (Math.abs(ta - tb) > 0.0001) return tb - ta;
 
         const xa = xValue(a);
         const xb = xValue(b);
@@ -995,12 +1061,12 @@
           <table>
             <colgroup>
               <col style="width: 9%">
-<col style="width: 38%">
+<col style="width: 37%">
 <col style="width: 11%">
 <col style="width: 11%">
 <col style="width: 11%">
 <col style="width: 8%">
-<col style="width: 12%">
+<col style="width: 13%">
             </colgroup>
             <thead>
               <tr>
@@ -1068,59 +1134,27 @@
   }
 
   window.location.href =
-    "pdfviewer.html?title=" +
+    "../pdfviewer.html?title=" +
     encodeURIComponent(eventName + " - Chung kết") +
     "&url=" +
     encodeURIComponent(pdfFinalParam);
 }
 
     function rebuildTabs(hasFinalTab) {
-      const tabsBar = document.getElementById("tabsBar");
-      tabsBar.innerHTML = `
-        <button class="tab-btn ${currentTab === "all" ? "active" : ""}" data-tab="all">Danh sách</button>
-        <button class="tab-btn ${currentTab === "individual" ? "active" : ""}" data-tab="individual">Cá nhân</button>
-        <button class="tab-btn ${currentTab === "team" ? "active" : ""}" data-tab="team">Đồng đội</button>
-        ${hasFinalTab ? `
-<button
-  class="tab-btn ${currentTab === "final" ? "active" : ""}"
-  data-tab="final">
-  Chung kết
-</button>
-` : ""}
-      `;
+  const tabsBar = document.getElementById("tabsBar");
 
-      tabsBar.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
+  tabsBar.innerHTML = `
+    <button class="tab-btn ${currentTab === "all" ? "active" : ""}" data-tab="all">Danh sách</button>
+    <button class="tab-btn ${currentTab === "individual" ? "active" : ""}" data-tab="individual">Cá nhân</button>
+    <button class="tab-btn ${currentTab === "team" ? "active" : ""}" data-tab="team">Đồng đội</button>
+    ${hasFinalTab ? `<button class="tab-btn ${currentTab === "final" ? "active" : ""}" data-tab="final" onclick="openFinalPdfFromTab(event)">Chung kết</button>` : ""}
+  `;
 
-    if(btn.dataset.tab === "final"){
+  tabsBar.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.dataset.tab === "final") return;
 
-      if(pdfFinalParam){
-        window.location.href =
-          "pdfviewer.html?title=" +
-          encodeURIComponent(eventName + " - Chung kết") +
-          "&url=" +
-          encodeURIComponent(pdfFinalParam);
-
-        return;
-      }
-
-      currentTab = "final";
-
-      const sc = document.getElementById("contentScroll");
-      if(sc) sc.scrollTop = 0;
-
-      showTab(currentTab);
-
-      document.getElementById("summaryBar").innerText =
-        buildSummary(latestData, currentTab);
-
-      updateStickyHeader(currentTab);
-      updateLayoutMetrics();
-
-      return;
-    }
-
-    currentTab = btn.dataset.tab;
+      currentTab = btn.dataset.tab;
 
           const sc = document.getElementById("contentScroll");
           if (sc) sc.scrollTop = 0;
@@ -1184,12 +1218,12 @@
           <table class="body-table">
             <colgroup>
               <col style="width: 9%">
-<col style="width: 38%">
+<col style="width: 37%">
 <col style="width: 11%">
 <col style="width: 11%">
 <col style="width: 11%">
 <col style="width: 8%">
-<col style="width: 12%">
+<col style="width: 13%">
             </colgroup>
             <tbody>
               ${rankedRows.map((item, idx) => {
@@ -1201,8 +1235,8 @@
                     <td>${safe(r.unit)}</td>
                     <td>${safe(r.code).toUpperCase()}</td>
                     <td>${formatScore(calcTotal(r))}</td>
-<td>${safe(r.x)}</td>
-<td class="note">${safe(r.note)}</td>
+                    <td>${safe(r.x)}</td>
+                    <td class="note">${safe(r.note)}</td>
                   </tr>
                   <tr class="detail-row hidden" data-detail-id="ind-${idx}">
                     <td colspan="7">${detailBoxHTML(r)}</td>
@@ -1286,11 +1320,10 @@
                     <td>${safe(r.unit)}</td>
                     <td>${safe(r.code).toUpperCase()}</td>
                     <td>${formatScore(calcTotal(r))}</td>
-                    <td>${safe(r.x)}</td>
                     <td class="note">${safe(r.note)}</td>
                   </tr>
                   <tr class="detail-row hidden" data-detail-id="final-${idx}">
-                    <td colspan="7">${detailBoxHTML(r)}</td>
+                    <td colspan="6">${detailBoxHTML(r)}</td>
                   </tr>
                 `).join("")}
               </tbody>
@@ -1341,42 +1374,29 @@
     function renderAllTabs(data) {
       const openTabNorm = norm(openTabParam);
 
-      if(openTabNorm === "all" || openTabNorm === "danh sach"){
-  currentTab = "all";
-}
-else if(openTabNorm === "individual" || openTabNorm === "ca nhan"){
-  currentTab = "individual";
-}
-else if(openTabNorm === "team" || openTabNorm === "dong doi" || openTabNorm === "hon hop"){
-  currentTab = "team";
-}
-else if(openTabNorm === "final" || openTabNorm === "chung ket"){
-  currentTab = "final";
-}
-else{
-  currentTab = "individual";
-}
+     if (openTabNorm === "all" || openTabNorm === "danh sach") currentTab = "all";
+else if (openTabNorm === "individual" || openTabNorm === "ca nhan") currentTab = "individual";
+else if (openTabNorm === "team" || openTabNorm === "dong doi" || openTabNorm === "hon hop") currentTab = "team";
+else if (openTabNorm === "final" || openTabNorm === "chung ket") currentTab = "final";
 
-if(currentTab === "final" && !finalTabAvailable){
-  currentTab = "individual";
-}
+if (currentTab === "final" && !finalTabAvailable) currentTab = "individual";
 
-  rebuildTabs(finalTabAvailable);
+      rebuildTabs(finalTabAvailable);
 
-  renderAllView(data);
-  renderIndividualView(data);
-  renderTeamView(data);
-  renderFinalView(data);
+      renderAllView(data);
+      renderIndividualView(data);
+      renderTeamView(data);
+      renderFinalView(data);
 
-  document.getElementById("summaryBar").innerText = buildSummary(data, currentTab);
-  showTab(currentTab);
-  updateStickyHeader(currentTab);
-  updateLayoutMetrics();
+      document.getElementById("summaryBar").innerText = buildSummary(data, currentTab);
+      showTab(currentTab);
+      updateStickyHeader(currentTab);
+      updateLayoutMetrics();
 
-  if (currentTab === "final") {
-    loadFinalPdfInFrame();
-  }
-}
+      if (currentTab === "final") {
+        loadFinalPdfInFrame();
+      }
+    }
 
     function showTab(tab) {
       document.querySelectorAll(".tab-btn").forEach(x => {
@@ -1395,11 +1415,18 @@ if(currentTab === "final" && !finalTabAvailable){
 
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
-        const content = r[5] || "";
-        const contentBaseNorm = norm(baseTitleOf(content));
 
-        if (!content) continue;
-        if (contentBaseNorm !== eventBaseNorm) continue;
+const rowYear = norm(r[0] || "");
+const rowCompetition = norm(r[3] || "");
+
+if (yearText && rowYear !== norm(yearText)) continue;
+if (competitionName && rowCompetition !== norm(competitionName)) continue;
+
+const content = r[5] || "";
+const contentBaseNorm = norm(baseTitleOf(content));
+
+if (!content) continue;
+if (contentBaseNorm !== eventBaseNorm) continue;
 
         const ho = r[11] || "";
         const ten = r[12] || "";

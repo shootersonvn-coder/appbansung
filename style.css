@@ -1,25 +1,39 @@
 :root {
   --bg: #dfeaf5;
+  --page-bg: #eef3fb;
+
   --header-green: #005f37;
   --header-green-2: #0b7a43;
+
   --button-green: #006b33;
   --button-green-2: #005f37;
+
   --tab-bg: #cfe0f2;
   --tab-text: #2d84ea;
+
   --white: #ffffff;
   --line: #d8dde5;
   --row-bg: #f7f7f7;
   --medal-total: #efdf8b;
   --footer-text: #878b92;
   --link-blue: #2d84ea;
+
   --shadow-soft: 0 3px 12px rgba(0, 0, 0, 0.06);
+
+  /* Chiều cao phần head, chưa tính safe-area */
+
+  --page-width: 95%;
 
   --font-main: "Roboto Condensed", -apple-system, BlinkMacSystemFont,
     "Helvetica Neue", Arial, sans-serif;
 }
 
+/* =========================
+   RESET
+========================= */
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -51,6 +65,9 @@ img {
   max-width: 100%;
 }
 
+/* =========================
+   APP SHELL
+========================= */
 .app-shell {
   min-height: 100vh;
   background: var(--bg);
@@ -63,6 +80,9 @@ img {
   min-height: 10px;
 }
 
+/* =========================
+   APP HEADER - HOME
+========================= */
 .app-header {
   background: linear-gradient(
     180deg,
@@ -72,21 +92,27 @@ img {
 }
 
 .header-row {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: center;
   padding: 14px 14px 16px;
+  min-height: 92px;
 }
 
 .logo-wrap {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+
   width: 64px;
   height: 64px;
-  flex: 0 0 64px;
   border-radius: 50%;
   overflow: hidden;
   background: #ffffff;
-  border: 2px solid rgba(255, 255, 255, 0.18);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+  border: 2px solid rgba(255,255,255,0.18);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
 }
 
 .logo-wrap img {
@@ -95,7 +121,9 @@ img {
   object-fit: contain;
 }
 
-.header-title {
+.app-header .header-title {
+  width: 100%;
+  text-align: center;
   color: #ffffff;
   font-size: 29px;
   line-height: 1;
@@ -103,15 +131,21 @@ img {
   letter-spacing: -0.6px;
 }
 
+/* =========================
+   MAIN
+========================= */
 .main-content {
   padding: 2px 12px 110px;
 }
 
+/* =========================
+   TOP TABS
+========================= */
 .tabs-row {
   display: flex;
   gap: 10px;
-  flex-wrap: nowrap;       /* ❗ không cho xuống dòng */
-  overflow-x: auto;        /* nếu thiếu chỗ thì cuộn ngang */
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
 .pill-tab {
@@ -126,10 +160,18 @@ img {
   line-height: 1;
 }
 
-/* =========================
-   CHỈ SỬA PHẦN BANNER
-   ========================= */
+.tabs {
+  width: 95%;
+  margin: 0 auto 10px;
+  display: flex;
+  gap: 6px;
+  padding: 8px 0;
+  background: var(--bg);
+}
 
+/* =========================
+   HERO / BANNER
+========================= */
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 2.12fr) minmax(0, 1fr);
@@ -150,9 +192,6 @@ img {
   min-width: 0;
   min-height: 0;
   box-shadow: var(--shadow-soft);
-}
-
-.hero-main {
   aspect-ratio: 16 / 9;
 }
 
@@ -161,10 +200,6 @@ img {
   grid-template-rows: 1fr 1fr;
   gap: 12px;
   min-width: 0;
-}
-
-.side-card {
-  aspect-ratio: 16 / 9;
 }
 
 .hero-main img,
@@ -194,7 +229,7 @@ img {
   align-items: center;
   justify-content: center;
   z-index: 2;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
 
 .youtube-badge span {
@@ -205,14 +240,15 @@ img {
   transform: translateX(1px);
 }
 
-/* ========================= */
-
+/* =========================
+   MEDAL BOARD
+========================= */
 .medal-card {
   background: #f4f4f4;
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0,0,0,0.04);
   width: 100%;
 }
 
@@ -280,25 +316,35 @@ img {
   font-weight: 800;
 }
 
+/* =========================
+   ACTION BUTTONS
+========================= */
 .main-actions {
   display: grid;
-  gap: 14px;
+  gap: 8px;
   margin-bottom: 18px;
 }
 
 .main-action {
   width: 100%;
-  min-height: 40px;
-  padding: 8px 14px;
+  min-height: 32px;
+  padding: 6px 12px;
   border-radius: 10px;
-  background: linear-gradient(180deg, var(--button-green) 0%, var(--button-green-2) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--button-green) 0%,
+    var(--button-green-2) 100%
+  );
   color: #ffffff;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 800;
   line-height: 1;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
+/* =========================
+   COPYRIGHT
+========================= */
 .copyright {
   text-align: center;
   color: var(--footer-text);
@@ -308,19 +354,22 @@ img {
   padding-bottom: 22px;
 }
 
+/* =========================
+   FLOATING BUTTONS
+========================= */
 .floating-left,
 .floating-right {
   position: fixed;
   bottom: calc(70px + env(safe-area-inset-bottom));
   z-index: 20;
   border-radius: 50%;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.18);
 }
 
 .floating-left {
   left: 18px;
-  width: 92px;
-  height: 92px;
+  width: 46px;
+  height: 46px;
   background: #f3eeb6;
   display: flex;
   align-items: center;
@@ -328,63 +377,276 @@ img {
 }
 
 .floating-left img {
-  width: 76px;
-  height: 76px;
+  width: 38px;
+  height: 38px;
   object-fit: contain;
   border-radius: 50%;
 }
 
 .floating-right {
   right: 18px;
-  width: 84px;
-  height: 84px;
-  background: radial-gradient(circle at 35% 30%, #0a8c53 0%, #006b3e 65%, #005f37 100%);
+  width: 42px;
+  height: 42px;
+  background: radial-gradient(
+    circle at 35% 30%,
+    #0a8c53 0%,
+    #006b3e 65%,
+    #005f37 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .chat-bubble {
-  width: 52px;
-  height: 52px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: #eef1ef;
   color: #2d6e4d;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 27px;
+  font-size: 14px;
   font-weight: 800;
   line-height: 1;
 }
 
+/* =========================
+   BOTTOM NAV
+========================= */
 .bottom-nav {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   padding: 8px 16px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(255, 255, 255, 0.96);
-  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  background: rgba(255,255,255,0.96);
+  border-top: 1px solid rgba(0,0,0,0.07);
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
   z-index: 15;
 }
 
+.bottom-nav button,
 .bottom-item {
   min-height: 32px;
   color: var(--link-blue);
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 1.1;
 }
+
+/* =========================
+   HEAD CHUNG SFS - STICKY
+========================= */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(180deg,#0b7f3b 0%, #005f37 100%);
+  padding:
+    calc(env(safe-area-inset-top) + 6px)
+    14px
+    8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.header-inner {
+  position: relative;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.back-btn {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 34px;
+  display: flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-main);
+  line-height: 1;
+  padding: 0;
+}
+
+.header-center,
+.header-text {
+  padding: 0 74px;
+  text-align: center;
+}
+
+.header .header-title {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.header-subtitle {
+  color: rgba(255,255,255,0.92);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.15;
+  margin-top: 2px;
+}
+
+/* =========================
+   COMMON FIXED PAGE HEADER
+========================= */
+
+.page-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 3000 !important;
+
+  background: linear-gradient(
+    180deg,
+    #0b7f3b 0%,
+    #005f37 100%
+  ) !important;
+
+  padding:
+    calc(env(safe-area-inset-top) + 4px)
+    14px
+    6px !important;
+
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+.page-header-inner {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 54px !important;
+  gap: 2px !important;
+}
+
+.page-width {
+  width: 95% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.page-back {
+  width: 100% !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  text-align: left !important;
+}
+
+.page-title-wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 40px !important;
+  gap: 2px !important;
+}
+
+.page-title {
+  color: #ffffff !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+}
+
+.page-subtitle {
+  color: rgba(255,255,255,0.88) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+}
+/* =========================
+   PAGE CONTENT OFFSET
+========================= */
+
+:root{
+  --fixed-head-h: 44px;
+  --fixed-tabs-h: 52px;
+}
+
+/* Màn không có tab */
+body:not(.has-tabs) .page,
+body.no-tabs .page,
+body.no-tabs .content,
+body.no-tabs main {
+  padding-top: calc(var(--fixed-head-h) + 10px) !important;
+}
+
+/* Màn có tab */
+body.has-tabs .page,
+body.has-tabs .content,
+body.has-tabs main {
+  padding-top: calc(var(--fixed-head-h) + var(--fixed-tabs-h) + 12px) !important;
+}
+
+/* =========================
+   FIXED TABS
+========================= */
+
+/*
+body.has-tabs .tabs,
+body.has-tabs .tab-row,
+body.has-tabs .tabs-row,
+body.has-tabs .event-tabs,
+body.has-tabs .schedule-tabs {
+  position: fixed !important;
+  top: var(--fixed-head-h) !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 2999 !important;
+
+  width: 95% !important;
+  margin: 0 auto !important;
+  padding: 8px 0 !important;
+
+  background: var(--page-bg) !important;
+
+  display: flex !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+
+  scrollbar-width: none !important;
+}
+*/
+
+body.has-tabs .tabs::-webkit-scrollbar,
+body.has-tabs .tab-row::-webkit-scrollbar,
+body.has-tabs .tabs-row::-webkit-scrollbar,
+body.has-tabs .event-tabs::-webkit-scrollbar,
+body.has-tabs .schedule-tabs::-webkit-scrollbar {
+  display: none !important;
+}
+/* =========================
+   TABLET / DESKTOP
+========================= */
 
 @media (min-width: 768px) {
   .app-shell {
     max-width: 860px;
     margin: 0 auto;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.03);
   }
 
   .header-row {
@@ -397,7 +659,7 @@ img {
     flex-basis: 72px;
   }
 
-  .header-title {
+  .app-header .header-title {
     font-size: 32px;
   }
 
@@ -406,7 +668,6 @@ img {
   }
 
   .tabs-row {
-    display: flex;
     align-items: center !important;
     gap: 12px;
     margin-top: 16px;
@@ -422,20 +683,13 @@ img {
     line-height: 1 !important;
   }
 
-  /* CHỈ SỬA PHẦN BANNER */
   .hero-grid {
-    grid-template-columns: minmax(0, 2.12fr) minmax(0, 1fr);
     gap: 14px;
   }
 
   .hero-side {
     gap: 14px;
   }
-
-  .card {
-    border-radius: 10px;
-  }
-  /* =================== */
 
   .medal-grid {
     grid-template-columns: 48px minmax(0, 1.7fr) 54px 54px 54px 54px 68px;
@@ -444,22 +698,254 @@ img {
 
   .medal-head {
     min-height: 56px;
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .medal-total,
   .medal-row {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .main-action {
-    min-height: 76px;
-    font-size: 15px;
+    min-height: 52px;
+    font-size: 14px;
+  }
+
+  .floating-left,
+  .floating-right {
+    display: none !important;
+  }
+
+  .bottom-nav button,
+  .bottom-item {
+    font-size: 14px;
+    font-weight: 400 !important;
   }
 }
 
+/* =========================
+   COMMON: PAGE HEADER + TABS
+   Dùng cho các màn có .top-fixed + .tabs + .content
+========================= */
 
-.floating-left,
-.floating-right {
-  display: none !important;
+body.fixed-tabs-page .top-fixed{
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 4000 !important;
+  background: var(--bg) !important;
+  padding-top: calc(var(--fixed-head-h) + 18px) !important;
+}
+
+body.fixed-tabs-page .content{
+  padding-top: 2px !important;
+}
+
+body.fixed-tabs-page .date{
+  margin-top: 6px !important;
+  margin-bottom: 8px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+body.fixed-tabs-page .schedule-card{
+  margin-top: 0 !important;
+}
+/* =========================
+   COMMON: FIXED BARS PAGE
+   Dùng cho màn có .fixed-bars + .summary-bar + .content-scroll
+========================= */
+
+body.fixed-bars-page .fixed-bars{
+  top: 0 !important;
+  z-index: 4000 !important;
+  background: var(--bg) !important;
+  padding-top: calc(var(--fixed-head-h) + 10px) !important;
+}
+
+body.fixed-bars-page .summary-bar{
+  margin-top: 0 !important;
+}
+/* =========================
+   COMMON COMPACT UI
+   Giảm chiều cao head, tab, dòng danh sách
+========================= */
+
+/* HEAD chung */
+.page-header-inner{
+  min-height: 48px !important;
+}
+
+.page-title-wrap{
+  min-height: 34px !important;
+  gap: 1px !important;
+}
+
+.page-title{
+  font-size: 16px !important;
+  line-height: 1.05 !important;
+}
+
+.page-subtitle{
+  font-size: 13px !important;
+  line-height: 1.05 !important;
+}
+
+/* TAB chung */
+.tabs,
+.tabs-row,
+.event-tabs,
+.schedule-tabs{
+  padding-top: 6px !important;
+  padding-bottom: 0px !important;
+}
+
+.tab,
+.tab-btn,
+.pill-tab{
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Thanh vàng summary */
+.summary-bar{
+  padding: 7px 14px !important;
+  font-size: 14px !important;
+  line-height: 1.1 !important;
+}
+
+/* Head bảng xanh */
+.sticky-table-head th{
+  height: 34px !important;
+  padding: 6px 5px !important;
+  font-size: 13px !important;
+}
+
+/* Dòng bảng danh sách */
+.body-table td{
+  height: 30px !important;
+  padding: 2px 5px !important;
+  font-size: 13px !important;
+}
+
+/* Card danh sách chung */
+.doc-card,
+.schedule-card{
+  min-height: 18px;
+}
+/* =========================
+   COMMON EVENT TABS
+========================= */
+
+body.fixed-bars-page .tabs-wrap{
+  background:#eef3fb !important;
+  padding:10px 18px 6px !important;
+  border-bottom:1px solid #d8dde5 !important;
+}
+
+body.fixed-bars-page .tabs{
+  width:100% !important;
+  margin:0 !important;
+
+  display:grid !important;
+  grid-template-columns:repeat(4, 1fr) !important;
+
+  gap:10px !important;
+  align-items:center !important;
+}
+
+body.fixed-bars-page .tab-btn{
+  height:32px !important;
+  min-height:32px !important;
+  padding:0 6px !important;
+
+  border-radius:11px !important;
+
+  font-size:13px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  white-space:nowrap !important;
+}
+
+body.fixed-bars-page .tab-btn.active{
+  background:#1f6a48 !important;
+  color:#ffffff !important;
+}
+
+/* =========================
+   COMMON EVENT COMPACT
+========================= */
+
+body.fixed-bars-page .summary-bar{
+  min-height:36px !important;
+  padding:6px 14px !important;
+
+  font-size:13px !important;
+  font-weight:700 !important;
+
+  display:flex !important;
+  align-items:center !important;
+}
+
+body.fixed-bars-page .sticky-table-head th{
+  height:34px !important;
+  padding:4px 6px !important;
+
+  font-size:12px !important;
+  line-height:1.05 !important;
+}
+
+body.fixed-bars-page .body-table td{
+  height:28px !important;
+  padding:2px 6px !important;
+
+  font-size:12px !important;
+  line-height:1.05 !important;
+}
+
+body.fixed-bars-page .team-card{
+  padding:6px 10px 4px !important;
+}
+
+body.fixed-bars-page .team-unit,
+body.fixed-bars-page .team-name,
+body.fixed-bars-page .team-total{
+  font-size:13px !important;
+  line-height:1.05 !important;
+}
+
+body.fixed-bars-page .athlete-line{
+  min-height:22px !important;
+}
+
+body.fixed-bars-page .athlete-order,
+body.fixed-bars-page .athlete-name{
+  font-size:12px !important;
+  line-height:1.05 !important;
+}
+/* =========================
+   PDF VIEWER PAGE
+========================= */
+
+body.pdf-viewer-page .page-back,
+body.pdf-viewer-page .page-back:link,
+body.pdf-viewer-page .page-back:visited{
+  color:#ffffff !important;
+  text-decoration:none !important;
+  font-size:14px !important;
+  font-weight:600 !important;
+  line-height:1 !important;
+}
+
+body.pdf-viewer-page .viewer-wrap{
+  top:calc(var(--fixed-head-h) + env(safe-area-inset-top) + 34px) !important;
 }

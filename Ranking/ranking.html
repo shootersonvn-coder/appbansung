@@ -1,0 +1,495 @@
+<!-- Ranking/ranking.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+<title>Ranking VĐV</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --card:#ffffff;
+  --green:#005f37;
+  --blue:#294b96;
+  --red:#d72d2d;
+  --line:#d8dde5;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  color:#111827;
+  font-size:14px;
+}
+
+.page{
+  padding:50px 0 30px;
+}
+
+.tabs{
+  position:sticky;
+  top:60px;
+  z-index:50;
+  width:95%;
+  margin:0 auto 6px;
+  display:flex;
+  gap:6px;
+  padding:2px 2px;
+  background:var(--bg);
+}
+
+.tabs::-webkit-scrollbar{
+  display:none;
+}
+
+.tab{
+  flex:1;
+  min-width:0;
+  height:38px;
+  border:none;
+  border-radius:14px;
+  background:#e7edf6;
+  color:#4b7fe2;
+  font-size:14px;
+  font-weight:800;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  white-space:nowrap;
+  padding:0 4px;
+}
+
+.tab.active{
+  background:#2f6f45;
+  color:#fff;
+}
+
+.loading{
+  padding:40px 16px;
+  text-align:center;
+  color:var(--blue);
+  font-size:14px;
+  font-weight:800;
+}
+
+.event-list{
+  width:95%;
+  margin:0 auto;
+  padding-top:10px;/*đảy cao thấp toàn bộ các card*/
+  display:grid;
+  gap:8px;
+}
+
+.event-card{
+  width:100%;
+  border:none;
+  background:var(--card);
+  border-radius:18px;
+  padding:10px 14px;
+  text-align:left;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  font-family:"Roboto Condensed",Arial,sans-serif;
+}
+
+.event-title{
+  font-size:14px;
+  font-weight:800;
+  line-height:1.2;
+  color:#111827;
+}
+
+.event-meta{
+  margin-top:10px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:70px;
+  height:28px;
+  padding:0 12px;
+  border-radius:999px;
+  background:#eef3fb;
+  color:var(--blue);
+  font-size:14px;
+  font-weight:800;
+}
+</style>
+</head>
+
+<body class="ranking-page">
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <button class="page-back page-back-button" onclick="history.back()">
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div class="page-title">
+        Ranking VĐV
+      </div>
+      <div class="page-subtitle">
+        Xếp hạng theo nội dung
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="tabs">
+    <button class="tab active" onclick="selectTab('all',this)">Tất cả</button>
+    <button class="tab" onclick="selectTab('truong',this)">S.trường</button>
+    <button class="tab" onclick="selectTab('ngan',this)">S.ngắn</button>
+    <button class="tab" onclick="selectTab('didong',this)">D.động</button>
+    <button class="tab" onclick="selectTab('diabay',this)">Đ.bay</button>
+  </div>
+
+  <div id="loading" class="loading">
+    Hãy đợi một lát
+  </div>
+
+  <div id="eventList" class="event-list"></div>
+
+</div>
+
+<script>
+const SHEET_ID = "1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+const SHEET_GID = "1558133737";
+
+const CSV_URL =
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+
+const COL_TIME = 4;
+const COL_EVENT = 5;
+const COL_ID = 10;
+const COL_UNIT = 14;
+const COL_TOTAL = 32;
+
+const VN_UNITS = [
+  "HAN","HAP","QUD","HCM","DON","THH","QNI",
+  "CAD","DAL","PHT","DNA","TTH"
+];
+
+let allEvents = [];
+let currentFilter = "all";
+
+function splitCSVRow(row){
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for(let i=0;i<row.length;i++){
+    const char = row[i];
+    const next = row[i+1];
+
+    if(char === '"'){
+      if(insideQuotes && next === '"'){
+        current += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+    }else if(char === "," && !insideQuotes){
+      result.push(current.trim());
+      current = "";
+    }else{
+      current += char;
+    }
+  }
+
+  result.push(current.trim());
+  return result;
+}
+
+function clean(v){
+  return String(v || "").trim();
+}
+
+function norm(s){
+  return clean(s)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d")
+    .replace(/Đ/g,"D")
+    .toLowerCase()
+    .replace(/\s+/g," ");
+}
+
+function baseEventName(s){
+  let raw = clean(s).normalize("NFC");
+  let t = norm(raw);
+
+  const finalKeys = [
+    " - c.ket",
+    "- c.ket",
+    " - chung ket",
+    "- chung ket"
+  ];
+
+  for(const k of finalKeys){
+    const idx = t.indexOf(k);
+    if(idx >= 0){
+      raw = raw.slice(0, idx).trim();
+      break;
+    }
+  }
+
+  raw = raw
+    .split(/\s+/)
+    .filter(word => {
+      const w = norm(word);
+
+      if(w === "tre") return false;
+      if(w === "16") return false;
+      if(w === "18") return false;
+      if(w === "21") return false;
+
+      return true;
+    })
+    .join(" ")
+    .replace(/\s+/g," ")
+    .trim();
+
+  return raw;
+}
+
+function isExcludedEvent(title){
+  const t = norm(title);
+
+  return t.includes("dong doi") ||
+    t.includes("pho thong") ||
+    t.includes("mac") ||
+    t.includes("tra") ||
+    t.includes("1/2") ||
+    t.includes("2/2") ||
+    t.includes("1/3") ||
+    t.includes("2/3") ||
+    t.includes("3/3") ||
+    t.includes("ngay") ||
+    t.includes("btc");
+}
+
+function parseDate(text){
+  const m = clean(text).match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+  if(!m) return null;
+
+  const dd = m[1].padStart(2,"0");
+  const mm = m[2].padStart(2,"0");
+  const yyyy = m[3];
+
+  return new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+}
+
+function formatDateVN(date){
+  if(!date) return "";
+
+  const dd = String(date.getDate()).padStart(2,"0");
+  const mm = String(date.getMonth() + 1).padStart(2,"0");
+  const yyyy = date.getFullYear();
+
+  return `${dd}.${mm}.${yyyy}`;
+}
+
+function parseScore(v){
+  const s = clean(v).replace(",", ".");
+  const n = parseFloat(s);
+  return Number.isFinite(n) ? n : null;
+}
+
+function isValidRankingRow(r){
+  const id = clean(r[COL_ID]);
+  if(!id) return false;
+
+  const unit = clean(r[COL_UNIT]);
+  if(!VN_UNITS.includes(unit)) return false;
+
+  const score = parseScore(r[COL_TOTAL]);
+  if(score == null || score <= 0) return false;
+
+  return true;
+}
+
+function countAthletesForEvent(rows, title, latestDate){
+  const fromDate = new Date(latestDate);
+  fromDate.setMonth(fromDate.getMonth() - 12);
+
+  const ids = new Set();
+
+  rows.slice(1).forEach(r => {
+    const rowTitle = baseEventName(r[COL_EVENT]);
+
+    if(norm(rowTitle) !== norm(title)) return;
+
+    const d = parseDate(r[COL_TIME]);
+    if(!d) return;
+
+    if(d < fromDate || d > latestDate) return;
+
+    if(!isValidRankingRow(r)) return;
+
+    ids.add(clean(r[COL_ID]));
+  });
+
+  return ids.size;
+}
+
+function groupOf(title){
+  const t = norm(title);
+
+  if(t.includes("dia bay")) return "diabay";
+  if(t.includes("di dong")) return "didong";
+  if(t.includes("sung truong") && !t.includes("di dong")) return "truong";
+  if(t.includes("sung ngan")) return "ngan";
+
+  return "";
+}
+
+async function loadRankingEvents(){
+  try{
+    const res = await fetch(CSV_URL + "&t=" + Date.now());
+
+    const text = await res.text();
+
+    const rows = text
+      .replace(/^\uFEFF/, "")
+      .split(/\r?\n/)
+      .filter(r => r.trim())
+      .map(splitCSVRow);
+
+    const map = new Map();
+
+    rows.slice(1).forEach(r => {
+      const eventRaw = clean(r[COL_EVENT]);
+      const eventTitle = baseEventName(eventRaw);
+
+      if(!eventTitle) return;
+      if(isExcludedEvent(eventTitle)) return;
+
+      const d = parseDate(r[COL_TIME]);
+      if(!d) return;
+
+      if(!isValidRankingRow(r)) return;
+
+      const key = norm(eventTitle);
+
+      if(!map.has(key)){
+        map.set(key,{
+          title:eventTitle,
+          latestDate:d
+        });
+      }
+
+      const item = map.get(key);
+
+      if(d > item.latestDate){
+        item.latestDate = d;
+      }
+    });
+
+    allEvents = Array.from(map.values())
+      .map(item => ({
+        title:item.title,
+        latestDate:item.latestDate,
+        athleteCount:countAthletesForEvent(rows, item.title, item.latestDate)
+      }))
+      .filter(item => item.athleteCount > 0)
+      .sort((a,b) =>
+        a.title.localeCompare(b.title,"vi",{numeric:true})
+      );
+
+    document.getElementById("loading").style.display = "none";
+    renderEvents();
+
+  }catch(err){
+    console.error(err);
+    document.getElementById("loading").innerText =
+      "Không tải được dữ liệu ranking: " + err.message;
+  }
+}
+
+function renderEvents(){
+  const list = document.getElementById("eventList");
+
+  let filtered = allEvents;
+
+  if(currentFilter !== "all"){
+    filtered = allEvents.filter(item =>
+      groupOf(item.title) === currentFilter
+    );
+  }
+
+  if(!filtered.length){
+    list.innerHTML = `
+      <div class="loading">
+        Không có nội dung phù hợp
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = filtered.map(item => `
+    <button class="event-card"
+      onclick="openDetail(
+        '${encodeURIComponent(item.title)}',
+        '${formatDateVN(item.latestDate)}'
+      )">
+
+      <div class="event-title">
+        ${item.title}
+      </div>
+
+      <div class="event-meta">
+        <span class="badge">
+          ${item.athleteCount} VĐV
+        </span>
+      </div>
+
+    </button>
+  `).join("");
+}
+
+function openDetail(encodedTitle, latestDate){
+  window.location.href =
+    "ranking-detail.html"
+    + "?event=" + encodedTitle
+    + "&date=" + encodeURIComponent(latestDate);
+}
+
+function selectTab(type, el){
+  currentFilter = type;
+
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  el.classList.add("active");
+
+  renderEvents();
+}
+
+loadRankingEvents();
+</script>
+
+</body>
+</html>

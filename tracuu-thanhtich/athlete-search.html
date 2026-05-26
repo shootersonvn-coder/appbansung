@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+<title>Tra cứu thành tích</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --card:#ffffff;
+  --green:#005f37;
+  --blue:#294b96;
+  --line:#d8dde5;
+  --header-h:172px;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  color:#111827;
+  font-size:14px;
+}
+
+/* PAGE */
+
+/* SEARCH */
+.search-wrap{
+  position:relative;
+  top:auto;
+  z-index:2500;
+
+  width:100%;
+  margin:0;
+
+  display:grid;
+  gap:8px;
+
+  padding:0 0 8px;
+  background:var(--bg);
+  border-bottom:1px solid rgba(0,0,0,.05);
+}
+
+.search-card{
+  position:relative;
+  width:95%;
+  margin:0 auto;
+  padding:0;
+}
+
+.field-label{
+  display:none;
+}
+
+.search-input{
+  width:100%;
+  height:34px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:0 12px;
+  background:#fff;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:14px;
+  color:#111827;
+  outline:none;
+}
+
+.search-input:focus{
+  border-color:#2f6f45;
+}
+
+/* SUGGEST */
+.suggest-list{
+  position:absolute;
+  left:0;
+  right:0;
+  top:38px;
+  z-index:3100;
+
+  display:none;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+
+  max-height:260px;
+  overflow-y:auto;
+}
+
+.suggest-item{
+  min-height:32px;
+  border:none;
+  background:#fff;
+  color:var(--blue);
+  text-align:left;
+  padding:6px 12px;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:14px;
+  font-weight:700;
+}
+
+/* RESULT */
+.result-wrap{
+  width:95%;
+  margin:8px auto 0;
+  display:grid;
+  gap:8px;
+}
+
+.result-card{
+  background:#fff;
+  border-radius:18px;
+  padding:12px 14px;
+  min-height:76px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+.result-name{
+  font-size:14px;
+  font-weight:800;
+  color:var(--blue);
+  line-height:1.25;
+}
+
+.result-sub{
+  margin-top:5px;
+  font-size:14px;
+  font-weight:600;
+  color:#666;
+  line-height:1.3;
+}
+
+.empty{
+  width:95%;
+  margin:8px auto 0;
+  background:#fff;
+  border-radius:18px;
+  padding:40px 14px;
+  text-align:center;
+  color:var(--blue);
+  font-size:14px;
+  font-weight:700;
+}
+body.search-page .page{
+  padding-top:72px !important;
+}
+
+body.search-page .search-wrap{
+  top:auto !important;
+}
+</style>
+</head>
+
+<body class="no-tabs search-page">
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <button class="page-back page-back-button"
+            onclick="history.back()">
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div class="page-title">Tra cứu thành tích</div>
+      <div class="page-subtitle">Tìm kiếm VĐV</div>
+    </div>
+
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="search-wrap">
+
+    <div class="search-card">
+      <input
+        id="unitInput"
+        class="search-input"
+        type="text"
+        placeholder="Chọn đơn vị"
+        autocomplete="off"
+      >
+      <div id="unitSuggest" class="suggest-list"></div>
+    </div>
+
+    <div class="search-card">
+      <input
+        id="hoInput"
+        class="search-input"
+        type="text"
+        placeholder="Nhập họ đệm"
+        autocomplete="off"
+      >
+      <div id="hoSuggest" class="suggest-list"></div>
+    </div>
+
+    <div class="search-card">
+      <input
+        id="tenInput"
+        class="search-input"
+        type="text"
+        placeholder="Nhập tên"
+        autocomplete="off"
+      >
+      <div id="tenSuggest" class="suggest-list"></div>
+    </div>
+
+    <div class="search-card">
+      <input
+        id="idInput"
+        class="search-input"
+        type="text"
+        placeholder="ID sẽ hiện tự động"
+        autocomplete="off"
+      >
+      <div id="idSuggest" class="suggest-list"></div>
+    </div>
+
+  </div>
+
+  <div id="resultWrap" class="result-wrap"></div>
+
+  <div id="empty" class="empty">
+    Hãy đợi một lát . . .
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID = "1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+const SHEET_GID = "1558133737";
+
+const CSV_URL =
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+
+const COL_ID = 10;
+const COL_HO = 11;
+const COL_TEN = 12;
+const COL_UNIT = 14;
+
+let athletes = [];
+
+const UNIT_NAMES = {
+  CAD: "Công an nhân dân",
+  HAD: "Hải Dương",
+  HAN: "Hà Nội",
+  HAP: "Hải Phòng",
+  HAT: "Hà Tĩnh",
+  HCM: "TP. Hồ Chí Minh",
+  QUD: "Quân đội",
+  QNI: "Quảng Ninh",
+  QNA: "Quảng Nam",
+  THH: "Thanh Hoá",
+  PHT: "Phú Thọ",
+  VIP: "Vĩnh Phúc"
+};
+
+const unitInput = document.getElementById("unitInput");
+const hoInput = document.getElementById("hoInput");
+const tenInput = document.getElementById("tenInput");
+const idInput = document.getElementById("idInput");
+
+const unitSuggest = document.getElementById("unitSuggest");
+const hoSuggest = document.getElementById("hoSuggest");
+const tenSuggest = document.getElementById("tenSuggest");
+const idSuggest = document.getElementById("idSuggest");
+
+const resultWrap = document.getElementById("resultWrap");
+const empty = document.getElementById("empty");
+
+function splitCSVRow(row){
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for(let i = 0; i < row.length; i++){
+    const char = row[i];
+    const next = row[i + 1];
+
+    if(char === '"'){
+      if(insideQuotes && next === '"'){
+        current += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+    }else if(char === "," && !insideQuotes){
+      result.push(current.trim());
+      current = "";
+    }else{
+      current += char;
+    }
+  }
+
+  result.push(current.trim());
+  return result;
+}
+
+function clean(v){
+  return String(v || "").trim();
+}
+
+function norm(s){
+  return clean(s)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d")
+    .replace(/Đ/g,"D")
+    .toLowerCase();
+}
+
+function unitFullName(code){
+  const c = clean(code).toUpperCase();
+  return UNIT_NAMES[c] || code;
+}
+
+function hideSuggest(el){
+  el.innerHTML = "";
+  el.style.display = "none";
+}
+
+function hideAllSuggest(){
+  hideSuggest(unitSuggest);
+  hideSuggest(hoSuggest);
+  hideSuggest(tenSuggest);
+  hideSuggest(idSuggest);
+}
+
+function renderSuggest(el, items, onClick){
+  if(!items.length){
+    hideSuggest(el);
+    return;
+  }
+
+  el.innerHTML = items.map(item => `
+    <button class="suggest-item" type="button" data-value="${String(item).replace(/"/g,"&quot;")}">
+      ${item}
+    </button>
+  `).join("");
+
+  el.style.display = "grid";
+
+  [...el.querySelectorAll(".suggest-item")].forEach(btn => {
+    btn.onclick = () => onClick(btn.dataset.value || "");
+  });
+}
+
+function uniqueSorted(items){
+  return [...new Set(items.filter(Boolean))]
+    .sort((a,b) => a.localeCompare(b,"vi",{numeric:true}));
+}
+
+async function loadAthletes(){
+  try{
+    const res = await fetch(CSV_URL + "&t=" + Date.now(), {
+      cache:"no-store"
+    });
+
+    const text = await res.text();
+
+    const rows = text
+      .replace(/^\uFEFF/, "")
+      .split(/\r?\n/)
+      .filter(r => r.trim())
+      .map(splitCSVRow);
+
+    const map = new Map();
+
+    rows.slice(1).forEach(r => {
+      const id = clean(r[COL_ID]);
+      const ho = clean(r[COL_HO]);
+      const ten = clean(r[COL_TEN]);
+      const unit = clean(r[COL_UNIT]);
+
+      if(!id || !ho || !ten || !unit) return;
+
+      if(!map.has(id)){
+        map.set(id,{ id, ho, ten, unit });
+      }
+    });
+
+    athletes = Array.from(map.values())
+      .sort((a,b) =>
+        (a.unit + a.ho + a.ten).localeCompare(
+          b.unit + b.ho + b.ten,
+          "vi",
+          {numeric:true}
+        )
+      );
+
+    empty.innerText =
+      "Đã tải " + athletes.length + " VĐV. Bắt đầu tra cứu.";
+
+  }catch(err){
+    empty.innerText =
+      "Không tải được dữ liệu VĐV: " + err.message;
+  }
+}
+
+loadAthletes();
+
+function getFilteredRows(){
+  const unit = norm(unitInput.value);
+  const ho = norm(hoInput.value);
+  const ten = norm(tenInput.value);
+  const id = norm(idInput.value);
+
+  return athletes.filter(a => {
+    if(unit){
+  const code = clean(a.unit).toUpperCase();
+  const full = unitFullName(code);
+
+  if(
+    !UNIT_NAMES[code] ||
+    (!norm(code).includes(unit) && !norm(full).includes(unit))
+  ){
+    return false;
+  }
+}
+
+    if(ho && !norm(a.ho).includes(ho)) return false;
+    if(ten && !norm(a.ten).includes(ten)) return false;
+    if(id && !norm(a.id).includes(id)) return false;
+
+    return true;
+  });
+}
+
+function updateAutoId(rows){
+  if(rows.length === 1){
+    idInput.value = rows[0].id;
+  }else if(!norm(idInput.value)){
+    idInput.value = "";
+  }
+}
+
+function filterData(){
+  const rows = getFilteredRows();
+
+  if(norm(unitInput.value) || norm(hoInput.value) || norm(tenInput.value)){
+    updateAutoId(rows);
+  }
+
+  renderResult(rows);
+}
+
+function renderResult(rows){
+  if(!rows.length){
+    resultWrap.innerHTML = "";
+    empty.style.display = "block";
+    empty.innerText = "Không tìm thấy VĐV phù hợp";
+    return;
+  }
+
+  empty.style.display = "none";
+
+  resultWrap.innerHTML =
+    rows.map(r => {
+      const fullName = `${r.ho} ${r.ten}`.trim();
+
+      return `
+        <div class="result-card"
+             onclick="openAthleteEvents(
+               '${encodeURIComponent(r.id)}',
+               '${encodeURIComponent(fullName)}'
+             )">
+
+          <div class="result-name">
+            ${fullName}
+          </div>
+
+          <div class="result-sub">
+            ${unitFullName(r.unit)} · ${r.unit} · ${r.id}
+          </div>
+
+        </div>
+      `;
+    }).join("");
+}
+
+function showUnitSuggest(){
+  const keyword = norm(unitInput.value);
+
+  const validCodes = Object.keys(UNIT_NAMES);
+
+  const items = uniqueSorted(
+    validCodes
+      .map(code => unitFullName(code))
+      .filter(name => !keyword || norm(name).includes(keyword))
+  );
+
+  renderSuggest(unitSuggest, items, value => {
+    unitInput.value = value;
+    hoInput.value = "";
+    tenInput.value = "";
+    idInput.value = "";
+
+    hideAllSuggest();
+    filterData();
+  });
+}
+
+function showHoSuggest(){
+  const unit = norm(unitInput.value);
+  const keyword = norm(hoInput.value);
+
+  const items = uniqueSorted(
+    athletes
+      .filter(a =>
+        !unit ||
+        norm(a.unit).includes(unit) ||
+        norm(unitFullName(a.unit)).includes(unit)
+      )
+      .map(a => a.ho)
+      .filter(v => !keyword || norm(v).includes(keyword))
+  );
+
+  renderSuggest(hoSuggest, items, value => {
+    hoInput.value = value;
+    tenInput.value = "";
+    idInput.value = "";
+
+    hideAllSuggest();
+    filterData();
+  });
+}
+
+function showTenSuggest(){
+  const unit = norm(unitInput.value);
+  const ho = norm(hoInput.value);
+  const keyword = norm(tenInput.value);
+
+  const items = uniqueSorted(
+    athletes
+      .filter(a =>
+        (!unit ||
+          norm(a.unit).includes(unit) ||
+          norm(unitFullName(a.unit)).includes(unit)) &&
+        (!ho || norm(a.ho).includes(ho))
+      )
+      .map(a => a.ten)
+      .filter(v => !keyword || norm(v).includes(keyword))
+  );
+
+  renderSuggest(tenSuggest, items, value => {
+    tenInput.value = value;
+    hideAllSuggest();
+    filterData();
+  });
+}
+
+function showIdSuggest(){
+  const keyword = norm(idInput.value);
+
+  const items = uniqueSorted(
+    athletes
+      .filter(a => !keyword || norm(a.id).includes(keyword))
+      .map(a => a.id)
+  );
+
+  renderSuggest(idSuggest, items, value => {
+    idInput.value = value;
+    hideAllSuggest();
+    filterData();
+  });
+}
+
+/* ĐƠN VỊ */
+unitInput.addEventListener("focus", () => {
+  hideAllSuggest();
+  showUnitSuggest();
+});
+
+unitInput.addEventListener("click", () => {
+  hideAllSuggest();
+  showUnitSuggest();
+});
+
+unitInput.addEventListener("input", () => {
+  showUnitSuggest();
+  filterData();
+});
+
+/* HỌ ĐỆM */
+hoInput.addEventListener("focus", () => {
+  hideAllSuggest();
+  showHoSuggest();
+});
+
+hoInput.addEventListener("click", () => {
+  hideAllSuggest();
+  showHoSuggest();
+});
+
+hoInput.addEventListener("input", () => {
+  showHoSuggest();
+  filterData();
+});
+
+/* TÊN */
+tenInput.addEventListener("focus", () => {
+  hideAllSuggest();
+  showTenSuggest();
+});
+
+tenInput.addEventListener("click", () => {
+  hideAllSuggest();
+  showTenSuggest();
+});
+
+tenInput.addEventListener("input", () => {
+  showTenSuggest();
+  filterData();
+});
+
+/* ID */
+idInput.addEventListener("focus", () => {
+  hideAllSuggest();
+  showIdSuggest();
+});
+
+idInput.addEventListener("click", () => {
+  hideAllSuggest();
+  showIdSuggest();
+});
+
+idInput.addEventListener("input", () => {
+  showIdSuggest();
+  filterData();
+});
+
+document.addEventListener("click", e => {
+  if(!e.target.closest(".search-card")){
+    hideAllSuggest();
+  }
+});
+
+function openAthleteEvents(id,name){
+  window.location.href =
+    "athlete-events.html"
+    + "?id=" + id
+    + "&name=" + name;
+}
+</script>
+
+</body>
+</html>

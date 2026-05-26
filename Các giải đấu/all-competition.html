@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>All Competition</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+:root{
+  --bg:#eef3fb;
+  --card:#ffffff;
+
+  --red:#ef4b4b;
+  --purple:#c63fe0;
+  --blue:#2d84ea;
+  --black:#111111;
+
+  --time:#8e8e93;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  font-family:"Roboto Condensed",-apple-system,BlinkMacSystemFont,sans-serif;
+  color:#111;
+  font-size:14px;
+}
+
+/* CHỈ STYLE RIÊNG PHẦN NỘI DUNG */
+.content{
+  width:100%;
+  padding:75px 26px 40px;
+}
+
+.month-title{
+  padding:10px 0 8px;
+  font-size:14px;
+  font-weight:800;
+  color:#000;
+}
+
+.schedule-card{
+  width:100%;
+  margin:0 auto 8px;
+  background:var(--card);
+  border-radius:18px;
+  padding:10px 14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  border:1px solid rgba(0,0,0,.04);
+  cursor:pointer;
+}
+
+.card-time{
+  color:var(--time);
+  font-size:14px;
+  line-height:1.2;
+}
+
+.card-title{
+  margin-top:8px;
+  font-size:14px;
+  font-weight:700;
+  line-height:1.2;
+}
+
+.loading{
+  padding:40px 20px;
+  text-align:center;
+  color:#666;
+}
+
+.page-back-button{
+  border:none;
+  background:transparent;
+  padding:0;
+  font-family:inherit;
+}
+
+/* COLOR RULES */
+.color-red{color:var(--red);}
+.color-purple{color:var(--purple);}
+.color-blue{color:var(--blue);}
+.color-black{color:var(--black);}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+
+    <button class="page-back page-back-button" onclick="history.back()">
+      ← Quay lại
+    </button>
+
+    <div class="page-title-wrap">
+      <div class="page-title">Giải đấu</div>
+      <div class="page-subtitle" id="name"></div>
+    </div>
+
+  </div>
+</header>
+
+<div class="content" id="schedule">
+  <div class="loading">Đang tải...</div>
+</div>
+
+<script>
+const url =
+"https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=1558133737";
+
+const params =
+  new URLSearchParams(window.location.search);
+
+const selectedYear =
+  (params.get("year") || "").trim();
+
+function trim(s){
+  return (s || "").trim();
+}
+
+function splitCSVRow(row){
+  const result = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for(let i=0;i<row.length;i++){
+    const char = row[i];
+    const next = row[i+1];
+
+    if(char === '"'){
+      if(insideQuotes && next === '"'){
+        current += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+    }
+    else if(char === "," && !insideQuotes){
+      result.push(current);
+      current = "";
+    }
+    else{
+      current += char;
+    }
+  }
+
+  result.push(current);
+  return result.map(v => v.trim());
+}
+
+function getStartDateValue(dateText){
+  const m =
+    String(dateText || "")
+      .match(/(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?/);
+
+  if(!m) return 99999999;
+
+  const dd = m[1].padStart(2,"0");
+  const mm = m[2].padStart(2,"0");
+  const yy = m[3] || selectedYear || "9999";
+
+  return Number(yy + mm + dd);
+}
+
+function getMonth(dateText){
+  const m =
+    String(dateText || "")
+      .match(/(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?/);
+
+  if(!m) return "00";
+
+  return m[2].padStart(2,"0");
+}
+
+function getColorClass(name){
+  const lower =
+    String(name || "")
+      .toLowerCase();
+
+  if(lower.includes("hải phòng")){
+    return "color-purple";
+  }
+
+  if(lower.includes("học")){
+    return "color-black";
+  }
+
+  if(name.includes("-")){
+    return "color-red";
+  }
+
+  return "color-blue";
+}
+
+function buildItems(rows){
+  const grouped = {};
+
+  for(let i=1;i<rows.length;i++){
+    const r = rows[i] || [];
+
+    const year = trim(r[0]);
+
+    if(year !== selectedYear) continue;
+
+    const dateRange = trim(r[1]);
+    const location = trim(r[2]);
+    const competition = trim(r[3]);
+    const content = trim(r[5]);
+
+    if(!competition || !content) continue;
+
+    const month = getMonth(dateRange);
+
+    if(!grouped[month]){
+      grouped[month] = [];
+    }
+
+    const existing =
+      grouped[month].find(
+        x => x.competition === competition
+      );
+
+    if(existing){
+      existing.count++;
+      continue;
+    }
+
+    grouped[month].push({
+      year,
+      dateRange,
+      location,
+      competition,
+      count:1,
+      sort:getStartDateValue(dateRange)
+    });
+  }
+
+  return grouped;
+}
+
+function openCompetition(item){
+  window.location.href =
+    "all-event.html"
+    + "?year="
+    + encodeURIComponent(item.year)
+    + "&competition="
+    + encodeURIComponent(item.competition);
+}
+
+function render(grouped){
+  const container =
+    document.getElementById("schedule");
+
+  container.innerHTML = "";
+
+  const months =
+    Object.keys(grouped)
+      .sort();
+
+  if(!months.length){
+    container.innerHTML =
+      `<div class="loading">Không có dữ liệu</div>`;
+    return;
+  }
+
+  months.forEach(month => {
+    const monthTitle =
+      document.createElement("div");
+
+    monthTitle.className = "month-title";
+    monthTitle.innerText = "Tháng " + month;
+
+    container.appendChild(monthTitle);
+
+    grouped[month].sort((a,b)=>a.sort - b.sort);
+
+    grouped[month].forEach(item => {
+      const card =
+        document.createElement("div");
+
+      card.className = "schedule-card";
+
+      const colorClass =
+        getColorClass(item.competition);
+
+      card.innerHTML = `
+        <div class="card-time">
+          ${item.dateRange || ""}
+          ${item.location ? " • " + item.location : ""}
+        </div>
+
+        <div class="card-title ${colorClass}">
+          ${item.competition}
+        </div>
+      `;
+
+      card.onclick = function(){
+        openCompetition(item);
+      };
+
+      container.appendChild(card);
+    });
+  });
+}
+
+async function load(){
+  const res = await fetch(
+    url + "&t=" + Date.now(),
+    {cache:"no-store"}
+  );
+
+  const text = await res.text();
+
+  const rows =
+    text
+      .split(/\r?\n/)
+      .filter(r => r.trim())
+      .map(r => splitCSVRow(r));
+
+  const grouped =
+    buildItems(rows);
+
+  document.getElementById("name").innerText =
+    "Lịch đấu " + selectedYear;
+
+  render(grouped);
+}
+
+load();
+</script>
+
+</body>
+</html>
