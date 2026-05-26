@@ -86,30 +86,41 @@ td:nth-child(11){
       <th>Ghi chú</th>
     </tr>
   </thead>
+
   <tbody id="body"></tbody>
 </table>
 </div>
 
 <script>
 const ISSF_URL = "https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30";
-const PROXY = "/api/issf?url=" + encodeURIComponent(ISSF_URL);
+
+const PROXY =
+  "/api/issf?url=" + encodeURIComponent(ISSF_URL);
 
 async function loadISSF(){
-  const html = await fetch(PROXY).then(r => r.text());
-  const doc = new DOMParser().parseFromString(html, "text/html");
+
+  const html =
+    await fetch(PROXY).then(r => r.text());
+
+  const doc =
+    new DOMParser().parseFromString(html, "text/html");
 
   document.getElementById("title").textContent =
-    doc.body.innerText.match(/10m Air Rifle Men[\s\S]*?Qualification/)?.[0]
-      .replace(/\s+/g, " - ")
-      || "ISSF Result";
+    "10m Air Rifle Men - Qualification";
 
   const rows = [];
 
   const table = doc.querySelector("table");
-  const trs = table ? [...table.querySelectorAll("tr")] : [];
+
+  const trs =
+    table
+      ? [...table.querySelectorAll("tr")]
+      : [];
 
   trs.forEach(tr => {
-    const tds = [...tr.querySelectorAll("td")];
+
+    const tds =
+      [...tr.querySelectorAll("td")];
 
     if(tds.length < 11) return;
 
@@ -127,24 +138,27 @@ async function loadISSF(){
       total: tds[10]?.innerText.trim() || "",
       note: tds[11]?.innerText.trim() || ""
     });
+
   });
 
-  document.getElementById("body").innerHTML = rows.map(r => `
-    <tr>
-      <td>${r.rank}</td>
-      <td>${r.bib}</td>
-      <td>${r.name}</td>
-      <td>${r.noc}</td>
-      <td>${r.s1}</td>
-      <td>${r.s2}</td>
-      <td>${r.s3}</td>
-      <td>${r.s4}</td>
-      <td>${r.s5}</td>
-      <td>${r.s6}</td>
-      <td>${r.total}</td>
-      <td>${r.note}</td>
-    </tr>
-  `).join("");
+  document.getElementById("body").innerHTML =
+    rows.map(r => `
+      <tr>
+        <td>${r.rank}</td>
+        <td>${r.bib}</td>
+        <td>${r.name}</td>
+        <td>${r.noc}</td>
+        <td>${r.s1}</td>
+        <td>${r.s2}</td>
+        <td>${r.s3}</td>
+        <td>${r.s4}</td>
+        <td>${r.s5}</td>
+        <td>${r.s6}</td>
+        <td>${r.total}</td>
+        <td>${r.note}</td>
+      </tr>
+    `).join("");
+
 }
 
 loadISSF();
