@@ -128,7 +128,10 @@ const params = new URLSearchParams(location.search);
 
 const ISSF_URL =
   params.get("url") ||
-  "https://www.issf-sports.org/competitions/3284/results/3b3b303b41504d3b313b513b493b313b303b30";
+  "https://www.issf-sports.org/competitions/3284/results/3b3b303b41524d3b313b513b493b313b303b30";
+
+const WANTED_TITLE =
+  params.get("title") || "";
 
 const PROXY =
   "/api/issf?url=" + encodeURIComponent(ISSF_URL);
@@ -142,16 +145,28 @@ async function loadISSF(){
     new DOMParser().parseFromString(html, "text/html");
 
   document.getElementById("title").textContent =
-    "10m Air Rifle Men - Qualification";
+  WANTED_TITLE || "ISSF Result";
 
   const rows = [];
 
   const tables = [...doc.querySelectorAll("table")];
 
-const table = tables.find(t =>
-  t.innerText.includes("Rank") &&
-  t.innerText.includes("Total")
-);
+let table = null;
+
+if (WANTED_TITLE) {
+  table = tables.find(t =>
+    t.innerText.includes(WANTED_TITLE) &&
+    t.innerText.includes("Rank") &&
+    t.innerText.includes("Total")
+  );
+}
+
+if (!table) {
+  table = tables.find(t =>
+    t.innerText.includes("Rank") &&
+    t.innerText.includes("Total")
+  );
+}
 
   const trs =
     table
