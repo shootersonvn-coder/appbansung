@@ -45,24 +45,44 @@ async function loadISSF(){
 
   const rows = [];
 
-  for(const line of lines){
-    const m = line.match(/^(\d+)\s+(\d+)\s+(.+?)\s+([A-Z]{3})\s+(\d+\.\d)\s+(\d+\.\d)\s+(\d+\.\d)\s+(\d+\.\d)\s+(\d+\.\d)\s+(\d+\.\d)\s+(\d+\.\d)(?:\s+(.*))?$/);
-    if(!m) continue;
+for(let i = 0; i < lines.length; i++){
 
-    rows.push({
-      rank:m[1],
-      bib:m[2],
-      name:m[3],
-      noc:m[4],
-      s1:m[5],
-      s2:m[6],
-      s3:m[7],
-      s4:m[8],
-      s5:m[9],
-      s6:m[10],
-      total:m[11],
-      note:m[12] || ""
-    });
+  const line = lines[i];
+
+  if(!/^\d+\s+\d+/.test(line)) continue;
+
+  const parts = line.split(/\s+/);
+
+  if(parts.length < 12) continue;
+
+  const rank = parts[0];
+  const bib  = parts[1];
+
+  const nocIndex = parts.findIndex(x => /^[A-Z]{3}$/.test(x));
+  if(nocIndex < 0) continue;
+
+  const name = parts.slice(2, nocIndex).join(" ");
+  const noc  = parts[nocIndex];
+
+  const scores = parts.slice(nocIndex + 1);
+
+  rows.push({
+    rank,
+    bib,
+    name,
+    noc,
+    s1:scores[0] || "",
+    s2:scores[1] || "",
+    s3:scores[2] || "",
+    s4:scores[3] || "",
+    s5:scores[4] || "",
+    s6:scores[5] || "",
+    total:scores[6] || "",
+    note:scores.slice(7).join(" ")
+  });
+}
+
+    
   }
 
   document.getElementById("body").innerHTML = rows.map(r => `
