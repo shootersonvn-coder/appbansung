@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Huy chương</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  font-family:"Roboto Condensed", Arial, sans-serif;
+}
+
+body{
+  margin:0;
+  background:#eef3fb;
+  color:#111;
+  font-size:14px;
+}
+
+.header{
+  background:linear-gradient(180deg,#0a5f34,#083f24);
+  color:white;
+  padding:calc(env(safe-area-inset-top) + 8px) 12px 10px;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.header-row{
+  position:relative;
+  height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.back-btn{
+  position:absolute;
+  left:0;
+  top:0;
+  height:30px;
+  display:flex;
+  align-items:center;
+  color:white;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:600;
+}
+
+.title{
+  font-size:18px;
+  font-weight:800;
+  text-align:center;
+}
+
+.container{
+  padding:12px 0 24px;
+}
+
+.card{
+  width:95%;
+  min-height:40px;
+  margin:0 auto 8px;
+  background:white;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 14px;
+  text-decoration:none;
+  color:#111;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.card-title{
+  font-size:14px;
+  font-weight:700;
+}
+
+.arrow{
+  font-size:22px;
+  color:#777;
+}
+
+.loading,
+.empty{
+  text-align:center;
+  padding:20px;
+  color:#555;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <a class="back-btn" href="../index.html">‹ Trở lại</a>
+    <div class="title">Huy chương</div>
+  </div>
+</div>
+
+<div class="container" id="list">
+  <div class="loading">Đang tải...</div>
+</div>
+
+<script>
+
+const SHEET_ID = "1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+const GID = "1558133737";
+
+function splitCSVRow(row){
+  const result = [];
+  let current = "";
+  let inQuotes = false;
+
+  for(let i = 0; i < row.length; i++){
+    const char = row[i];
+    const next = row[i + 1];
+
+    if(char === '"' && inQuotes && next === '"'){
+      current += '"';
+      i++;
+    }else if(char === '"'){
+      inQuotes = !inQuotes;
+    }else if(char === "," && !inQuotes){
+      result.push(current);
+      current = "";
+    }else{
+      current += char;
+    }
+  }
+
+  result.push(current);
+  return result.map(v => v.trim());
+}
+
+function parseCSV(text){
+  return text
+    .replace(/\r/g,"")
+    .split("\n")
+    .filter(r => r.trim() !== "")
+    .map(splitCSVRow);
+}
+
+function clean(v){
+  return String(v || "").trim();
+}
+
+fetch(CSV_URL)
+  .then(res => res.text())
+  .then(text => {
+    const rows = parseCSV(text).slice(2);
+
+    const years = [...new Set(
+      rows
+        .map(r => clean(r[0]))
+        .filter(v => /^\d{4}$/.test(v))
+    )].sort((a,b) => Number(b) - Number(a));
+
+    const list = document.getElementById("list");
+
+    if(years.length === 0){
+      list.innerHTML = `<div class="empty">Không có dữ liệu</div>`;
+      return;
+    }
+
+    list.innerHTML = years.map(year => `
+      <a class="card" href="medal-competition.html?year=${encodeURIComponent(year)}">
+        <div class="card-title">${year}</div>
+        <div class="arrow">›</div>
+      </a>
+    `).join("");
+  })
+  .catch(err => {
+    document.getElementById("list").innerHTML =
+      `<div class="empty">Lỗi tải dữ liệu</div>`;
+    console.error(err);
+  });
+</script>
+
+</body>
+</html>

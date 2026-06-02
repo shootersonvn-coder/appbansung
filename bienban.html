@@ -29,8 +29,6 @@
         "Helvetica Neue", Arial, sans-serif;
     }
 
-   
-
     .docs-panel {
       position: fixed;
       inset: 0;
@@ -38,9 +36,9 @@
       background: #eef3fb;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
-    
     .docs-panel-body {
       flex: 1;
       min-height: 0;
@@ -93,32 +91,48 @@
       font-size: 15px;
       font-weight: 500;
     }
-    .page-back-button{
-      border:none;
-      background:transparent;
-      padding:0;
+
+    .doc-item-title-bold{
+  font-weight:700;
+}
+
+    .page-back-button {
+      border: none;
+      background: transparent;
+      padding: 0;
     }
+
+    .page-header {
+      position: sticky !important;
+      top: 0;
+      z-index: 100;
+    }
+    .doc-item-title-red{
+  color:#d72d2d;
+  font-weight:500;
+}
   </style>
 </head>
+
 <body>
   <div class="docs-panel" aria-hidden="false">
     <header class="page-header">
-  <div class="page-header-inner">
+      <div class="page-header-inner">
 
-    <button
-      class="page-back page-back-button"
-      onclick="history.back()"
-      type="button"
-    >
-      ← Quay lại
-    </button>
+        <button
+          class="page-back page-back-button"
+          onclick="goBackBienBan()"
+          type="button"
+        >
+          ← Quay lại
+        </button>
 
-    <div class="page-title-wrap">
-      <div class="page-title">Biên bản</div>
-    </div>
+        <div class="page-title-wrap">
+          <div class="page-title">Biên bản</div>
+        </div>
 
-  </div>
-</header>
+      </div>
+    </header>
 
     <div class="docs-panel-body">
       <div id="bienBanList" class="docs-list"></div>
@@ -128,7 +142,9 @@
   <script>
     const sheetId = "1LQk6udf4WhlTV7Zsd5WXg1w25vMkKPv9DBXYS-BLErk";
 
-    const bienBanLinks = [
+    let currentScreen = "main";
+
+    const mainBienBanLinks = [
       {
         title: "Phòng thành tích",
         gid: "1535864021",
@@ -159,7 +175,6 @@
         gid: "203776563",
         orientation: "portrait"
       },
-      
       {
         title: "25m Súng ngắn Ổ quay",
         gid: "414043690",
@@ -170,71 +185,16 @@
         gid: "1469266810",
         orientation: "portrait"
       },
-      {
-        title: "Đĩa bay (Đang triển khai)",
-        gid: "206701293",
-        orientation: "portrait"
-      },
-
-
-
-
-
-
 
       {
-        title: "Chung kết 10m Di động tiêu chuẩn",
-        gid: "1836875129",
-        orientation: "landscape"
+        title: "Biên bản Đĩa bay",
+        screen: "diabay"
       },
+
       {
-        title: "Chung kết 10m Di động hỗn hợp đồng đội",
-        gid: "1382005835",
-        orientation: "landscape"
+        title: "Biên bản Chung kết",
+        screen: "final"
       },
-      {
-        title: "Chung kết 10m Súng trường hơi",
-        gid: "808172752",
-        orientation: "landscape"
-      },
-      {
-        title: "Chung kết 10m Súng trường hơi hỗn hợp đồng đội",
-        gid: "1603990803",
-        orientation: "landscape"
-      },
-      
-      {
-        title: "Chung kết 25m Súng ngắn thể thao",
-        gid: "1849978543",
-        orientation: "landscape"
-      },
-      {
-        title: "Chung kết 25m Súng ngắn bắn nhanh",
-        gid: "785041353",
-        orientation: "landscape"
-      },
-      {
-        title: "Chung kết 50m Súng trường 3 tư thế",
-        gid: "576025096",
-        orientation: "landscape"
-      },
-      {
-        title: "Chung kết Đĩa bay (Đang triển khai)",
-        gid: "206701293",
-        orientation: "portrait"
-      },
-
-      
-
-
-
-
-
-
-
-
-
-
 
       {
         title: "Thay đổi danh sách thi đấu",
@@ -271,13 +231,102 @@
         gid: "1448969014",
         orientation: "portrait"
       },
-        
       {
         title: "Bia thi đấu",
         gid: "1042423621",
         orientation: "landscape"
       }
-      
+    ];
+
+    const diaBayBienBanLinks = [
+      {
+        title: "Đĩa bay Skeet",
+        gid: "1892502639",
+        orientation: "landscape"
+      },
+      {
+        title: "Đĩa bay Trap",
+        gid: "873737389",
+        orientation: "landscape"
+      },
+      {
+        title: "Đĩa bay Double Trap",
+        gid: "966746818",
+        orientation: "landscape"
+      },
+      {
+        title: "Đĩa bay Compak Sporting (Đang triển khai)",
+        gid: "206701293",
+        orientation: "landscape"
+      },
+      {
+        title: "Đĩa bay Sporting Clay (Đang triển khai)",
+        gid: "206701293",
+        orientation: "landscape"
+      },
+      {
+        title: "Đĩa bay Skeet hỗn hợp đồng đội (Đang triển khai)",
+        gid: "206701293",
+        orientation: "landscape"
+      },
+      {
+        title: "Đĩa bay Trap hỗn hợp đồng đội (Đang triển khai)",
+        gid: "206701293",
+        orientation: "landscape"
+      },
+      {
+        title: "Chung kết Đĩa bay Skeet (Đang triển khai)",
+        gid: "1892502639",
+        orientation: "landscape"
+      },
+      {
+        title: "Chung kết Đĩa bay Trap (Đang triển khai)",
+        gid: "873737389",
+        orientation: "landscape"
+      },
+      {
+        title: "Chung kết Đĩa bay Skeet hỗn hợp đồng đội (Đang triển khai)",
+        gid: "206701293",
+        orientation: "landscape"
+      }
+    ];
+
+    const finalBienBanLinks = [
+      {
+        title: "Chung kết 10m Di động tiêu chuẩn",
+        gid: "1836875129",
+        orientation: "landscape"
+      },
+      {
+        title: "Chung kết 10m Di động hỗn hợp đồng đội",
+        gid: "1382005835",
+        orientation: "landscape"
+      },
+      {
+        title: "Chung kết 10m Súng trường hơi",
+        gid: "808172752",
+        orientation: "landscape"
+      },
+      {
+        title: "Chung kết 10m Súng trường hơi hỗn hợp đồng đội",
+        gid: "1603990803",
+        orientation: "landscape"
+      },
+      {
+        title: "Chung kết 25m Súng ngắn thể thao",
+        gid: "1849978543",
+        orientation: "landscape"
+      },
+      {
+        title: "Chung kết 25m Súng ngắn bắn nhanh",
+        gid: "785041353",
+        orientation: "landscape"
+      },
+      {
+        title: "Chung kết 50m Súng trường 3 tư thế",
+        gid: "576025096",
+        orientation: "landscape"
+      }
     ];
 
     function buildGoogleSheetPdfUrl(sheetId, gid, orientation = "portrait") {
@@ -299,8 +348,7 @@
         + `&right_margin=0.25`;
     }
 
-    function openBienBanLink(index) {
-      const item = bienBanLinks[index];
+    function openPdf(item) {
       if (!item || !item.gid) return;
 
       const finalURL = buildGoogleSheetPdfUrl(
@@ -312,24 +360,103 @@
       window.location.href = finalURL;
     }
 
-    function renderBienBanList() {
+    function openBienBanLink(index) {
+      const item = mainBienBanLinks[index];
+      if (!item) return;
+
+      if (item.screen === "final") {
+        renderFinalBienBanList();
+        return;
+      }
+
+      if (item.screen === "diabay") {
+        renderDiaBayBienBanList();
+        return;
+      }
+
+      openPdf(item);
+    }
+
+    function openFinalBienBanLink(index) {
+      const item = finalBienBanLinks[index];
+      openPdf(item);
+    }
+
+    function openDiaBayBienBanLink(index) {
+      const item = diaBayBienBanLinks[index];
+      openPdf(item);
+    }
+
+    function renderMainBienBanList() {
+      currentScreen = "main";
+
+      const title = document.querySelector(".page-title");
+      if (title) title.textContent = "Biên bản";
+
+      renderList(mainBienBanLinks, "openBienBanLink");
+    }
+
+    function renderFinalBienBanList() {
+      currentScreen = "final";
+
+      const title = document.querySelector(".page-title");
+      if (title) title.textContent = "Biên bản Chung kết";
+
+      renderList(finalBienBanLinks, "openFinalBienBanLink");
+    }
+
+    function renderDiaBayBienBanList() {
+      currentScreen = "diabay";
+
+      const title = document.querySelector(".page-title");
+      if (title) title.textContent = "Đĩa bay";
+
+      renderList(diaBayBienBanLinks, "openDiaBayBienBanLink");
+    }
+
+    function renderList(data, clickFunctionName) {
       const list = document.getElementById("bienBanList");
+      const body = document.querySelector(".docs-panel-body");
       if (!list) return;
 
-      if (!bienBanLinks.length) {
+      if (!data.length) {
         list.innerHTML = `<div class="doc-empty">Chưa có biên bản.</div>`;
         return;
       }
 
-      list.innerHTML = bienBanLinks.map((item, index) => `
-        <button class="doc-item-btn" type="button" onclick="openBienBanLink(${index})">
-          <div class="doc-item-title">${item.title}</div>
+      list.innerHTML = data.map((item, index) => `
+        <button class="doc-item-btn" type="button" onclick="${clickFunctionName}(${index})">
+          <div class="doc-item-title ${
+  currentScreen === "main" &&
+  (
+    item.title === "Biên bản Đĩa bay" ||
+    item.title === "Biên bản Chung kết"
+  )
+    ? "doc-item-title-red"
+    : currentScreen === "diabay" &&
+      item.title.includes("Chung kết")
+      ? "doc-item-title-red"
+      : ""
+}">
+  ${item.title}
+</div>
           <div class="doc-item-arrow">›</div>
         </button>
       `).join("");
+
+      if (body) body.scrollTop = 0;
     }
 
-    renderBienBanList();
+    function goBackBienBan() {
+      if (currentScreen === "final" || currentScreen === "diabay") {
+        renderMainBienBanList();
+        return;
+      }
+
+      history.back();
+    }
+
+    renderMainBienBanList();
   </script>
 </body>
 </html>
