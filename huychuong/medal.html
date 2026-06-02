@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta charset="UTF-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
 <title>Huy chương</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../style.css?v=2">
@@ -17,75 +22,46 @@
 html,body{
   margin:0;
   padding:0;
-  width:100%;
-  min-height:100%;
   background:#eef3fb;
-  font-family:"Roboto Condensed",sans-serif;
+  font-family:"Roboto Condensed", Arial, sans-serif;
+  color:#111827;
 }
 
-.page-header-inner{
+.page{
   width:100%;
-  background:linear-gradient(#078239,#005f37);
-  color:white;
-  padding:
-    calc(env(safe-area-inset-top) + 10px)
-    16px
-    24px;
-  min-height:216px;
-  position:relative;
-  box-shadow:0 2px 8px rgba(0,0,0,.16);
-}
-
-.page-back{
-  position:absolute;
-  left:26px;
-  top:calc(env(safe-area-inset-top) + 70px);
-  color:white;
-  text-decoration:none;
-  font-size:14px;
-  font-weight:700;
-}
-
-.page-title-wrap{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:28px;
-  text-align:center;
-}
-
-.page-title{
-  color:white;
-  font-size:18px;
-  font-weight:800;
-}
-
-.container{
-  padding:28px 0 18px;
+  margin-top:22px;
 }
 
 .doc-card{
-  display:block;
   width:95%;
-  margin:0 auto 18px;
-  background:white;
-  border-radius:18px;
-  min-height:70px;
-  line-height:70px;
-  padding:0 26px;
-  box-shadow:0 2px 8px rgba(0,0,0,.12);
-  color:#1f5eb8;
-  font-size:16px;
-  font-weight:700;
+  height:40px;
   text-decoration:none;
+  margin:0 auto 10px;
+  background:#ffffff;
+  border-radius:12px;
+  border:1px solid #d9e2ee;
+  display:flex;
+  align-items:center;
+  padding:0 14px;
+  font-size:14px;
+  font-weight:500;
+  color:#1d4ed8;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+.doc-card:active{
+  transform:scale(0.995);
+}
+
+.bottom-space{
+  height:20px;
 }
 </style>
 </head>
 
 <body class="no-tabs doc-page">
 
-<div class="page">
-
+<header class="page-header">
   <div class="page-header-inner">
 
     <a href="javascript:history.back()" class="page-back">
@@ -93,18 +69,23 @@ html,body{
     </a>
 
     <div class="page-title-wrap">
-      <div class="page-title">Huy chương</div>
+      <div class="page-title">
+        Huy chương
+      </div>
     </div>
 
   </div>
+</header>
 
-  <div class="container">
+<div class="page">
 
-    <a class="doc-card" href="medal-year.html">
-      Tổng hợp huy chương
-    </a>
-
+  <div
+    class="doc-card"
+    onclick="window.location.href='https://mellifluous-raindrop-50eec8.netlify.app/huychuong/medal-year.html?v=2'"
+    Tổng hợp huy chương
   </div>
+
+  <div class="bottom-space"></div>
 
 </div>
 
