@@ -280,15 +280,31 @@
       margin-bottom: 3px;
     }
 
-    .athlete-line {
-      display: grid;
-      grid-template-columns: 22px 1fr;
-      gap: 8px;
-      align-items: center;
-      min-height: 26px;
-      padding: 0;
-      cursor: pointer;
-    }
+   .athlete-line {
+  display: grid;
+  grid-template-columns: 22px 1fr 52px 42px;
+  gap: 8px;
+  align-items: center;
+  min-height: 26px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.athlete-score{
+  font-size:14px;
+  font-weight:400;
+  color:#111827;
+  text-align:right;
+  white-space:nowrap;
+}
+
+.athlete-x{
+  font-size:14px;
+  font-weight:400;
+  color:#111827;
+  text-align:right;
+  white-space:nowrap;
+}
 
     .athlete-order {
       color: var(--muted);
@@ -732,6 +748,28 @@
     function xValue(r) {
       return parseInt(safe(r.x), 10) || 0;
     }
+
+
+    
+function hasXValue(r) {
+  const t = safe(r.x);
+  return t !== "" && t !== "-" && t !== "—";
+}
+
+function formatXValue(r) {
+  return hasXValue(r) ? String(xValue(r)) : "";
+}
+
+function teamHasX(members) {
+  return members.some(m => hasXValue(m));
+}
+
+
+
+
+
+
+
 
     function shouldShowIndividualRank(r) {
       if (!hasAnySeriesValue(r)) return false;
@@ -1216,45 +1254,63 @@
       attachExpandableRows(wrap);
     }
 
-    function renderTeamView(rows) {
-      const groups = buildRankedTeamGroups(rows);
-      const wrap = document.getElementById("teamView");
 
-      if (!groups.length) {
-        wrap.innerHTML = `<div class="empty">Không có dữ liệu đồng đội</div>`;
-        return;
-      }
 
-      wrap.innerHTML = `
-        <div class="cards-wrap">
-          ${groups.map((g, gi) => {
-            const total = teamTotal(g.members);
 
-            return `
-              <div class="team-card">
-                <div class="team-head">
-                  <div class="team-unit">${g.rankText ? `${g.rankText}. ` : ""}${g.unit || "-"}</div>
-                  <div class="team-name">${teamLabel(g.code)}</div>
+function renderTeamView(rows) {
+  const groups = buildRankedTeamGroups(rows);
+  const wrap = document.getElementById("teamView");
+
+  if (!groups.length) {
+    wrap.innerHTML = `<div class="empty">Không có dữ liệu đồng đội</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="cards-wrap">
+      ${groups.map((g, gi) => {
+        const total = teamTotal(g.members);
+        const xTotal = teamXTotal(g.members);
+        const showTeamX = teamHasX(g.members);
+
+        return `
+          <div class="team-card">
+            <div class="team-head">
+              <div class="team-unit">${g.rankText ? `${g.rankText}. ` : ""}${g.unit || "-"}</div>
+              <div class="team-name">${teamLabel(g.code)}</div>
+            </div>
+
+            <div class="team-total">
+              Tổng: ${formatScore(total) || "0"}${showTeamX ? ` - x-${xTotal}` : ""}
+            </div>
+
+            ${g.members.map((m, mi) => {
+              const athleteTotal = calcTotal(m);
+              const athleteX = hasXValue(m) ? formatXValue(m) : "";
+
+              return `
+                <div class="athlete-line" data-expand-id="team-${gi}-${mi}">
+                  <div class="athlete-order">${mi + 1}</div>
+                  <div class="athlete-name">${safe(m.name)}</div>
+                  <div class="athlete-score">${formatScore(athleteTotal)}</div>
+<div class="athlete-x">${athleteX ? `x-${athleteX}` : "&nbsp;"}</div>
                 </div>
-                <div class="team-total">Tổng: ${formatScore(total) || "0"}</div>
 
-                ${g.members.map((m, mi) => `
-                  <div class="athlete-line" data-expand-id="team-${gi}-${mi}">
-                    <div class="athlete-order">${mi + 1}</div>
-                    <div class="athlete-name">${safe(m.name)}</div>
-                  </div>
-                  <div class="team-athlete-detail hidden" data-detail-id="team-${gi}-${mi}">
-                    ${detailBoxHTML(m)}
-                  </div>
-                `).join("")}
-              </div>
-            `;
-          }).join("")}
-        </div>
-      `;
+                <div class="team-athlete-detail hidden" data-detail-id="team-${gi}-${mi}">
+                  ${detailBoxHTML(m)}
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
 
-      attachExpandableRows(wrap);
-    }
+  attachExpandableRows(wrap);
+}
+
+    
 
     function renderFinalView(rows) {
       const wrap = document.getElementById("finalView");

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no,
+      viewport-fit=cover">
+
+<title>Chi tiết huy chương</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:#eef3fb;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+}
+
+.page{
+  width:100%;
+  margin-top:70px; /*Sửa chui*/
+  padding-bottom:24px;
+}
+
+.sub-title{
+  width:95%;
+  margin:6px auto 3px;
+  text-align:center;
+  color:#1d4ed8;
+  font-size:14px;
+  font-weight:700;
+}
+
+.filter-title{
+  width:95%;
+  margin:0 auto 4px;
+  text-align:center;
+  color:#111827;
+  font-size:14px;
+  font-weight:700;
+}
+
+.card{
+  width:95%;
+  margin:0 auto 10px;
+  background:#fff;
+  border-radius:12px;
+  border:1px solid #d9e2ee;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+  color:#111827;
+  padding:10px 14px;
+}
+
+.card *{
+  font-size:14px !important;
+}
+
+.line-grid{
+  display:grid;
+  grid-template-columns:1fr 64px 34px 32px 28px;
+  align-items:center;
+  column-gap:4px;
+  min-height:22px;
+}
+
+.individual-event-row{
+  display:block;
+  min-height:22px;
+}
+
+.text-main,
+.text-sub{
+  min-width:0;
+  color:#111827;
+  font-weight:400;
+}
+
+.text-main{
+  color:#1d4ed8;
+}
+
+.individual-title{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.total-col,
+.x-col,
+.kl-col,
+.icon-col{
+  text-align:right;
+  white-space:nowrap;
+  font-weight:400;
+}
+
+.score-cell{
+  display:flex;
+  justify-content:flex-end;
+  align-items:baseline;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+.score-int{
+  min-width:42px;
+  text-align:right;
+}
+
+.score-dec{
+  width:20px;
+  text-align:left;
+}
+
+.kl-col{
+  color:#d72d2d;
+}
+
+.icon-col{
+  font-size:16px !important;
+  font-weight:800;
+}
+
+.event-row .text-main,
+.event-row .total-col,
+.event-row .x-col,
+.event-row .kl-col{
+  font-weight:800;
+}
+
+.player-row .text-sub,
+.player-row .total-col,
+.player-row .x-col,
+.player-row .kl-col{
+  font-weight:400;
+}
+
+.loading,.empty{
+  text-align:center;
+  padding:20px;
+  color:#666;
+  font-size:14px;
+}
+
+
+
+.page-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+}
+
+.medal-fixed-title{
+  position:fixed;
+  top:54px;
+  left:0;
+  right:0;
+  z-index:999;
+  background:#eef3fb;
+  padding:8px 0 6px;
+  border-bottom:1px solid #d9e2ee;
+}
+
+.page{
+  padding-top:140px;
+  padding-bottom:24px;
+}
+</style>
+</head>
+
+<body class="no-tabs doc-page">
+
+<header class="page-header">
+  <div class="page-header-inner">
+    <a href="javascript:history.back()" class="page-back">← Quay lại</a>
+    <div class="page-title-wrap">
+      <div class="page-title">Chi tiết huy chương</div>
+    </div>
+  </div>
+</header>
+
+<div class="medal-fixed-title">
+  <div id="competitionName" class="sub-title"></div>
+  <div id="filterTitle" class="filter-title"></div>
+</div>
+
+<div class="page">
+  <div id="list">
+    <div class="loading">Đang tải...</div>
+  </div>
+</div>
+
+<script>
+const SHEET_ID = "1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+const GID = "1558133737";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+const UNIT_GID = "1062776861";
+const UNIT_CSV_URL =
+`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${UNIT_GID}`;
+
+const params = new URLSearchParams(location.search);
+
+const selectedYear = params.get("year") || "";
+const selectedCompetition = params.get("competition") || "";
+const selectedTime = params.get("time") || "";
+const selectedUnit = params.get("unit") || "";
+const selectedType = params.get("type") || "all";
+
+document.getElementById("competitionName").textContent =
+  selectedYear ? `${selectedCompetition} ${selectedYear}` : selectedCompetition;
+
+function typeName(type){
+  if(type === "gold") return "Vàng";
+  if(type === "silver") return "Bạc";
+  if(type === "bronze") return "Đồng";
+  if(type === "record") return "Kỷ lục";
+  return "Tất cả";
+}
+
+
+function splitCSVRow(row){
+  const result=[];
+  let current="";
+  let inQuotes=false;
+
+  for(let i=0;i<row.length;i++){
+    const char=row[i];
+    const next=row[i+1];
+
+    if(char === '"' && inQuotes && next === '"'){
+      current+='"';
+      i++;
+    }else if(char === '"'){
+      inQuotes=!inQuotes;
+    }else if(char === "," && !inQuotes){
+      result.push(current);
+      current="";
+    }else{
+      current+=char;
+    }
+  }
+
+  result.push(current);
+  return result.map(v=>v.trim());
+}
+
+function parseCSV(text){
+  return text
+    .replace(/\r/g,"")
+    .split("\n")
+    .filter(r=>r.trim()!=="")
+    .map(splitCSVRow);
+}
+
+function clean(v){
+  return String(v || "").trim();
+}
+
+function numberValue(v){
+  const n = Number(clean(v).replace(",", "."));
+  return isNaN(n) ? 0 : n;
+}
+
+function formatNum(n){
+  if(!n) return "";
+  return Number(n).toLocaleString("vi-VN",{
+    minimumFractionDigits: Number.isInteger(Number(n)) ? 0 : 1,
+    maximumFractionDigits: 1
+  });
+}
+
+function medalType(v){
+  const s = clean(v).toLowerCase().replace(/\s+/g,"");
+
+  if(s === "v" || s === "v1" || s === "v2" || s === "v3") return "gold";
+  if(s === "b" || s === "b1" || s === "b2" || s === "b3") return "silver";
+
+  if(
+    s === "đ" || s === "d" ||
+    s === "đ1" || s === "d1" ||
+    s === "đ2" || s === "d2" ||
+    s === "đ3" || s === "d3" ||
+    s === "đ4" || s === "d4" ||
+    s === "đ5" || s === "d5"
+  ) return "bronze";
+
+  return "";
+}
+
+function medalIcon(type){
+  if(type === "gold") return "🥇";
+  if(type === "silver") return "🥈";
+  if(type === "bronze") return "🥉";
+  return "";
+}
+
+function hasRecord(v){
+  const s = clean(v).toLowerCase();
+  return s && s !== "0" && s !== "-" && s !== "không";
+}
+
+function hasAnyRecord(r){
+  if(hasRecord(r[26])) return true;
+  if(hasRecord(r[27])) return true;
+
+  const ac = clean(r[28]).toUpperCase();
+
+const recordCodes = [
+  "PKLD1","PKLD4","PKLD7",
+  "LKLD1","LKLD4","LKLD7",
+  "DKLD1","DKLD4","DKLD7",
+
+  "LKLK1","LKLK2","LKLK3",
+  "DKLK1","DKLK2","DKLK3",
+
+  "LKLC1","LKLC2","LKLC3",
+  "DKLC1","DKLC2","DKLC3"
+];
+
+return recordCodes.includes(ac);
+}
+
+function teamGroupFromCode(code){
+  const c = clean(code).toUpperCase().replace("Đ","D");
+
+  if(["V1","V2","V3"].includes(c)) return "V";
+  if(["B1","B2","B3"].includes(c)) return "B";
+  if(["D1","D2","D3"].includes(c)) return "D1";
+  if(["D4","D5"].includes(c)) return "D4";
+
+  return "";
+}
+
+function recordGroupFromCode(code){
+  const c = clean(code).toUpperCase().replace("Đ","D");
+
+  if(["PKLD1","PKLD2","PKLD3"].includes(c)) return "PKLD1";
+  if(["PKLD4","PKLD5"].includes(c)) return "PKLD4";
+  if(["PKLD7","PKLD8","PKLD9"].includes(c)) return "PKLD7";
+
+  if(["LKLD1","LKLD2","LKLD3"].includes(c)) return "LKLD1";
+  if(["LKLD4","LKLD5"].includes(c)) return "LKLD4";
+  if(["LKLD7","LKLD8","LKLD9"].includes(c)) return "LKLD7";
+  if(["DKLD1","DKLD2","DKLD3"].includes(c)) return "DKLD1";
+if(["DKLD4","DKLD5"].includes(c)) return "DKLD4";
+if(["DKLD7","DKLD8","DKLD9"].includes(c)) return "DKLD7";
+  return "";
+}
+
+function codeOrder(code){
+  const c = clean(code).toUpperCase().replace("Đ","D");
+  const n = Number(c.replace(/[A-Z]/g,""));
+  return isNaN(n) ? 99 : n;
+}
+
+
+
+
+function normalizeEventName(s){
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function isDecimalMedalEvent(eventName){
+  const name = normalizeEventName(eventName);
+
+  return [
+    "10m sung truong hoi nam",
+    "10m sung truong hoi nu",
+    "50m sung truong ban nam nam",
+    "50m sung truong ban nam nu",
+    "10m sung truong hoi hon hop dong doi",
+
+    "10m sung truong hoi nam tre",
+    "10m sung truong hoi nu tre",
+    "50m sung truong ban nam nam tre",
+    "50m sung truong ban nam nu tre",
+    "10m sung truong hoi hon hop dong doi tre",
+
+    "10m sung truong hoi nam 16",
+    "10m sung truong hoi nu 16",
+    "50m sung truong ban nam nam 16",
+    "50m sung truong ban nam nu 16",
+    "10m sung truong hoi hon hop dong doi 16",
+
+    "10m sung truong hoi nam 18",
+    "10m sung truong hoi nu 18",
+    "50m sung truong ban nam nam 18",
+    "50m sung truong ban nam nu 18",
+    "10m sung truong hoi hon hop dong doi 18"
+  ].includes(name);
+}
+
+function formatMedalScore(value, eventName){
+  const raw = String(value || "").trim();
+  if(!raw) return "";
+
+  const n = Number(raw.replace(",", "."));
+  if(!Number.isFinite(n)) return raw;
+
+  if(isDecimalMedalEvent(eventName)){
+    return n.toFixed(1).replace(".", ",");
+  }
+
+  return String(Math.round(n));
+}
+
+function scoreHTML(value, eventName){
+  const text = formatMedalScore(value, eventName);
+
+  if(!text) return "";
+
+  if(text.includes(",")){
+    const parts = text.split(",");
+
+    return `
+      <span class="score-cell">
+        <span class="score-int">${parts[0]}</span>
+        <span class="score-dec">,${parts[1]}</span>
+      </span>
+    `;
+  }
+
+  return `
+    <span class="score-cell">
+      <span class="score-int">${text}</span>
+      <span class="score-dec"></span>
+    </span>
+  `;
+}
+
+
+
+
+
+
+
+async function loadUnitMap(){
+  const map = new Map();
+  const res = await fetch(UNIT_CSV_URL);
+  const text = await res.text();
+  const rows = parseCSV(text).slice(1);
+  rows.forEach(r=>{
+    const code = clean(r[0]);
+    const name = clean(r[1]);
+    if(code && name){
+      map.set(code,name);
+    }
+  });
+  return map;
+}
+
+Promise.all([
+  fetch(CSV_URL).then(r=>r.text()),
+  loadUnitMap()
+])
+.then(([text, unitMap])=>{
+
+
+
+  const rows = parseCSV(text).slice(2);
+
+  const fullUnitName = unitMap.get(selectedUnit) || selectedUnit;
+
+document.getElementById("filterTitle").textContent =
+`${fullUnitName} - ${typeName(selectedType)}`;
+
+  const individual = [];
+  const teamMap = new Map();
+
+rows.forEach(r=>{
+  const year = clean(r[0]);
+  const time = clean(r[1]);
+  const competition = clean(r[3]);
+  const eventName = clean(r[5]);
+  const unit = clean(r[14]);
+
+  if(year !== selectedYear) return;
+  if(competition !== selectedCompetition) return;
+  if(selectedTime && time !== selectedTime) return;
+  if(unit !== selectedUnit) return;
+
+  const name = `${clean(r[11])} ${clean(r[12])}`.trim();
+  const total = clean(r[32]);
+  const x = clean(r[23]);
+
+  const personalCode = clean(r[29]);
+  const teamCode = clean(r[30]);
+
+  const personalMedal = medalType(personalCode);
+  const teamMedal = medalType(teamCode);
+  const teamGroup = teamGroupFromCode(teamCode);
+
+  const klPersonal = hasRecord(r[26]) || hasRecord(r[27]);
+
+  const recordCode = clean(r[28]);
+  const recordGroup = recordGroupFromCode(recordCode);
+  const klTeam = recordGroup !== "";
+
+  const hasKL = klPersonal || klTeam;
+
+  if(personalMedal){
+    if(selectedType === "all" || selectedType === personalMedal){
+      individual.push({
+        kind:"individual",
+        eventName,
+        name,
+        total,
+        x,
+        medal:personalMedal,
+        kl:hasKL
+      });
+    }
+  }
+
+  if(teamMedal && teamGroup){
+    if(selectedType === "all" || selectedType === teamMedal){
+      const key = `${eventName}__${unit}__${teamGroup}__${teamMedal}`;
+
+      if(!teamMap.has(key)){
+        teamMap.set(key,{
+          kind:"team",
+          eventName,
+          medal:teamMedal,
+          kl:false,
+          total:0,
+          x:0,
+          athletes:[]
+        });
+      }
+
+      const item = teamMap.get(key);
+
+      item.total += numberValue(total);
+      item.x += numberValue(x);
+      if(hasKL) item.kl = true;
+
+      item.athletes.push({
+        name,
+        code:teamCode,
+        total,
+        x
+      });
+    }
+  }
+
+  if(selectedType === "record"){
+    if(klPersonal){
+      individual.push({
+        kind:"individual",
+        eventName,
+        name,
+        total,
+        x,
+        medal:"",
+        kl:true
+      });
+    }
+
+    if(klTeam){
+      const key = `${eventName}__${unit}__${recordGroup}__record`;
+
+      if(!teamMap.has(key)){
+        teamMap.set(key,{
+          kind:"team",
+          eventName,
+          medal:"",
+          kl:true,
+          total:0,
+          x:0,
+          athletes:[]
+        });
+      }
+
+      const item = teamMap.get(key);
+
+      item.total += numberValue(total);
+      item.x += numberValue(x);
+
+      item.athletes.push({
+        name,
+        code:recordCode,
+        total,
+        x
+      });
+    }
+  }
+});  
+
+  const teams = [...teamMap.values()];
+
+  teams.forEach(t=>{
+    t.athletes.sort((a,b)=>codeOrder(a.code)-codeOrder(b.code));
+  });
+
+  individual.sort((a,b)=>a.eventName.localeCompare(b.eventName,"vi"));
+  teams.sort((a,b)=>a.eventName.localeCompare(b.eventName,"vi"));
+
+  const data = [
+    ...individual.filter(x=>x.medal==="gold"),
+    ...teams.filter(x=>x.medal==="gold"),
+
+    ...individual.filter(x=>x.medal==="silver"),
+    ...teams.filter(x=>x.medal==="silver"),
+
+    ...individual.filter(x=>x.medal==="bronze"),
+    ...teams.filter(x=>x.medal==="bronze"),
+
+    ...individual.filter(x=>x.medal===""),
+    ...teams.filter(x=>x.medal==="")
+  ];
+
+  const list = document.getElementById("list");
+
+  if(data.length === 0){
+    list.innerHTML = `<div class="empty">Không có dữ liệu</div>`;
+    return;
+  }
+
+  let html = "";
+
+  data.forEach(x=>{
+    if(x.kind === "individual"){
+      html += `
+        <div class="card">
+          <div class="individual-event-row event-row">
+            <div class="text-main individual-title">${x.eventName}</div>
+          </div>
+
+          <div class="line-grid player-row">
+            <div class="text-sub">${x.name}</div>
+
+            <div class="total-col">${scoreHTML(x.total, x.eventName)}</div>
+
+
+
+            <div class="x-col">${x.x ? x.x + "x" : ""}</div>
+            <div class="kl-col">${x.kl ? "KL" : ""}</div>
+            <div class="icon-col">${medalIcon(x.medal)}</div>
+          </div>
+        </div>
+      `;
+    }else{
+      html += `
+        <div class="card">
+          <div class="line-grid event-row">
+            <div class="text-main">${x.eventName}</div>
+
+
+            <div class="total-col">${scoreHTML(x.total, x.eventName)}</div>
+            <div class="x-col">${x.x ? formatNum(x.x) + "x" : ""}</div>
+            <div class="kl-col">${x.kl ? "KL" : ""}</div>
+            <div class="icon-col">${medalIcon(x.medal)}</div>
+          </div>
+
+          ${x.athletes.map(a=>`
+            <div class="line-grid player-row">
+              <div class="text-sub">${a.name}</div>
+              <div class="total-col">${scoreHTML(a.total, x.eventName)}</div>
+              <div class="x-col">${a.x ? a.x + "x" : ""}</div>
+              <div></div>
+              <div></div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+  });
+
+  list.innerHTML = html;
+})
+.catch(err=>{
+  document.getElementById("list").innerHTML =
+    `<div class="empty">Lỗi tải dữ liệu</div>`;
+  console.error(err);
+});
+</script>
+
+<script>
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
+</script>
+
+</body>
+</html>

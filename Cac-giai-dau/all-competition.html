@@ -1,8 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport"
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no,
+      viewport-fit=cover">
 <title>All Competition</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,16 +39,69 @@ html,
 body{
   margin:0;
   padding:0;
+  height:100%;
+  overflow:hidden;
   background:var(--bg);
   font-family:"Roboto Condensed",-apple-system,BlinkMacSystemFont,sans-serif;
   color:#111;
   font-size:14px;
 }
 
-/* CHỈ STYLE RIÊNG PHẦN NỘI DUNG */
 .content{
+  position:fixed;
+  left:0;
+  right:0;
+  top:60px;
+  bottom:0;
+
   width:100%;
-  padding:60px 26px 40px;
+  padding:0 26px;
+  background:var(--bg);
+
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+.year-card{
+  width:100%;
+  margin:0 auto 16px;
+  background:var(--card);
+  border-radius:18px;
+  padding:12px 14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  border:1px solid rgba(0,0,0,.04);
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+#schedule{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding-bottom:40px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.year-label{
+  width:54px;
+  font-size:14px;
+  font-weight:800;
+  color:#0b5d2a;
+}
+
+.year-input{
+  flex:1;
+  height:42px;
+  border:1px solid #d8dde5;
+  border-radius:14px;
+  background:#fff;
+  padding:0 12px;
+  font-size:18px;
+  font-weight:800;
+  color:var(--red);
+  font-family:inherit;
 }
 
 .month-title{
@@ -88,8 +147,88 @@ body{
   padding:0;
   font-family:inherit;
 }
+.year-select-wrap{
+  flex:1;
+  position:relative;
+}
 
-/* COLOR RULES */
+.year-input{
+  width:100%;
+  height:42px;
+  border:1px solid #d8dde5;
+  border-radius:14px;
+  background:#fff;
+  padding:0 12px;
+  font-size:14px;
+  font-weight:800;
+  color:var(--red);
+  font-family:inherit;
+}
+
+.year-hint{
+  position:absolute;
+  left:58px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:14px;
+  font-weight:400;
+  color:#8e8e93;
+  pointer-events:none;
+}
+.year-input{
+  width:100%;
+  height:42px;
+  border:1px solid #d8dde5;
+  border-radius:14px;
+  background:#fff;
+  padding:0 12px;
+  font-size:14px;
+  font-weight:800;
+  color:var(--red);
+  font-family:inherit;
+
+  display:flex;
+  align-items:center;
+}
+
+.year-menu{
+  position:absolute;
+  left:0;
+  right:0;
+  top:50px;
+  z-index:9999;
+
+  background:#fff;
+  border:1px solid #d8dde5;
+  border-radius:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+  overflow:hidden;
+}
+
+.year-option{
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:14px;
+  font-weight:700;
+  color:#111;
+}
+
+.year-option.current-year{
+  color:#ef4b4b;
+  font-weight:800;
+}
+
+.year-option.old{
+  color:#2d84ea;
+}
+
+.hidden{
+  display:none !important;
+}
+
 .color-red{color:var(--red);}
 .color-purple{color:var(--purple);}
 .color-blue{color:var(--blue);}
@@ -102,9 +241,9 @@ body{
 <header class="page-header">
   <div class="page-header-inner">
 
-    <button class="page-back page-back-button" onclick="history.back()">
-      ← Quay lại
-    </button>
+    <button class="page-back page-back-button" onclick="goBack()">
+  ← Quay lại
+</button>
 
     <div class="page-title-wrap">
       <div class="page-title">Giải đấu</div>
@@ -114,8 +253,20 @@ body{
   </div>
 </header>
 
-<div class="content" id="schedule">
-  <div class="loading">Đang tải...</div>
+<div class="content">
+  <div class="year-card">
+  <div class="year-label">Năm</div>
+
+  <div class="year-select-wrap">
+    <div id="yearInput" class="year-input"></div>
+<span class="year-hint">Hoặc chọn năm khác</span>
+<div id="yearMenu" class="year-menu hidden"></div>
+  </div>
+</div>
+
+  <div id="schedule">
+    <div class="loading">Đang tải...</div>
+  </div>
 </div>
 
 <script>
@@ -125,8 +276,8 @@ const url =
 const params =
   new URLSearchParams(window.location.search);
 
-const selectedYear =
-  (params.get("year") || "").trim();
+let selectedYear =
+  (params.get("year") || String(new Date().getFullYear())).trim();
 
 function trim(s){
   return (s || "").trim();
@@ -331,16 +482,103 @@ async function load(){
       .filter(r => r.trim())
       .map(r => splitCSVRow(r));
 
-  const grouped =
-    buildItems(rows);
+  const years = [...new Set(
+    rows
+      .slice(1)
+      .map(r => trim(r[0]))
+      .filter(y => /^\d{4}$/.test(y))
+  )].sort((a,b) => Number(b) - Number(a));
+
+  if(!years.includes(selectedYear)){
+    selectedYear = years[0] || "";
+  }
+
+
+
+
+
+
+
+  const yearInput =
+  document.getElementById("yearInput");
+
+const yearMenu =
+  document.getElementById("yearMenu");
+
+const currentYear =
+  String(new Date().getFullYear());
+
+function renderYearBox(){
+  yearInput.innerText =
+    selectedYear;
+
+  yearMenu.innerHTML =
+    years.map(y => `
+      <div
+        class="year-option ${y === currentYear ? "current-year" : ""}"
+        data-year="${y}">
+        ${y}
+      </div>
+    `).join("")
+    +
+    `
+      <div class="year-option old" data-year="OLD">
+        Giải đấu khác PDF
+      </div>
+    `;
+}
+
+renderYearBox();
+
+yearInput.onclick = function(){
+  yearMenu.classList.toggle("hidden");
+};
+
+yearMenu.onclick = function(e){
+  const item =
+    e.target.closest("[data-year]");
+
+  if(!item) return;
+
+  const value =
+    item.getAttribute("data-year");
+
+  if(value === "OLD"){
+    window.location.href =
+      "old-competitions.html";
+    return;
+  }
+
+  selectedYear =
+    value;
+
+  yearMenu.classList.add("hidden");
 
   document.getElementById("name").innerText =
     "Lịch đấu " + selectedYear;
 
-  render(grouped);
+  renderYearBox();
+  render(buildItems(rows));
+};
+
+
+document.getElementById("name").innerText =
+  "Lịch đấu " + selectedYear;
+
+render(buildItems(rows));
+}
+
+function goBack(){
+  window.location.href = "../index.html";
 }
 
 load();
+</script>
+
+<script>
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
 </script>
 
 </body>

@@ -25,11 +25,24 @@
   --line-green: #006400;
 }
 
-body {
-  margin: 0;
-  font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
+
+
+
+html,
+body{
+  margin:0;
+  padding:0;
+  height:100%;
+  overflow:hidden;
 }
+
+body{
+  font-family:"Roboto Condensed",-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg);
+}
+
+
+
 
 button,
 input,
@@ -201,11 +214,19 @@ span {
   display: none !important;
 }
 
-.top-fixed {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: var(--bg);
+.top-fixed{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+  background:var(--bg);
+}
+
+.content{
+  height:100vh;
+  overflow-y:auto;
+  padding-top:118px;
 }
 
 @keyframes spin {
@@ -482,7 +503,7 @@ function isGreenKeywordLine(s) {
 
 function isRedKeywordLine(s) {
   const t = norm(s);
-  return t.includes("mac") || t.includes("thuong");
+  return t.includes("mac") || t.includes("thuong") || t.includes("tham");
 }
 
 function pdfIcon(className = "off") {
@@ -790,10 +811,14 @@ function render() {
       : ``;
 
     card.innerHTML = `
-      <div class="card-main-time">${item.time || " "}</div>
-      <div class="card-main-title">${item.title}</div>
-      ${isExpanded ? subHtml : ``}
-    `;
+  ${!isExpanded
+    ? `<div class="card-main-time">${item.time || " "}</div>`
+    : ``}
+
+  <div class="card-main-title">${item.title}</div>
+
+  ${isExpanded ? subHtml : ``}
+`;
 
     card.addEventListener("click", function (e) {
       if (item.isGreen) {

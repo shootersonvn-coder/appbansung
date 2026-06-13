@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  />
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+/>
   <title>SFS Shooting</title>
   <link rel="apple-touch-icon" href="iconsfs192.PNG">
   <link rel="manifest" href="manifest.json">
@@ -73,7 +73,7 @@
   border-radius:18px;
 
   background:#c5daf7;
-  color:#0251d0;
+  color:#023a95;
 
   font-size:15px;
   font-weight:400;
@@ -270,13 +270,120 @@
   padding:0;
   margin:0;
 }
-/* RIÊNG TITLE INDEX */
+
+/* ===== CỐ ĐỊNH CỨNG HOME - CHỈ BẢNG HC CUỘN ===== */
+html,body{
+  height:100%;
+  overflow:hidden !important;
+}
+
+.app-shell{
+  height:100dvh;
+  overflow:hidden !important;
+  position:relative;
+  padding-bottom:76px;
+}
+
+.main-content{
+  height:calc(100dvh - 186px);
+  overflow:hidden !important;
+}
+
+.bottom-nav{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:9999;
+  background:#ffffff;
+}
+
+.medal-scroll{
+  height:286px;
+  max-height:286px;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch;
+}
+
+
+/* ===== HEAD INDEX: LOGO + 2 DÒNG CHỮ ===== */
+.app-header .header-row{
+  height:86px;
+  display:flex;
+  align-items:flex-start;
+  padding:8px 16px 6px;
+  position:relative;
+}
+
+.app-header .logo-wrap{
+  width:50px;
+  height:50px;
+  flex:0 0 50px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  margin-top:-8px;
+}
+
+.app-header .logo-wrap img{
+  width:45px;
+  height:45px;
+  object-fit:contain;
+  transform:none;
+}
+
+.app-header .header-text{
+  flex:1;
+  min-width:0;
+  padding-left:10px;
+  padding-top:15px;
+  overflow:hidden;
+  text-align:center;
+}
+
 .app-header .header-title{
+  display:block;
+  color:#ffffff !important;
   font-size:30px !important;
   font-weight:800 !important;
-  line-height:1 !important;
-  color:#ffffff !important;
+  line-height:34px !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.25);
 }
+
+.app-header .header-marquee{
+  position:absolute;
+
+  left:2%;
+  width:95%;
+
+  bottom:6px;   /* hạ thấp dòng chữ */
+
+  overflow:hidden;
+  white-space:nowrap;
+
+  color:#fff7cc;
+  font-size:13px;
+  font-weight:700;
+  line-height:16px;
+  text-align:left;
+}
+
+.app-header .header-marquee span{
+  display:inline-block;
+  white-space:nowrap;
+  padding-left:95%;
+  animation:marqueeMove 20s linear infinite;
+}
+
+@keyframes marqueeMove{
+  from{
+    transform:translateX(0);
+  }
+  to{
+    transform:translateX(-100%);
+  }
+}
+
 
   </style>
 </head>
@@ -285,28 +392,31 @@
     <header class="app-header">
       <div class="safe-top"></div>
       <div class="header-row">
-        <div class="logo-wrap">
-          <img
-            src="https://drive.google.com/thumbnail?id=1hD6kz8VLtibH5bYwsWSFkdC8IV5O7HzB&sz=w500"
-            alt="Logo SFS"
-          />
-        </div>
-        <div class="header-title">SFS Shooting</div>
-      </div>
+  <div class="logo-wrap">
+    <img src="/images/logo.png" alt="Logo SFS">
+  </div>
+
+  <div class="header-text">
+    <div class="header-title">SFS Shooting</div>
+    <div class="header-marquee">
+      <span id="headerMarqueeText"></span>
+    </div>
+  </div>
+</div>
     </header>
 
     <main class="main-content">
       <section class="tabs-row">
         <button class="pill-tab" onclick="location.href=withRefreshParam('sfs.html')">sfs</button>
         <button class="pill-tab" onclick="location.href='luat.html'">Luật</button>
-        <button class="pill-tab" onclick="location.href='Các giải đấu/all-competitions.html'">Giải đấu</button>
+        <button class="pill-tab" onclick="location.href='Cac-giai-dau/all-competition.html'">Giải đấu</button>
         <button class="pill-tab" onclick="goNews()">Tin tức</button>
         <button class="pill-tab" onclick="location.href='tailieuview.html'">🔍 Tìm kiếm</button>
         
       </section>
 
       <section class="hero-grid">
-        <a id="hero-main-link" href="competition.html" class="hero-main card">
+        <a id="hero-main-link" href="#" class="hero-main card" onclick="openLatestEventFromBanner(event)">
           <img
             id="main-banner-image"
             src=""
@@ -392,7 +502,7 @@
           </button>
 
           <button class="main-action"
-            onclick="openSingleLink('https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=pdf&gid=1024913637&size=a4&portrait=true&fitw=true&sheetnames=false&printtitle=false&pagenum=UNDEFINED&gridlines=false&fzr=false&top_margin=0.25&bottom_margin=0.25&left_margin=0.25&right_margin=0.25')">
+            onclick="openSingleLink('huychuong/medal-year.html')">
             Huy chương
           </button>
 
@@ -437,9 +547,9 @@
       Đơn vị thành viên
     </button>
 
-    <button onclick="openQuanTri()">
-      Quản trị
-    </button>
+    <button class="bottom-item" onclick="openAdminPage()">
+  Quản trị
+</button>
 
     <button onclick="window.location.href='contact.html'">
       Liên hệ
@@ -450,7 +560,6 @@
     © 2025 SFS Shooting – http://sfs.vn
   </div>
 </nav>
-
 
  
 
@@ -471,8 +580,11 @@
 const latestBannerCSV =
   "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=311114195";
 
-const medalSheetUrl =
-  "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=1974758112";
+const MEDAL_SOURCE_URL =
+  "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=1558133737";
+
+const UNIT_SOURCE_URL =
+  "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/export?format=csv&gid=1062776861";
 
 const AUTO_REFRESH_MS = 15000;
 const MEDAL_MIN_ROWS = 11;
@@ -484,9 +596,9 @@ let autoRefreshTimer = null;
 let lastMainBannerURL = localStorage.getItem("lastMainBannerURL") || "";
 let lastMedalSnapshot = "";
 
-
-
-
+let latestCompetitionYear = "";
+let latestCompetitionName = "";
+let latestCompetitionTime = "";
 
 function splitCSVRow(row) {
   const result = [];
@@ -607,10 +719,27 @@ function withRefreshParam(url) {
   return `${url}${joiner}app_refresh=${Date.now()}`;
 }
 
-function refreshAppLinks() {
+function buildLatestEventUrl(){
+  if(!latestCompetitionYear || !latestCompetitionName) {
+    return withRefreshParam("competition.html");
+  }
+
+  return "Cac-giai-dau/all-event.html"
+    + "?year=" + encodeURIComponent(latestCompetitionYear)
+    + "&competition=" + encodeURIComponent(latestCompetitionName)
+    + "&time=" + encodeURIComponent(latestCompetitionTime)
+    + "&app_refresh=" + Date.now();
+}
+
+function openLatestEventFromBanner(e){
+  if(e) e.preventDefault();
+  window.location.href = buildLatestEventUrl();
+}
+
+ function refreshAppLinks() {
   const heroMainLink = document.getElementById("hero-main-link");
   if (heroMainLink) {
-    heroMainLink.href = withRefreshParam("competition.html");
+    heroMainLink.href = buildLatestEventUrl();
   }
 
   const sideBannerLink = document.getElementById("side-banner-link");
@@ -618,6 +747,7 @@ function refreshAppLinks() {
     sideBannerLink.href = withRefreshParam("imagegallery.html?mode=grid");
   }
 }
+
 
 async function loadMainBanner() {
   const img = document.getElementById("main-banner-image");
@@ -634,13 +764,18 @@ async function loadMainBanner() {
     const cols = splitCSVRow(firstLine);
 
     const latestYear = (cols[0] || "").trim();
-    const latestCompetitionKey = (cols[3] || "").trim();
-    const latestCompetitionTitle = latestCompetitionKey;
+const latestTime = (cols[1] || "").trim();
+const latestCompetitionKey = (cols[3] || "").trim();
+const latestCompetitionTitle = latestCompetitionKey;
+
+latestCompetitionYear = latestYear;
+latestCompetitionTime = latestTime;
+latestCompetitionName = latestCompetitionKey;
 
     const heroMainLink = document.getElementById("hero-main-link");
-    if (heroMainLink) {
-      heroMainLink.href = withRefreshParam("competition.html");
-    }
+if (heroMainLink) {
+  heroMainLink.href = buildLatestEventUrl();
+}
 
     const sideBannerLink = document.getElementById("side-banner-link");
     if (sideBannerLink) {
@@ -674,6 +809,7 @@ async function loadMainBanner() {
     }
 
     await loadSideBannerImages();
+    await loadMedalBoard(true);
   } catch (e) {
     console.log("Lỗi banner", e);
 
@@ -773,59 +909,210 @@ function renderMedalRows(data) {
   return filledRows.join("");
 }
 
-async function loadMedalBoard(force = false) {
-  try {
-    const res = await fetch(medalSheetUrl + "&cb=" + Date.now(), { cache: "no-store" });
+function clean(v){
+  return String(v || "").trim();
+}
+
+function sortTextVN(v){
+  return String(v || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d")
+    .trim();
+}
+
+function medalType(v){
+  const s = clean(v).toLowerCase().replace(/\s+/g,"");
+
+  if(s === "v" || s === "v1") return "gold";
+  if(s === "b" || s === "b1") return "silver";
+  if(s === "đ" || s === "d" || s === "đ1" || s === "d1" || s === "đ4" || s === "d4") return "bronze";
+
+  return "";
+}
+
+function hasRecord(v){
+  const s = clean(v).toLowerCase();
+  return s && s !== "0" && s !== "-" && s !== "không";
+}
+
+function recordGroupFromCode(code){
+  const c = clean(code).toUpperCase().replace("Đ","D");
+
+  if(["PKLD1","PKLD2","PKLD3"].includes(c)) return "PKLD1";
+  if(["PKLD4","PKLD5","PKLD6"].includes(c)) return "PKLD4";
+  if(["PKLD7","PKLD8","PKLD9"].includes(c)) return "PKLD7";
+
+  if(["LKLD1","LKLD2","LKLD3"].includes(c)) return "LKLD1";
+  if(["LKLD4","LKLD5","LKLD6"].includes(c)) return "LKLD4";
+  if(["LKLD7","LKLD8","LKLD9"].includes(c)) return "LKLD7";
+
+  if(["DKLD1","DKLD2","DKLD3"].includes(c)) return "DKLD1";
+  if(["DKLD4","DKLD5","DKLD6"].includes(c)) return "DKLD4";
+  if(["DKLD7","DKLD8","DKLD9"].includes(c)) return "DKLD7";
+
+  return "";
+}
+
+function isInternationalCompetition(){
+  return latestCompetitionName.includes("-");
+}
+
+function isVietnamDomesticUnit(unit){
+  const s = sortTextVN(unit);
+
+  return [
+    "ha noi","hai phong","tp hcm","hcm","ha tinh",
+    "quan doi","cong an nd","da nang","dak lak",
+    "dong nai","quang ninh","thanh hoa","phu tho"
+  ].includes(s);
+}
+
+function makeMedalItem(unit){
+  return {
+    unit,
+    gold:0,
+    silver:0,
+    bronze:0,
+    kl:0,
+    recordKeys:new Set()
+  };
+}
+
+function addMedal(item, value){
+  const t = medalType(value);
+  if(t === "gold") item.gold++;
+  if(t === "silver") item.silver++;
+  if(t === "bronze") item.bronze++;
+}
+
+async function loadUnitMap(){
+  const map = new Map();
+
+  const res = await fetch(UNIT_SOURCE_URL + "&cb=" + Date.now(), {cache:"no-store"});
+  const text = await res.text();
+  const rows = parseCSV(text).slice(1);
+
+  rows.forEach(r=>{
+    const code = clean(r[0]);
+    const name = clean(r[1]);
+    if(code && name) map.set(code, name);
+  });
+
+  return map;
+}
+
+async function loadMedalBoard(force = false){
+  const medalTable = document.getElementById("medalTableBody");
+  const totalRow = document.getElementById("medalTotalRow");
+  if(!medalTable || !totalRow) return;
+
+  if(!latestCompetitionYear || !latestCompetitionName){
+    medalTable.innerHTML = renderMedalRows([]);
+    return;
+  }
+
+  try{
+    const [res, unitMap] = await Promise.all([
+      fetch(MEDAL_SOURCE_URL + "&cb=" + Date.now(), {cache:"no-store"}),
+      loadUnitMap()
+    ]);
+
     const text = await res.text();
+    const rows = parseCSV(text).slice(2);
 
-    const normalized = text.replace(/^\uFEFF/, "").trim();
-    if (!force && normalized === lastMedalSnapshot) {
-      return;
-    }
-    lastMedalSnapshot = normalized;
+    const map = new Map();
 
-    const lines = normalized.split(/\r?\n/).filter(line => line.trim() !== "");
-    const medalTable = document.getElementById("medalTableBody");
-    const totalRow = document.getElementById("medalTotalRow");
-    if (!medalTable || !totalRow) return;
+    rows.forEach(r=>{
+      const year = clean(r[0]);
+      const time = clean(r[1]);
+      const competition = clean(r[3]);
+      const unit = clean(r[14]);
 
-    if (lines.length < 2) {
-      medalTable.innerHTML = renderMedalRows([]);
-      totalRow.innerHTML = `
-        <div class="unit">0</div>
-        <div class="medal">0</div>
-        <div class="medal">0</div>
-        <div class="medal">0</div>
-        <div class="medal">0</div>
-      `;
-      return;
-    }
+      if(year !== latestCompetitionYear) return;
+      if(competition !== latestCompetitionName) return;
+      if(!unit) return;
 
-    const data = lines.slice(1).map(line => {
-      const c = splitCSVRow(line);
-      return {
-        unit: (c[0] || "").trim(),
-        gold: toInt(c[1]),
-        silver: toInt(c[2]),
-        bronze: toInt(c[3]),
-        kl: toInt(c[4])
-      };
-    }).filter(x => x.unit);
+      const displayUnit = unitMap.get(unit) || unit;
 
-    data.sort((a, b) =>
-      b.gold - a.gold ||
-      b.silver - a.silver ||
-      b.bronze - a.bronze ||
-      b.kl - a.kl ||
-      a.unit.localeCompare(b.unit, "vi")
-    );
+      if(isInternationalCompetition() && isVietnamDomesticUnit(displayUnit)){
+        return;
+      }
+
+      if(!map.has(unit)){
+        map.set(unit, makeMedalItem(unit));
+      }
+
+      const item = map.get(unit);
+
+      addMedal(item, r[29]); // AD
+      addMedal(item, r[30]); // AE
+
+      if(hasRecord(r[26])) item.kl++; // AA
+      if(hasRecord(r[27])) item.kl++; // AB
+
+      const ac = clean(r[28]).toUpperCase();
+
+      const singleRecordCodes = [
+        "PKLK1","LKLK1","DKLK1",
+        "PKLC1","LKLC1","DKLC1"
+      ];
+
+      if(singleRecordCodes.includes(ac)){
+        item.kl++;
+      }
+
+      const recordGroup = recordGroupFromCode(ac);
+      if(recordGroup){
+        const key = `${competition}__${unit}__${clean(r[5])}__${recordGroup}`;
+
+        if(!item.recordKeys.has(key)){
+          item.recordKeys.add(key);
+          item.kl++;
+        }
+      }
+    });
+
+    let data = [...map.values()].map(x=>({
+      unit: unitMap.get(x.unit) || x.unit,
+      rawUnit: x.unit,
+      gold: x.gold,
+      silver: x.silver,
+      bronze: x.bronze,
+      kl: x.kl
+    }));
+
+    data.sort((a,b)=>{
+      const aTotal = a.gold + a.silver + a.bronze;
+      const bTotal = b.gold + b.silver + b.bronze;
+
+      const aHas = aTotal > 0 || a.kl > 0;
+      const bHas = bTotal > 0 || b.kl > 0;
+
+      if(aHas && !bHas) return -1;
+      if(!aHas && bHas) return 1;
+
+      if(!aHas && !bHas){
+        return sortTextVN(a.unit).localeCompare(sortTextVN(b.unit));
+      }
+
+      return (
+        b.gold - a.gold ||
+        b.silver - a.silver ||
+        b.bronze - a.bronze ||
+        b.kl - a.kl ||
+        bTotal - aTotal ||
+        sortTextVN(a.unit).localeCompare(sortTextVN(b.unit))
+      );
+    });
 
     medalTable.innerHTML = renderMedalRows(data);
 
-    const totalGold = data.reduce((s, x) => s + x.gold, 0);
-    const totalSilver = data.reduce((s, x) => s + x.silver, 0);
-    const totalBronze = data.reduce((s, x) => s + x.bronze, 0);
-    const totalKL = data.reduce((s, x) => s + x.kl, 0);
+    const totalGold = data.reduce((s,x)=>s+x.gold,0);
+    const totalSilver = data.reduce((s,x)=>s+x.silver,0);
+    const totalBronze = data.reduce((s,x)=>s+x.bronze,0);
+    const totalKL = data.reduce((s,x)=>s+x.kl,0);
 
     totalRow.innerHTML = `
       <div class="unit">${data.length}</div>
@@ -835,31 +1122,38 @@ async function loadMedalBoard(force = false) {
       <div class="medal">${totalKL}</div>
     `;
 
-    console.log("Bảng HC đã cập nhật");
-  } catch (err) {
-    console.log("Lỗi bảng HC", err);
-
-    const medalTable = document.getElementById("medalTableBody");
-    const totalRow = document.getElementById("medalTotalRow");
-    if (medalTable) {
-      medalTable.innerHTML = renderMedalRows([]);
-    }
-    if (totalRow) {
-      totalRow.innerHTML = `
-        <div class="unit">0</div>
-        <div class="medal">0</div>
-        <div class="medal">0</div>
-        <div class="medal">0</div>
-        <div class="medal">0</div>
-      `;
-    }
+  }catch(err){
+    console.log("Lỗi bảng HC Home", err);
+    medalTable.innerHTML = renderMedalRows([]);
   }
+}
+
+function openLatestMedalRanking(){
+  if(!latestCompetitionYear || !latestCompetitionName){
+    return;
+  }
+
+  window.location.href =
+    "huychuong/medal-ranking.html"
+    + "?year=" + encodeURIComponent(latestCompetitionYear)
+    + "&competition=" + encodeURIComponent(latestCompetitionName)
+    + "&app_refresh=" + Date.now();
+}
+
+function setupMedalCardClick(){
+  const medalCard = document.querySelector(".medal-card");
+  if(!medalCard) return;
+
+  medalCard.style.cursor = "pointer";
+
+  medalCard.addEventListener("click", function(){
+    openLatestMedalRanking();
+  });
 }
 
 function refreshHomeAndAppLinks() {
   refreshAppLinks();
   loadMainBanner();
-  loadMedalBoard(false);
 }
 
 function openSingleLink(link) {
@@ -934,13 +1228,9 @@ function openGiaiDauLink(index) {
   window.location.href = withRefreshParam(item.url);
 }
 
-
-
-
-
 refreshAppLinks();
+setupMedalCardClick();
 loadMainBanner();
-loadMedalBoard(true);
 
 if (autoRefreshTimer) {
   clearInterval(autoRefreshTimer);
@@ -959,7 +1249,7 @@ function openQuanTri() {
 
   if (pass === null) return;
 
-  if (pass === "1223") {
+  if (pass === "1223") {/*Mật khảu quản trị*/
     window.location.href = "score-input.html";
   } else {
     alert("Sai mật khẩu");
@@ -1017,8 +1307,47 @@ function makeDraggable(selector){
 
 }
 
+
+const HEADER_SHEET_URL =
+  "https://docs.google.com/spreadsheets/d/1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ/gviz/tq?tqx=out:json&gid=1980202996&range=A1";
+
+async function loadHeaderMarquee() {
+  const el = document.getElementById("headerMarqueeText");
+  if (!el) return;
+
+  try {
+    const res = await fetch(HEADER_SHEET_URL);
+    const text = await res.text();
+
+    const json = JSON.parse(
+      text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1)
+    );
+
+    const value = json.table.rows?.[0]?.c?.[0]?.v || "";
+    el.textContent = value ? "   " + value + "   " : "";
+  } catch (err) {
+    el.textContent = "";
+  }
+}
+
+loadHeaderMarquee();
+setInterval(loadHeaderMarquee, 5000);
+
 makeDraggable(".floating-left");
 makeDraggable(".floating-right");
+</script>
+<script>
+function openAdminPage(){
+  const pass = prompt("Nhập mật khẩu quản trị");
+
+  if (pass === null) return;
+
+  if (pass.trim() === "1223") {
+    window.location.href = "quan-tri/quantri.html";
+  } else {
+    alert("Sai mật khẩu hoặc liên hệ Admin");
+  }
+}
 </script>
 </body>
 </html>

@@ -1,147 +1,227 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Nhập điểm</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-body {
-  font-family: Arial, sans-serif;
-  padding: 0;
-  margin: 0;
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
 }
 
-.top-fixed {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: #fff;
-  padding: 14px 14px 8px;
+html,body{
+  margin:0;
+  padding:0;
+  background:#eef3fb;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:14px;
+  color:#0f172a;
 }
 
-.back-btn {
-  position: fixed;
-  top: 20px; /* ngang dòng Mật khẩu */
-  right: 14px;
-  z-index: 9999;
-  padding: 6px 10px;
-  font-size: 14px;
-  background: #e6e6e6;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-.save-btn {
-  position: fixed;
-  top: 60px; /* ngang dòng Nhập điểm */
-  right: 14px;
-  z-index: 9999;
-  padding: 8px 18px;
-  font-size: 15px;
-  font-weight: normal; /* chữ thường */
-  background: #e6e6e6;
-  border: 1px solid #ccc;
-  border-radius: 20px;
+body{
+  padding:0;
+  overflow:hidden;
 }
 
-.content-wrap {
-  padding: 0 14px 14px;
+.top-fixed{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+  height:112px;
+  background:linear-gradient(180deg,#0a5f34,#083f24);
+  color:#fff;
+  padding:8px 12px 10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.22);
 }
 
-h3 {
-  margin-top: 0;
+.top-actions{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:7px;
 }
 
-select {
-  font-size: 16px;
-  padding: 6px;
-  min-width: 280px;
+.back-btn,
+#passwordModeBtn{
+  height:32px;
+  padding:0 12px;
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:999px;
+  background:rgba(255,255,255,.16);
+  color:#fff;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:14px;
+  font-weight:700;
 }
 
-.table-wrap {
-  max-height: calc(100vh - 170px);
-  overflow-y: auto;
-  margin-top: 12px;
+h3{
+  margin:0 0 7px;
+  text-align:center;
+  font-size:18px;
+  line-height:22px;
+  font-weight:800;
+  color:#fff;
 }
 
-table {
-  border-collapse: collapse;
-  margin-top: 0;
-  width: 100%;
-  table-layout: fixed;
+select{
+  width:100%;
+  height:34px;
+  padding:0 10px;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  background:#fff;
+  color:#0f172a;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:15px;
+  font-weight:700;
 }
 
-th, td {
-  border: 1px solid #ccc;
-  padding: 4px;
-  text-align: center;
-  vertical-align: middle;
+.content-wrap{
+  position:fixed;
+  top:112px;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:0 6px 18px;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
 }
 
-th {
-  background: #e8eef5;
+.table-wrap{
+  width:100%;
+  overflow:visible;
+  border-radius:0 0 12px 12px;
+  background:#fff;
+  box-shadow:0 2px 8px rgba(15,23,42,.12);
 }
 
-thead th {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: #e8eef5;
+table{
+  border-collapse:separate;
+  border-spacing:0;
+  width:100%;
+  min-width:0;
+  table-layout:fixed;
+  background:#fff;
 }
 
-input {
-  width: 42px;
-  height: 28px;
-  text-align: center;
-  line-height: 28px;
-  font-size: 14px;
-  padding: 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
+th,td{
+  border-right:1px solid #d7e0ec;
+  border-bottom:1px solid #d7e0ec;
+  padding:4px 1px;
+  text-align:center;
+  vertical-align:middle;
 }
 
-.mavdv {
-  font-weight: bold;
-  width: 80px;
+th{
+  height:36px;
+  background:#dfeaf7;
+  color:#073b63;
+  font-size:14px;
+  font-weight:800;
 }
 
-.total {
-  font-weight: bold;
-  min-width: 60px;
+thead th{
+  position:sticky;
+  top:0;
+  z-index:950;
+  background:#dfeaf7;
+  box-shadow:0 2px 3px rgba(15,23,42,.16);
 }
 
-button {
-  margin-top: 12px;
-  padding: 10px 22px;
-  font-size: 16px;
+thead th:first-child,
+tbody td:first-child{
+  position:sticky;
+  left:0;
 }
 
-.status {
-  margin-top: 10px;
-  font-weight: bold;
+tbody td:first-child{
+  z-index:60;
+  background:#fff;
 }
-td.total, th.total-col {
-  width: 55px;      /* bạn có thể tăng 90 nếu muốn */
-  min-width: 55px;
+
+thead th:first-child{
+  z-index:960;
+  background:#dfeaf7;
+}
+
+th:first-child,
+td:first-child{
+  width:48px;
+}
+
+th.total-col,
+td.total{
+  width:52px;
+  min-width:52px;
+}
+
+input{
+  width:30px;
+  height:28px;
+  text-align:center;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:13px;
+  font-weight:500;
+  padding:0;
+  border-radius:7px;
+  border:1px solid #cbd5e1;
+  background:#fff;
+  color:#111827;
+}
+
+input[readonly]{
+  background:#edf1f5;
+  color:#94a3b8;
+}
+
+.mavdv{
+  width:48px;
+  font-weight:800;
+  color:#064887;
+  font-size:13px;
+}
+
+.total{
+  font-weight:800;
+  color:#b91c1c;
+  font-size:13px;
+}
+
+.status{
+  min-height:22px;
+  margin-top:10px;
+  text-align:center;
+  font-size:14px;
+  font-weight:800;
+  color:#064887;
+}
+
+button{
+  font-family:"Roboto Condensed",Arial,sans-serif;
 }
 </style>
 </head>
-
 <body>
 
 <div class="top-fixed">
-  <button class="back-btn" onclick="history.back()"><< Quay lại</button>
-<button class="save-btn" onclick="saveAll()">Lưu</button>
+  <div class="top-actions">
+    
+    <button class="back-btn" onclick="history.back()">← Quay lại</button>
 
-  <div style="margin-bottom:10px;">
-    Mật khẩu:
-    <input type="password" id="password" style="padding:6px;">
+    
+    <button id="passwordModeBtn" onclick="togglePasswordMode()">🔒 ON</button>
   </div>
 
   <h3>Nhập điểm</h3>
 
-  <label>Nội dung:</label>
   <select id="contentSelect">
     <option value="">Đang tải...</option>
   </select>
@@ -152,7 +232,7 @@ td.total, th.total-col {
     <table>
       <thead>
         <tr>
-          <th>Mã bia</th>
+          <th>Mã</th>
           <th>1</th>
           <th>2</th>
           <th>3</th>
@@ -163,11 +243,10 @@ td.total, th.total-col {
           <th class="total-col">Tổng</th>
         </tr>
       </thead>
+      
       <tbody id="scoreBody"></tbody>
     </table>
   </div>
-
-  
 
   <div class="status" id="status"></div>
 </div>
@@ -176,6 +255,10 @@ td.total, th.total-col {
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjiBV2GdBuakdgwJyrqOg-xXbW2YD1su0wapZCXOUL3hORisfN7D_2gpe9en30W4x2XQ/exec";
 
 let allRows = [];
+let autoSaveTimer = null;
+let requirePassword = true;
+let currentContent = "";
+let hasRenderedOnce = false;
 
 function toNumber(v) {
   if (!v) return 0;
@@ -186,16 +269,44 @@ function format1(v) {
   return Number(v).toFixed(1).replace(".", ",");
 }
 
+function isDecimalContent(name){
+  const t = (name || "").toLowerCase();
+
+  return (
+    t.includes("10m súng trường hơi nam") ||
+    t.includes("10m súng trường hơi nữ") ||
+    t.includes("10m súng trường hơi nam nữ") ||
+    t.includes("50m súng trường nằm nam") ||
+    t.includes("50m súng trường nằm nữ") ||
+    t.includes("50m súng trường nằm nam nữ") ||
+    t.includes("10m súng trường hơi hỗn hợp đồng đội")
+  );
+}
+
+
 function normalize(v) {
   if (!v) return "";
+
   const n = toNumber(v);
   if (Number.isNaN(n)) return "";
-  return format1(n);
+
+  if (isDecimalContent(currentContent)) {
+    return format1(n);
+  }
+
+  return String(Math.floor(n));
 }
 
 function displayValue(v) {
   if (v === "" || v == null) return "";
-  return String(v).replace(".", ",");
+
+  const n = toNumber(v);
+
+  if (isDecimalContent(currentContent)) {
+    return format1(n);
+  }
+
+  return String(Math.floor(n));
 }
 
 function calcRow(tr) {
@@ -214,14 +325,33 @@ function calcRow(tr) {
   });
 
   const totalCell = tr.querySelector(".total");
-  totalCell.textContent = hasValue
-    ? (hasDecimal ? format1(sum) : String(Math.round(sum)))
-    : "";
+  
+  
+totalCell.textContent = hasValue
+  ? (isDecimalContent(currentContent) ? format1(sum) : String(Math.floor(sum)))
+  : "";
+
+}
+
+function applyLockState() {
+  document.querySelectorAll(".score, .x").forEach(input => {
+    input.readOnly = requirePassword;
+  });
+}
+
+function updatePasswordModeButton() {
+  const btn = document.getElementById("passwordModeBtn");
+  if (!btn) return;
+
+  btn.textContent = requirePassword
+    ? "🔒 ON"
+    : "🔓 OFF";
 }
 
 function renderRows(noidung) {
   const body = document.getElementById("scoreBody");
-  body.innerHTML = "";
+  if (document.activeElement) document.activeElement.blur();
+body.innerHTML = "";
 
   const rows = allRows.filter(r => r.noidung === noidung);
 
@@ -233,76 +363,138 @@ function renderRows(noidung) {
 
     tr.innerHTML = `
       <td class="mavdv">${r.mavdv}</td>
-      <td><input class="score" value="${displayValue(r.c1)}"></td>
-      <td><input class="score" value="${displayValue(r.c2)}"></td>
-      <td><input class="score" value="${displayValue(r.c3)}"></td>
-      <td><input class="score" value="${displayValue(r.c4)}"></td>
-      <td><input class="score" value="${displayValue(r.c5)}"></td>
-      <td><input class="score" value="${displayValue(r.c6)}"></td>
-      <td><input class="x" value="${displayValue(r.x)}"></td>
-      <td class="total"></td>
+      <td><input class="score" type="text" inputmode="decimal" pattern="[0-9,]*" value="${displayValue(r.c1)}"></td>
+<td><input class="score" type="text" inputmode="decimal" pattern="[0-9,]*" value="${displayValue(r.c2)}"></td>
+<td><input class="score" type="text" inputmode="decimal" pattern="[0-9,]*" value="${displayValue(r.c3)}"></td>
+<td><input class="score" type="text" inputmode="decimal" pattern="[0-9,]*" value="${displayValue(r.c4)}"></td>
+<td><input class="score" type="text" inputmode="decimal" pattern="[0-9,]*" value="${displayValue(r.c5)}"></td>
+<td><input class="score" type="text" inputmode="decimal" pattern="[0-9,]*" value="${displayValue(r.c6)}"></td>
+<td><input class="x" type="text" inputmode="numeric" pattern="[0-9]*" value="${displayValue(r.x)}"></td>
+<td class="total"></td>
     `;
 
     body.appendChild(tr);
 
     tr.querySelectorAll(".score, .x").forEach(input => {
-  input.addEventListener("input", () => {
-    input.value = input.value
-      .replace(/\./g, ",")
-      .replace(/[^0-9,]/g, "");
+      input.addEventListener("focus", () => {
+        if (requirePassword) {
+          input.blur();
+          alert("Bấm mở khoá ở góc trên bên phải\nRồi nhập mật khẩu mở khoá");
+        }
+      });
 
+      
+      input.addEventListener("input", () => {
+  if (requirePassword) {
+    input.value = "";
+    alert("Nhập\nmật khẩu");
+    return;
+  }
+
+  input.value = input.value
+    .replace(/\./g, ",")
+    .replace(/[^0-9,]/g, "");
+
+  tr.dataset.dirty = "1";
+  calcRow(tr);
+  autoSave();
+});
+
+input.addEventListener("blur", () => {
+  if (requirePassword) return;
+
+  if (input.classList.contains("score")) {
+    input.value = normalize(input.value);
     tr.dataset.dirty = "1";
+    calcRow(tr);
+    autoSave();
+  }
+});
+
+input.addEventListener("keydown", e => {
+        if (requirePassword) {
+          e.preventDefault();
+          alert("Nhập điểm đang bị khóa\nLiên hệ Admin để mở");
+          return;
+        }
+
+        const td = input.closest("td");
+        const row = input.closest("tr");
+        if (!td || !row) return;
+
+        const colIndex = [...row.children].indexOf(td);
+        const rows = [...row.parentElement.children];
+        const rowIndex = rows.indexOf(row);
+
+        function focusCell(r, c) {
+          const nextRow = rows[r];
+          if (!nextRow) return;
+
+          const nextCell = nextRow.children[c];
+          if (!nextCell) return;
+
+          const nextInput = nextCell.querySelector("input");
+          if (nextInput) {
+            nextInput.focus();
+            nextInput.select();
+          }
+        }
+
+        if (e.key === "Enter" || e.key === "ArrowDown") {
+          e.preventDefault();
+          focusCell(rowIndex + 1, colIndex);
+        }
+
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          focusCell(rowIndex - 1, colIndex);
+        }
+
+        if (e.key === "ArrowRight") {
+          e.preventDefault();
+          focusCell(rowIndex, colIndex + 1);
+        }
+
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          focusCell(rowIndex, colIndex - 1);
+        }
+      });
+    });
+
     calcRow(tr);
   });
 
-  input.addEventListener("keydown", e => {
-    const td = input.closest("td");
-    const row = input.closest("tr");
-    if (!td || !row) return;
+  applyLockState();
+}
 
-    const colIndex = [...row.children].indexOf(td);
-    const rows = [...row.parentElement.children];
-    const rowIndex = rows.indexOf(row);
+function updateRowsOnly(noidung) {
+  const rows = allRows.filter(r => r.noidung === noidung);
 
-    function focusCell(r, c) {
-      const nextRow = rows[r];
-      if (!nextRow) return;
+  rows.forEach(r => {
+    const tr = document.querySelector(
+      `tr[data-noidung="${r.noidung}"][data-mavdv="${r.mavdv}"]`
+    );
 
-      const nextCell = nextRow.children[c];
-      if (!nextCell) return;
+    if (!tr) return;
+    if (tr.dataset.dirty === "1") return;
 
-      const nextInput = nextCell.querySelector("input");
-      if (nextInput) {
-        nextInput.focus();
-        nextInput.select();
-      }
-    }
+    const scores = tr.querySelectorAll(".score");
 
-    if (e.key === "Enter" || e.key === "ArrowDown") {
-      e.preventDefault();
-      focusCell(rowIndex + 1, colIndex);
-    }
+    scores[0].value = displayValue(r.c1);
+    scores[1].value = displayValue(r.c2);
+    scores[2].value = displayValue(r.c3);
+    scores[3].value = displayValue(r.c4);
+    scores[4].value = displayValue(r.c5);
+    scores[5].value = displayValue(r.c6);
 
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      focusCell(rowIndex - 1, colIndex);
-    }
-
-    if (e.key === "ArrowRight") {
-      e.preventDefault();
-      focusCell(rowIndex, colIndex + 1);
-    }
-
-    if (e.key === "ArrowLeft") {
-      e.preventDefault();
-      focusCell(rowIndex, colIndex - 1);
-    }
-  });
-});
+    tr.querySelector(".x").value = displayValue(r.x);
 
     calcRow(tr);
   });
 }
+
+
 
 function handleData(data) {
   if (data.error) {
@@ -311,6 +503,10 @@ function handleData(data) {
   }
 
   allRows = data.rows || [];
+  requirePassword = data.requirePassword !== false;
+
+  updatePasswordModeButton();
+  applyLockState();
 
   const select = document.getElementById("contentSelect");
   select.innerHTML = `<option value="">-- Chọn nội dung --</option>`;
@@ -321,8 +517,18 @@ function handleData(data) {
     opt.textContent = c;
     select.appendChild(opt);
   });
+if (currentContent) {
+  select.value = currentContent;
 
-  document.getElementById("status").textContent = "";
+  if (!hasRenderedOnce) {
+    renderRows(currentContent);
+    hasRenderedOnce = true;
+  } else {
+    updateRowsOnly(currentContent);
+  }
+}
+
+  
 }
 
 function loadData() {
@@ -343,14 +549,32 @@ function loadData() {
 }
 
 document.getElementById("contentSelect").addEventListener("change", e => {
-  renderRows(e.target.value);
+  currentContent = e.target.value;
+  hasRenderedOnce = false;
+  renderRows(currentContent);
+  hasRenderedOnce = true;
 });
 
-function saveAll() {
+function autoSave() {
+  clearTimeout(autoSaveTimer);
+
+  autoSaveTimer = setTimeout(() => {
+    saveAll(true);
+  }, 800);
+}
+
+function saveAll(isAuto = false) {
+  if (requirePassword) {
+    alert("Mở khoá ở góc trên bên phải trước\nHoặc liên hệ Admin để mở");
+    return;
+  }
+
   const trs = document.querySelectorAll('#scoreBody tr[data-dirty="1"]');
 
   if (trs.length === 0) {
-    document.getElementById("status").textContent = "Không có dòng nào thay đổi";
+    if (!isAuto) {
+      document.getElementById("status").textContent = "Không có dòng nào thay đổi";
+    }
     return;
   }
 
@@ -377,19 +601,90 @@ function saveAll() {
     method: "POST",
     mode: "no-cors",
     body: JSON.stringify({
-      password: document.getElementById("password").value,
       items
     })
   })
   .then(() => {
-    document.getElementById("status").textContent = "Đã gửi dữ liệu. Kiểm tra Sheet.";
+    trs.forEach(tr => tr.dataset.dirty = "0");
+    document.getElementById("status").textContent = "Đã tự động lưu";
   })
   .catch(err => {
     document.getElementById("status").textContent = "Lỗi lưu dữ liệu";
     console.error(err);
   });
 }
+
+function togglePasswordMode() {
+  const adminPassword = prompt(
+    "Nhập mật khẩu"
+  );
+if (!adminPassword) return;
+
+
+
+  const nextMode = requirePassword ? "OFF" : "ON";
+
+  document.getElementById("status").textContent = "Đang đổi chế độ...";
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify({
+      action: "setPasswordMode",
+      adminPassword: adminPassword,
+      mode: nextMode
+    })
+  })
+  .then(() => {
+    setTimeout(loadData, 800);
+  })
+  .catch(err => {
+    document.getElementById("status").textContent = "Lỗi đổi chế độ mật khẩu";
+    console.error(err);
+  });
+}
+function refreshPasswordModeOnly(data) {
+  if (typeof data.requirePassword === "boolean") {
+    requirePassword = data.requirePassword;
+    updatePasswordModeButton();
+    applyLockState();
+  }
+}
+
+function checkPasswordMode() {
+  const old = document.getElementById("modeChecker");
+  if (old) old.remove();
+
+  const script = document.createElement("script");
+  script.id = "modeChecker";
+  script.src = SCRIPT_URL + "?callback=refreshPasswordModeOnly&t=" + Date.now();
+
+  document.body.appendChild(script);
+}
+
 loadData();
+setInterval(checkPasswordMode, 60000);
+
+setInterval(() => {
+  const active = document.activeElement;
+
+  if (
+    active &&
+    (
+      active.tagName === "INPUT" ||
+      active.tagName === "SELECT" ||
+      active.tagName === "TEXTAREA"
+    )
+  ) {
+    return;
+  }
+
+  loadData();
+}, 5000);
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.focus();
+});
 </script>
 
 </body>

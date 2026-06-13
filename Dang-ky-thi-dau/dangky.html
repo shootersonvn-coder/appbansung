@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Đăng ký thi đấu</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{
+  margin:0;padding:0;background:#eef3fb;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:14px;color:#0f172a;
+}
+.header{
+  position:sticky;top:0;z-index:100;
+  background:linear-gradient(180deg,#0a5f34,#083f24);
+  color:#fff;padding:18px 12px 14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.22);
+}
+.back-btn{
+  position:absolute;left:10px;top:18px;height:32px;min-width:64px;
+  border:0;border-radius:999px;background:rgba(255,255,255,.16);
+  color:#fff;font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:14px;font-weight:800;
+}
+.header-title{text-align:center;font-size:20px;font-weight:800;line-height:24px}
+.header-sub{margin-top:8px;text-align:center;font-size:14px;font-weight:700;color:#fff7cc;line-height:18px}
+.page{width:100%;padding:12px 10px 28px}
+.card{
+  width:100%;max-width:520px;margin:0 auto 12px;background:#fff;
+  border-radius:14px;padding:12px;box-shadow:0 2px 8px rgba(15,23,42,.12);
+  border:1px solid #d9e2ee;
+}
+.input-wrap{position:relative}
+.input{
+  width:100%;height:42px;border:1px solid #cbd5e1;border-radius:11px;
+  padding:0 12px;font-family:"Roboto Condensed",Arial,sans-serif;
+  font-size:16px;font-weight:700;color:#0f172a;background:#fff;
+}
+.suggest-box{
+  position:absolute;left:0;right:0;top:46px;z-index:999;background:#fff;
+  border:1px solid #cbd5e1;border-radius:12px;
+  box-shadow:0 6px 18px rgba(15,23,42,.18);
+  display:none;max-height:220px;overflow-y:auto;
+}
+.suggest-item{
+  padding:10px 12px;font-size:16px;font-weight:800;color:#064887;
+  border-bottom:1px solid #edf1f7;
+}
+.suggest-item:last-child{border-bottom:0}
+.btn{
+  width:100%;height:42px;border:0;border-radius:999px;background:#064887;color:#fff;
+  font-family:"Roboto Condensed",Arial,sans-serif;font-size:16px;font-weight:800;
+}
+.btn.secondary{background:#0a5f34}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.label{font-size:13px;font-weight:800;color:#064887;margin:0 0 5px}
+.hidden{display:none}
+.status{max-width:520px;margin:8px auto;text-align:center;font-weight:800;color:#b91c1c;min-height:22px}
+.unit-name{text-align:center;color:#064887;font-size:18px;font-weight:800;margin-bottom:8px}
+.gender-card{
+  display:flex;align-items:center;justify-content:center;color:#064887;cursor:pointer;
+}
+.gender-card.active{background:#064887;color:#fff;border-color:#064887}
+.guide-title{
+  font-size:14px;
+  font-weight:800;
+  color:#6b7280;   /* màu ghi */
+  margin-bottom:10px;
+}
+
+.guide-text{
+  font-size:14px;
+  font-weight:400;
+  line-height:22px;
+  color:#64748b; /* màu ghi */
+
+  text-align:justify;
+  text-justify:inter-word;
+}
+.pick-btn{
+  flex:1;height:38px;border-radius:999px;border:1px solid #cbd5e1;
+  background:#f8fafc;color:#064887;font-family:"Roboto Condensed",Arial,sans-serif;
+  font-weight:800;font-size:15px;
+}
+.pick-btn.active{background:#064887;color:#fff;border-color:#064887}
+.content-title{font-size:16px;line-height:20px;font-weight:800;color:#0f172a;margin-bottom:10px}
+.pick-grid.five{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.preview-line{border-top:1px solid #e2e8f0;padding:8px 0;font-size:15px;font-weight:700}
+.preview-line:first-child{border-top:0}
+.preview-sub{color:#064887;font-weight:800;margin-top:3px}
+.pdf-red{
+  color:#dc2626;
+  font-weight:700;
+}
+.id-row{
+  display:grid;
+  grid-template-columns:1.15fr .7fr .7fr 1fr .7fr;
+  gap:7px;
+}
+.small-input{
+  text-align:center;
+  padding:0 4px;
+}
+.pick-btn.disabled{
+  opacity:.35;
+  color:#94a3b8;
+  background:#f1f5f9;
+  pointer-events:none;
+}
+.team-members{
+  margin-top:4px;
+  margin-left:18px;
+  font-size:14px;
+  font-weight:700;
+  color:#064887;
+  line-height:20px;
+}
+
+.team-member-row{
+  display:grid;
+  grid-template-columns:22px 1fr;
+  gap:4px;
+}
+
+.team-member-main{
+  font-weight:800;
+  color:#0f172a;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <div class="header-title">Đăng ký thi đấu</div>
+  <div class="header-sub" id="eventTitle">Đang tải...</div>
+</div>
+
+<div class="page">
+
+  <div id="loginView">
+    <div class="card">
+      <div class="label">Đơn vị</div>
+      <div class="input-wrap">
+        <input class="input" id="unitInput" placeholder="Chọn hoặc nhập đơn vị" autocomplete="off">
+        <div class="suggest-box" id="unitSuggest"></div>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div class="label">Mã xác thực</div>
+      <input class="input" id="codeInput" type="text" placeholder="Ví dụ: HAN hoặc QUD, HCM" autocomplete="off">
+
+      <div style="height:14px"></div>
+
+      <button class="btn" onclick="verifyLogin()">XÁC NHẬN</button>
+    </div>
+  </div>
+
+
+
+<div class="card guide-card">
+  <div class="guide-title">Hướng dẫn đăng ký thi đấu</div>
+
+  <div class="guide-text">
+    • Chọn đúng đơn vị và nhập mã xác thực do Ban tổ chức cấp.<br>
+    • Nhập hoặc chọn Họ đệm, Tên của vận động viên từ danh sách gợi ý.<br>
+    • Kiểm tra Giới tính, Ngày tháng năm sinh, Loại súng và Nhóm tuổi trước khi đăng ký.<br>
+    • Huấn luyện viên / Vận động viên tham dự lần đầu chưa được Hệ thống gợi ý thì gõ trực tiếp vào ô (Riêng số ngẫu nhiên là tự động) <br>
+    • Chọn các nội dung thi đấu phù hợp với vận động viên.<br>
+    • Các nội dung "Hỗn hợp đồng đội" chỉ đăng ký theo đội, không đăng ký cá nhân hoặc.<br>
+    • Các nội dung "Hỗn hợp đồng đội Đĩa bay, Súng ngắn hơi, Súng trường hơi" được đăng ký 2  (hai) đội của 1 (một) đơn vị.<br>
+    • Nội dung "Hỗn hợp đồng đội Di động" được đăng ký 3  (ba) đội của 1 (một) đơn vị.<br>
+    • Sau khi bấm XÁC NHẬN, Hệ thống sẽ lưu trực tiếp vào cơ sở dữ liệu của giải đấu. Đồng thời Hệ thống sẽ xuất ra bản <span class="pdf-red">pdf</span>. Để đơn vị tiện in và Xác nhận của Cơ quan / Đơn vị.<br>
+    • Trước thời gian Ban tổ chức khoá ĐĂNG KÝ ONLINE các Trưởng đoàn, Lãnh đội vẫn có thể vào lại Hệ thống để chỉnh sửa trước khi in bản <span class="pdf-red">pdf</span>.<br>
+    • Đến thời hạn nộp bản ĐĂNG KÝ về Ban tổ chức cũng là thời điểm Hệ thống tự động khóa ĐĂNG KÝ ONLINE.
+    
+  </div>
+</div>
+
+
+
+
+  <div id="registerView" class="hidden">
+  <div class="card">
+    <div class="unit-name" id="unitName"></div>
+
+    <div class="row">
+      <div>
+        <div class="label">Họ đệm</div>
+        <div class="input-wrap">
+          <input class="input" id="hodemInput" autocomplete="off">
+          <div class="suggest-box" id="hodemSuggest"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="label">Tên</div>
+        <div class="input-wrap">
+          <input class="input" id="tenInput" autocomplete="off">
+          <div class="suggest-box" id="tenSuggest"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:10px"></div>
+
+    <div class="id-row">
+      <div>
+        <div class="label">Giới tính</div>
+        <div class="input gender-card" id="genderCard" onclick="toggleGender()">Giới tính</div>
+      </div>
+
+      <div>
+        <div class="label">Sinh ngày</div>
+        <input class="input small-input" id="ddInput" maxlength="2" inputmode="numeric" placeholder="Ngày">
+      </div>
+
+      <div>
+        <div class="label">Tháng</div>
+        <input class="input small-input" id="mmInput" maxlength="2" inputmode="numeric" placeholder="Tháng">
+      </div>
+
+      <div>
+        <div class="label">Năm</div>
+        <input class="input small-input" id="yyyyInput" maxlength="4" inputmode="numeric" placeholder="Năm">
+      </div>
+
+      <div>
+        <div class="label">Ngẫu</div>
+        <input class="input small-input" id="xxInput" maxlength="2" inputmode="numeric" value="01">
+      </div>
+    </div>
+
+    <div style="height:10px"></div>
+
+    <div class="row">
+      <div>
+        <div class="label">Loại súng</div>
+        <div class="input-wrap">
+          <input class="input" id="gunInput" placeholder="Chọn loại súng" autocomplete="off">
+          <div class="suggest-box" id="gunSuggest"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="label">Nhóm tuổi</div>
+        <div class="input-wrap">
+          <input class="input" id="ageInput" placeholder="Chọn lứa tuổi" autocomplete="off">
+          <div class="suggest-box" id="ageSuggest"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="contentTitle" class="card hidden">
+    <div class="label">Nội dung thi</div>
+    <div id="contentBox"></div>
+  </div>
+
+  <div class="card">
+    <button class="btn secondary" onclick="submitRegister()">XÁC NHẬN</button>
+  </div>
+
+  <div id="previewBox" class="card hidden"></div>
+</div>
+
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+const SCRIPT_URL =
+"https://mellifluous-raindrop-50eec8.netlify.app/.netlify/functions/dangky";
+
+let DATA=null, loginUnit="", loginCode="", gender="";
+let UNIT_OPTIONS=[], HODEM_OPTIONS=[], GUN_OPTIONS=[], AGE_OPTIONS=[];
+
+function callApi(params, callbackName){
+  const arr = [];
+
+  Object.keys(params || {}).forEach(k => {
+    arr.push(encodeURIComponent(k) + "=" + encodeURIComponent(params[k]));
+  });
+
+  arr.push("t=" + Date.now());
+
+  const url = SCRIPT_URL + "?" + arr.join("&");
+
+  fetch(url)
+  .then(r => r.text())
+  .then(text => {
+  console.log(text);
+
+  const data = JSON.parse(text);
+    if (typeof window[callbackName] === "function") {
+      window[callbackName](data);
+    }
+  })
+
+  
+    .catch(err => {
+      document.getElementById("eventTitle").textContent = "Fetch lỗi";
+      setStatus(err.message || "Không tải được dữ liệu");
+    });
+}
+
+function cleanText(v){return String(v||"").trim()}
+function sortKeyVN(v){
+  return cleanText(v).toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d").replace(/[^a-z0-9\s]/g,"")
+    .replace(/\s+/g," ").trim();
+}
+function uniqueSorted(arr){
+  return [...new Set((arr||[]).map(cleanText).filter(Boolean))]
+    .sort((a,b)=>sortKeyVN(a).localeCompare(sortKeyVN(b)));
+}
+function escapeHtml(v){
+  return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function setStatus(t){document.getElementById("status").textContent=t||""}
+
+function handleInit(data){
+  DATA=data;
+
+  if(!data || data.success === false || data.error){
+    document.getElementById("eventTitle").textContent="Lỗi tải dữ liệu";
+    setStatus(data?.error || data?.message || "Không nhận được dữ liệu");
+    return;
+  }
+
+  document.getElementById("eventTitle").textContent =
+    cleanText(data.tenGiaiDau || data.title || data.eventTitle) || "Không có tên giải";
+
+  if(!data.dangKyMo){
+    document.getElementById("loginView").innerHTML =
+      `<div class="card" style="text-align:center;font-weight:800;color:#b91c1c;font-size:18px">
+        ĐĂNG KÝ ĐÃ ĐÓNG<br>Vui lòng liên hệ BTC
+      </div>`;
+    return;
+  }
+
+  const HIDDEN_UNITS = ["Hà Tĩnh", "Vĩnh Phúc, "Hải Dương", "Quảng Nam", "Nam Định", "Thái Nguyên", "Tuyển trẻ QG", "Z113"];
+
+UNIT_OPTIONS = uniqueSorted(
+  (DATA.units || [])
+    .filter(x => !HIDDEN_UNITS.includes(String(x.donvi || "").trim()))
+    .map(x => x.donvi)
+);
+  GUN_OPTIONS = uniqueSorted((DATA.contents || []).map(x => x.nhom));
+
+  bindSuggest("unitInput","unitSuggest",()=>UNIT_OPTIONS);
+  bindSuggest("gunInput","gunSuggest",()=>GUN_OPTIONS,()=>{prepareAgeOptions();renderContents();});
+  bindSuggest("ageInput","ageSuggest",()=>AGE_OPTIONS,()=>renderContents());
+
+  setStatus("");
+}
+
+function bindSuggest(inputId, boxId, getOptions, onPick){
+  const input=document.getElementById(inputId);
+  const box=document.getElementById(boxId);
+
+  function show(){
+    let q = sortKeyVN(input.value);
+    if(inputId==="gunInput" || inputId==="ageInput") q="";
+
+    const list = getOptions().filter(v => !q || sortKeyVN(v).includes(q)).slice(0,30);
+
+    if(!list.length){
+      box.style.display="none";
+      box.innerHTML="";
+      return;
+    }
+
+    box.innerHTML=list.map(v =>
+      `<div class="suggest-item" data-value="${escapeHtml(v)}">${escapeHtml(v)}</div>`
+    ).join("");
+
+    box.style.display="block";
+
+    box.querySelectorAll(".suggest-item").forEach(item=>{
+      item.onclick=()=>{
+        input.value=item.dataset.value;
+        box.style.display="none";
+        clearPreview();
+        if(onPick) onPick(item.dataset.value);
+      };
+    });
+  }
+
+  input.onfocus=show;
+  input.oninput=()=>{
+    show();
+    if(inputId==="hodemInput"){
+      document.getElementById("tenInput").value="";
+      resetGender();
+    }
+    if(inputId==="tenInput") autoFillGender();
+    if(inputId==="gunInput"){prepareAgeOptions();renderContents();}
+    if(inputId==="ageInput") renderContents();
+    clearPreview();
+  };
+  input.onblur=()=>setTimeout(()=>box.style.display="none",180);
+}
+
+function verifyLogin(){
+  const unit=document.getElementById("unitInput").value.trim();
+  const code=document.getElementById("codeInput").value.trim();
+
+  if(!unit || !code){
+    setStatus("Nhập đơn vị và mã xác thực");
+    return;
+  }
+
+  setStatus("Đang xác thực...");
+
+  window.verifyCallback=function(res){
+    if(!res.success){
+      setStatus(res.message || "Xác thực không đúng");
+      return;
+    }
+
+    loginUnit=res.unit || unit;
+    loginCode=res.code || code;
+
+    document.getElementById("loginView").classList.add("hidden");
+    document.getElementById("registerView").classList.remove("hidden");
+    document.getElementById("unitName").textContent=loginUnit;
+
+    loadSuggestions();
+    setStatus("");
+  };
+
+  callApi({action:"verify",unit,code},"verifyCallback");
+}
+
+function loadSuggestions(){
+  const athletes=(DATA.athletes || []).filter(a => sortKeyVN(a.donvi) === sortKeyVN(loginUnit));
+  HODEM_OPTIONS=uniqueSorted(athletes.map(a=>a.hodem));
+
+  bindSuggest("hodemInput","hodemSuggest",()=>HODEM_OPTIONS,()=>{
+    document.getElementById("tenInput").value="";
+    resetGender();
+    setTimeout(autoFillGender,50);
+  });
+
+  bindSuggest("tenInput","tenSuggest",()=>{
+    const hodem=document.getElementById("hodemInput").value.trim();
+    return uniqueSorted(
+      athletes.filter(a=>sortKeyVN(a.hodem)===sortKeyVN(hodem)).map(a=>a.ten)
+    );
+  },()=>autoFillGender());
+}
+
+function resetGender(){
+  gender="";
+  const card=document.getElementById("genderCard");
+  card.textContent="Chọn giới tính";
+  card.classList.remove("active");
+}
+function setGenderCard(v){
+  gender=cleanText(v);
+  const card=document.getElementById("genderCard");
+  card.textContent=gender || "Chọn giới tính";
+  card.classList.toggle("active", !!gender);
+}
+function toggleGender(){
+  clearPreview();
+  setGenderCard(gender==="Nam" ? "Nữ" : "Nam");
+  renderContents();
+}
+function getGenderValue(a){
+  const k=sortKeyVN(a.gioitinh);
+  if(k==="nu" || k==="2") return "Nữ";
+  if(k==="nam" || k==="1") return "Nam";
+  return a.gioitinh || "";
+}
+function autoFillGender(){
+  const hodem=document.getElementById("hodemInput").value.trim();
+  const ten=document.getElementById("tenInput").value.trim();
+  if(!hodem || !ten){resetGender();return;}
+
+  const found=(DATA.athletes || []).find(a =>
+    sortKeyVN(a.donvi)===sortKeyVN(loginUnit) &&
+    sortKeyVN(a.hodem)===sortKeyVN(hodem) &&
+    sortKeyVN(a.ten)===sortKeyVN(ten)
+  );
+
+  if(found){
+    setGenderCard(getGenderValue(found));
+    fillIdFieldsFromAthlete(found);
+  }
+
+  renderContents();
+}
+
+function prepareAgeOptions(){
+  const gun=document.getElementById("gunInput").value.trim();
+  AGE_OPTIONS=[];
+
+  if(!gun){
+    document.getElementById("ageInput").value="";
+    return;
+  }
+
+  AGE_OPTIONS=uniqueSorted(
+    (DATA.contents||[])
+      .filter(x=>sortKeyVN(x.nhom)===sortKeyVN(gun))
+      .map(x=>{
+        const s=sortKeyVN(x.noidung);
+        if(s.includes("16")) return "16";
+        if(s.includes("18")) return "18";
+        if(s.includes("tre")) return "Trẻ";
+        return "Lớn";
+      })
+  );
+
+  if(AGE_OPTIONS.length===1) document.getElementById("ageInput").value=AGE_OPTIONS[0];
+}
+
+function renderContents(){
+  const gun=document.getElementById("gunInput").value.trim();
+  const age=document.getElementById("ageInput").value.trim();
+  const title=document.getElementById("contentTitle");
+  const box=document.getElementById("contentBox");
+
+  box.innerHTML="";
+
+  if(!gun || !age || !gender){
+    title.classList.add("hidden");
+    return;
+  }
+
+  const list=(DATA.contents||[]).filter(x=>{
+    const s=sortKeyVN(x.noidung);
+    if(sortKeyVN(x.nhom)!==sortKeyVN(gun)) return false;
+
+    if(age==="Trẻ" && !s.includes("tre")) return false;
+    if(age==="16" && !s.includes("16")) return false;
+    if(age==="18" && !s.includes("18")) return false;
+    if(age==="Lớn" && (s.includes("tre") || s.includes("16") || s.includes("18"))) return false;
+
+    if(gender==="Nam") return s.includes(" nam") || s.includes("hon hop");
+    if(gender==="Nữ") return s.includes(" nu") || s.includes("hon hop");
+    return true;
+  });
+
+  title.classList.remove("hidden");
+
+  if(!list.length){
+    box.innerHTML=`<div style="font-weight:800;color:#b91c1c;text-align:center;padding:10px">
+      Không có nội dung thuộc nhóm này
+    </div>`;
+    return;
+  }
+
+  box.innerHTML=list.map(it=>`
+    <div class="content-card" data-noidung="${escapeHtml(it.noidung)}">
+      <div style="border-top:1px solid #e2e8f0;padding:10px 0">
+        <div class="content-title">${escapeHtml(it.noidung)}</div>
+        ${renderPickButtons(it.noidung)}
+      </div>
+    </div>
+  `).join("");
+}
+
+function togglePick(btn){
+  const card=btn.closest(".content-card");
+  const type=btn.dataset.type;
+
+  if(btn.classList.contains("active")){
+    btn.classList.remove("active");
+    return;
+  }
+
+  if(type==="kiemtra"){
+    card.querySelectorAll(".pick-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    clearPreview();
+    return;
+  }
+
+  const kt=card.querySelector('[data-type="kiemtra"]');
+  if(kt) kt.classList.remove("active");
+
+  if(["doi1","doi2","doi3"].includes(type)){
+    card.querySelectorAll('[data-type="doi1"],[data-type="doi2"],[data-type="doi3"]')
+      .forEach(b=>b.classList.remove("active"));
+  }
+
+  btn.classList.add("active");
+  clearPreview();
+}
+
+function getTeamLimit(noidung){
+  const s=sortKeyVN(noidung);
+  if(s.includes("di dong hon hop dong doi")) return 3;
+  if(s.includes("hon hop")) return 2;
+  return 1;
+}
+
+function renderPickButtons(noidung){
+  const limit=getTeamLimit(noidung);
+  const s=sortKeyVN(noidung);
+  const isMixedTeam = s.includes("hon hop dong doi");
+
+  return `
+    <div class="pick-grid five">
+      <button class="pick-btn ${isMixedTeam?"disabled":""}"
+        ${isMixedTeam?'type="button"':'onclick="togglePick(this)" data-type="canhan"'}>
+        Cá nhân
+      </button>
+
+      <button class="pick-btn" onclick="togglePick(this)" data-type="doi1">Đội 1</button>
+
+      <button class="pick-btn ${limit>=2?"":"disabled"}"
+        ${limit>=2?'onclick="togglePick(this)" data-type="doi2"':'type="button"'}>Đội 2</button>
+
+      <button class="pick-btn ${limit>=3?"":"disabled"}"
+        ${limit>=3?'onclick="togglePick(this)" data-type="doi3"':'type="button"'}>Đội 3</button>
+
+      <button class="pick-btn" onclick="togglePick(this)" data-type="kiemtra">K.tra</button>
+    </div>`;
+}
+
+function collectItems(){
+  const items=[];
+  document.querySelectorAll(".content-card").forEach(card=>{
+    const obj={noidung:card.dataset.noidung,canhan:false,doi1:false,doi2:false,doi3:false,kiemtra:false};
+    card.querySelectorAll(".pick-btn.active").forEach(btn=>obj[btn.dataset.type]=true);
+    if(obj.canhan||obj.doi1||obj.doi2||obj.doi3||obj.kiemtra) items.push(obj);
+  });
+  return items;
+}
+
+function checkRegister(){
+  const hodem=document.getElementById("hodemInput").value.trim();
+  const ten=document.getElementById("tenInput").value.trim();
+  const gun=document.getElementById("gunInput").value.trim();
+  const age=document.getElementById("ageInput").value.trim();
+  const items=collectItems();
+
+  if(!hodem || !ten || !gender || !gun || !age){
+    setStatus("Chưa đủ thông tin");
+    return false;
+  }
+  if(!items.length){
+    setStatus("Chưa chọn nội dung thi");
+    return false;
+  }
+
+  setStatus("");
+  return true;
+}
+
+function makeAthleteId(){
+  const unitCode=String(loginCode||"").trim().toUpperCase();
+  const genderCode=gender==="Nữ" ? "2" : "1";
+  const yyyy=document.getElementById("yyyyInput").value.trim().padStart(4,"0");
+  const mm=document.getElementById("mmInput").value.trim().padStart(2,"0");
+  const dd=document.getElementById("ddInput").value.trim().padStart(2,"0");
+  const xx=document.getElementById("xxInput").value.trim().padStart(2,"0");
+  return unitCode + genderCode + yyyy + mm + dd + xx;
+}
+
+function submitRegister(){
+  if(!checkRegister()) return;
+
+  const items=collectItems();
+
+  window.registerCallback=function(res){
+  if(!res.success){
+    setStatus(res.message || "Lỗi lưu đăng ký");
+    return;
+  }
+
+  setStatus("Đã đăng ký thành công");
+
+  showPreviewSaved();
+};
+
+  callApi({
+    action:"register",
+    unit:loginUnit,
+    code:loginCode,
+    hodem:document.getElementById("hodemInput").value.trim(),
+    ten:document.getElementById("tenInput").value.trim(),
+    gioitinh:gender,
+    id:makeAthleteId(),
+    nhom:(document.getElementById("gunInput").value.trim()+" "+document.getElementById("ageInput").value.trim()).trim(),
+    items:JSON.stringify(items)
+  },"registerCallback");
+}
+
+function parseId(id){
+  const m=String(id||"").match(/^([A-Z]+)([12])(\d{4})(\d{2})(\d{2})(\d{2})$/i);
+  if(!m) return null;
+  return {yyyy:m[3],mm:m[4],dd:m[5],xx:m[6]};
+}
+function fillIdFieldsFromAthlete(a){
+  const p=parseId(a.id);
+  if(!p) return;
+  document.getElementById("yyyyInput").value=p.yyyy;
+  document.getElementById("mmInput").value=p.mm;
+  document.getElementById("ddInput").value=p.dd;
+  document.getElementById("xxInput").value=p.xx;
+}
+function clearPreview(){
+  const box=document.getElementById("previewBox");
+  box.innerHTML="";
+  box.classList.add("hidden");
+  setStatus("");
+}
+function showPreviewSaved(){
+
+  const items = collectItems();
+
+  let html = `
+    <div style="
+      color:#0a5f34;
+      font-size:18px;
+      font-weight:800;
+      text-align:center;
+      margin-bottom:10px;">
+      Đã đăng ký thành công
+    </div>
+  `;
+
+  items.forEach(it=>{
+
+    const ds=[];
+
+    if(it.canhan) ds.push("Cá nhân");
+    if(it.doi1) ds.push("Đội 1");
+    if(it.doi2) ds.push("Đội 2");
+    if(it.doi3) ds.push("Đội 3");
+    if(it.kiemtra) ds.push("Kiểm tra");
+
+    html += `
+      <div class="preview-line">
+        <div><b>${it.noidung}</b></div>
+        <div class="preview-sub">${ds.join(" • ")}</div>
+      </div>
+    `;
+  });
+
+  const box=document.getElementById("previewBox");
+
+  box.innerHTML=html;
+  box.classList.remove("hidden");
+
+  setTimeout(()=>{
+    box.scrollIntoView({
+      behavior:"smooth",
+      block:"end"
+    });
+  },200);
+}
+
+window.onerror = function(msg, url, line, col){
+  document.getElementById("eventTitle").textContent = "Lỗi JS";
+  setStatus("Dòng " + line + ": " + msg);
+};
+
+window.initCallback = handleInit;
+callApi({action:"init"},"initCallback");
+</script>
+
+
+</body>
+</html>

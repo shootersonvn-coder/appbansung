@@ -3,15 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no,
+      viewport-fit=cover">
 
-<title>Huy chương</title>
+<title>Tìm kiếm</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=2">
+<link rel="stylesheet" href="style.css?v=2">
 
 <style>
 *{
@@ -26,15 +30,16 @@ html,body{
   font-family:"Roboto Condensed", Arial, sans-serif;
   color:#111827;
 }
-
+ 
 /* =========================
    CONTENT
 ========================= */
 .page{
   width:100%;
-  margin-top:22px;
+  margin-top:22px;/*Thay đổi độ cao của các card*/
+  padding-top:4014px !important;
+  
 }
-
 /* CARD */
 .doc-card{
   width:95%;
@@ -55,17 +60,25 @@ html,body{
     0 2px 6px rgba(0,0,0,0.05);
 }
 
+/* CLICK EFFECT */
 .doc-card:active{
   transform:scale(0.995);
 }
 
+/* FOOT SPACE */
 .bottom-space{
   height:20px;
+}
+.online-text{
+  color:#dc2626;
+  font-weight:700;
 }
 </style>
 </head>
 
 <body class="no-tabs doc-page">
+
+
 
 <!-- =========================
      HEAD
@@ -73,13 +86,12 @@ html,body{
 <header class="page-header">
   <div class="page-header-inner">
 
-    <a href="javascript:history.back()" class="page-back">
-      ← Quay lại
-    </a>
+    <a href="index.html" class="page-back">← Quay lại</a>
+    
 
     <div class="page-title-wrap">
       <div class="page-title">
-        Huy chương
+        Tìm kiếm
       </div>
     </div>
 
@@ -91,13 +103,73 @@ html,body{
 ========================= -->
 <div class="page">
 
-  <a class="doc-card" href="medal-year.html">
-    Tổng hợp huy chương
+
+  <a class="doc-card" href="../Ranking/ranking.html">
+  Xếp hạng VĐV (Đang thử nghiệm)
   </a>
+
+  <a class="doc-card" href="../tracuu-thanhtich/athlete-search.html">
+  Tra cứu thành tích VĐV
+  </a>
+
+
+
+  <div
+  class="doc-card"
+  onclick="window.location.href='Tìm kiếm thành tích/competition-result-search.html'">
+  Tìm kiếm thành tích giải đấu (Chưa hoàn thiện)
+  </div>
+
+  <a class="doc-card" href="huychuong/medal.html">
+  Huy chương
+  </a>
+
+  <div class="doc-card">
+    Sắp triển khai - Kỷ lục
+  </div>
+
+  <div class="doc-card" href="#">
+    Sắp triển khai - Đẳng cấp
+  </div>
+
+  <div class="doc-card">
+    Sắp triển khai
+  </div>
+
+  <div class="doc-card">
+    Sắp triển khai
+  </div>
+  
+  <div class="doc-card" href="#">
+    Sắp triển khai
+  </div>
+
+  <div class="doc-card">
+    Sắp triển khai
+  </div>
+
+  <div class="doc-card">
+    Sắp triển khai
+  </div>
+
+  <a class="doc-card" href="Dang-ky-thi-dau/dangky.html">
+  Đăng ký thi đấu (Đang xây dựng)&nbsp <span class="online-text">Online</span>
+</a>
+
+  <a
+  class="doc-card"
+  href="https://drive.google.com/drive/folders/1BpleFalMJvY3Mu-m9Eke3qig6a4Lwn-6?usp=drive_link">
+  Mẫu Đăng ký thi đấu 📝
+</a>
 
   <div class="bottom-space"></div>
 
 </div>
+<script>
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
+</script>
 
 </body>
 </html>

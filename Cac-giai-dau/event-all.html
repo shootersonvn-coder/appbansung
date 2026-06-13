@@ -1,9 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport"
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no,
+      viewport-fit=cover">
   <title>Event-all</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,498 +16,389 @@
   <link rel="stylesheet" href="../style.css?v=2">
 
   <style>
-:root{
-  --bg:#eef3fb;
-  --green-dark:#0b5d2a;
-  --green-head-top:#0a5f34;
-  --green-head-bottom:#083f24;
-  --tab-bg:#dfeaf6;
-  --tab-text:#2d84ea;
-  --tab-active:#1f6a48;
-  --line:#d8dde5;
-  --summary-bg:#e6c161;
-  --card:#ffffff;
-  --muted:#8b8f97;
-  --red:#ff4b57;
-  --blue:#2d84ea;
-
-  --fixed-bars-h:240px;
-  --sticky-head-h:42px;
-
-  --safe-top:env(safe-area-inset-top,0px);
-  --safe-bottom:env(safe-area-inset-bottom,0px);
-}
-
-html,
-body{
-  height:100%;
-  overflow:hidden;
-  margin:0;
-  padding:0;
-  background:var(--bg);
-}
-
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-  font-family:"Roboto Condensed",-apple-system,BlinkMacSystemFont,sans-serif;
-}
-
-/* APP */
-.app-shell{
-  position:fixed;
-  inset:0;
-  background:var(--bg);
-  overflow:hidden;
-}
-
-/* TOP */
-.fixed-bars{
-  position:absolute;
-  left:0;
-  right:0;
-  top:0;
-  z-index:1000;
-  background:var(--bg);
-  box-shadow:0 1px 0 rgba(0,0,0,.04);
-}
-
-/* TABS */
-.tabs-wrap{
-  padding:10px 14px 10px;
-  background:var(--bg);
-}
-
-.tabs{
-  display:flex;
-  gap:8px;
-}
-
-.tab-btn{
-  flex:1;
-  height:36px;
-
-  border:none;
-  border-radius:12px;
-
-  background:var(--tab-bg);
-  color:var(--tab-text);
-
-  font-size:14px;
-  font-weight:700;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  white-space:nowrap;
-
-  border:1px solid rgba(47,108,72,.08);
-}
-
-.tab-btn.active{
-  background:var(--tab-active);
-  color:#fff;
-  border-color:transparent;
-}
-
-/* SUMMARY */
-.summary-bar{
-  background:var(--summary-bg);
-  color:#111;
-
-  font-size:14px;
-  font-weight:700;
-
-  padding:10px 14px;
-
-  white-space:nowrap;
-  overflow-x:auto;
-
-  -webkit-overflow-scrolling:touch;
-
-  border-top:1px solid rgba(0,0,0,.04);
-  border-bottom:1px solid rgba(0,0,0,.04);
-}
-
-/* STICKY TABLE HEAD */
-.sticky-table-head{
-  background:linear-gradient(
-    180deg,
-    var(--green-head-top) 0%,
-    var(--green-head-bottom) 100%
-  );
-
-  box-shadow:0 1px 0 rgba(0,0,0,.06);
-}
-
-.sticky-table-head.hidden{
-  display:none !important;
-}
-
-.sticky-table-head table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  table-layout:fixed;
-  background:transparent;
-}
-
-.sticky-table-head th{
-  color:#fff;
-  font-size:13px;
-  font-weight:700;
-
-  padding:8px 6px;
-
-  text-align:center;
-  white-space:nowrap;
-
-  height:var(--sticky-head-h);
-
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-/* CONTENT */
-.content-scroll{
-  position:absolute;
-  left:0;
-  right:0;
-  top:var(--fixed-bars-h);
-  bottom:0;
-
-  overflow-y:auto;
-  overflow-x:hidden;
-
-  -webkit-overflow-scrolling:touch;
-
-  background:#fff;
-
-  padding-bottom:calc(20px + var(--safe-bottom));
-}
-
-.tab-view{
-  min-height:100%;
-  background:#fff;
-}
-
-/* TABLE */
-.table-wrap{
-  width:100%;
-  overflow-x:hidden;
-  background:#fff;
-}
-
-table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  table-layout:fixed;
-  background:#fff;
-}
-
-.body-table td{
-  height:34px;
-  padding:3px 6px;
-
-  font-size:13px;
-
-  border-bottom:1px solid var(--line);
-
-  text-align:center;
-  vertical-align:middle;
-
-  background:#fff;
-}
-
-td.name,
-th.name,
-td.note,
-th.note{
-  text-align:left;
-}
-
-td.unit,
-th.unit,
-td.code,
-th.code,
-td.rank,
-th.rank,
-td.num,
-th.num{
-  white-space:nowrap;
-}
-
-.name-text{
-  display:block;
-  line-height:1.12;
-  word-break:break-word;
-}
-
-.row-click{
-  cursor:pointer;
-}
-
-/* DETAIL */
-.detail-row td{
-  background:#f8fafc;
-  padding:0;
-  border-bottom:1px solid var(--line);
-  height:auto;
-}
-
-.detail-box{
-  padding:10px;
-}
-
-.detail-grid{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:8px;
-}
-
-.detail-chip{
-  background:#fff;
-  border:1px solid #e2e6ec;
-  border-radius:10px;
-  padding:7px 6px;
-  text-align:center;
-}
-
-.detail-chip .label{
-  font-size:11px;
-  color:#6f7782;
-  line-height:1;
-  margin-bottom:4px;
-}
-
-.detail-chip .value{
-  font-size:14px;
-  font-weight:700;
-  line-height:1.1;
-  color:#111;
-}
-
-.detail-note{
-  margin-top:8px;
-  font-size:13px;
-  color:#444;
-  line-height:1.2;
-}
-
-/* TEAM */
-.cards-wrap{
-  padding:10px;
-  display:grid;
-  gap:12px;
-  background:#fff;
-}
-
-.team-card{
-  background:var(--card);
-  border:1px solid #d7dbe1;
-  border-radius:18px;
-  padding:8px 12px 6px;
-  box-shadow:0 1px 0 rgba(0,0,0,.02);
-}
-
-.team-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10px;
-  margin-bottom:6px;
-}
-
-.team-unit{
-  font-size:14px;
-  font-weight:800;
-  line-height:1.1;
-}
-
-.team-name{
-  font-size:14px;
-  font-weight:800;
-  color:var(--blue);
-  line-height:1.1;
-  white-space:nowrap;
-}
-
-.team-total{
-  font-size:14px;
-  font-weight:800;
-  color:var(--red);
-  margin-bottom:3px;
-}
-
-.athlete-line{
-  display:grid;
-  grid-template-columns:22px 1fr;
-  gap:8px;
-  align-items:center;
-  min-height:26px;
-  cursor:pointer;
-}
-
-.athlete-order{
-  color:var(--muted);
-  font-size:14px;
-  text-align:right;
-}
-
-.athlete-name{
-  font-size:14px;
-  line-height:1.15;
-}
-
-.team-athlete-detail{
-  margin:4px 0 6px 30px;
-  background:#f8fafc;
-  border:1px solid #e2e6ec;
-  border-radius:12px;
-  padding:8px;
-}
-
-/* FINAL */
-.final-tools{
-  background:#fff;
-  padding:10px;
-  border-bottom:1px solid var(--line);
-
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.final-tool-btn{
-  border:none;
-  border-radius:14px;
-
-  background:linear-gradient(
-    180deg,
-    #0b7f3b 0%,
-    #005f37 100%
-  );
-
-  color:#fff;
-
-  padding:10px 14px;
-
-  font-size:15px;
-  font-weight:700;
-}
-
-.final-pdf-wrap{
-  position:relative;
-  background:#fff;
-  min-height:360px;
-  height:calc(100vh - var(--fixed-bars-h) - 120px);
-  border-top:1px solid var(--line);
-}
-
-.final-pdf-frame{
-  width:100%;
-  height:100%;
-  border:0;
-  display:block;
-  background:#fff;
-}
-
-.final-loading,
-.final-error{
-  position:absolute;
-  inset:0;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  padding:24px;
-
-  text-align:center;
-
-  background:#fff;
-  color:#4b5563;
-
-  font-size:14px;
-  font-weight:600;
-
-  z-index:2;
-}
-
-.final-error{
-  display:none;
-  flex-direction:column;
-  gap:14px;
-}
-
-.empty{
-  padding:20px 16px;
-  font-size:14px;
-  text-align:center;
-  color:#666;
-  background:#fff;
-}
-
-.hidden{
-  display:none !important;
-}
-
-@media (min-width:768px){
-
-  :root{
-    --sticky-head-h:48px;
-  }
-
-  .tabs-wrap{
-    padding:14px 24px 12px;
-  }
-
-  .tabs{
-    gap:12px;
-  }
-
-  .tab-btn{
-    height:52px;
-    font-size:18px;
-  }
-
-  .summary-bar{
-    font-size:18px;
-    padding:10px 24px;
-  }
-
-  .sticky-table-head th{
-    font-size:14px;
-    padding:10px 8px;
-  }
-
-  .body-table td{
-    height:36px;
-    font-size:14px;
-    padding:3px 8px;
-  }
-}
-</style>
+    :root {
+      --bg: #eef3fb;
+      --green-head-top: #0a5f34;
+      --green-head-bottom: #083f24;
+      --tab-bg: #dfeaf6;
+      --tab-text: #2d84ea;
+      --tab-active: #1f6a48;
+      --line: #d8dde5;
+      --summary-bg: #e6c161;
+      --card: #ffffff;
+      --muted: #8b8f97;
+      --red: #ff4b57;
+      --blue: #2d84ea;
+      --fixed-bars-h: 240px;
+      --sticky-head-h: 42px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .app-shell {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .fixed-bars {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      z-index: 1000;
+      background: var(--bg);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+    }
+
+    .tabs-wrap {
+      padding: 10px 8px 10px;
+      background: var(--bg);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      height: 34px;
+      border: 1px solid rgba(47,108,72,0.08);
+      border-radius: 12px;
+      background: var(--tab-bg);
+      color: var(--tab-text);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      padding: 0 6px;
+    }
+
+    .tab-btn.active {
+      background: var(--tab-active);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .summary-bar {
+      background: var(--summary-bg);
+      color: #111;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 14px;
+      white-space: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-top: 1px solid rgba(0,0,0,0.04);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .sticky-table-head {
+      background: linear-gradient(180deg, var(--green-head-top) 0%, var(--green-head-bottom) 100%);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+    }
+
+    .sticky-table-head.hidden {
+      display: none !important;
+    }
+
+    .sticky-table-head table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: fixed;
+      background: transparent;
+    }
+
+    .sticky-table-head th {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 6px;
+      text-align: center;
+      white-space: nowrap;
+      height: var(--sticky-head-h);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: transparent;
+    }
+
+    .content-scroll {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: var(--fixed-bars-h);
+      bottom: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      background: #fff;
+      padding-bottom: calc(20px + var(--safe-bottom));
+    }
+
+    .tab-view {
+      min-height: 100%;
+      background: #fff;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: hidden;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: fixed;
+      background: #fff;
+    }
+
+    .body-table td {
+      height: 34px;
+      padding: 3px 6px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+      vertical-align: middle;
+      background: #fff;
+    }
+
+    td.name, th.name,
+    td.note, th.note {
+      text-align: left;
+    }
+
+    td.unit, th.unit,
+    td.code, th.code,
+    td.rank, th.rank,
+    td.num, th.num {
+      white-space: nowrap;
+    }
+
+    .name-text {
+      display: block;
+      line-height: 1.12;
+      word-break: break-word;
+    }
+
+    .row-click {
+      cursor: pointer;
+    }
+
+    .detail-row td {
+      background: #f8fafc;
+      padding: 0;
+      border-bottom: 1px solid var(--line);
+      height: auto;
+    }
+
+    .detail-box {
+      padding: 10px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .detail-chip {
+      background: #fff;
+      border: 1px solid #e2e6ec;
+      border-radius: 10px;
+      padding: 7px 6px;
+      text-align: center;
+    }
+
+    .detail-chip .label {
+      font-size: 11px;
+      color: #6f7782;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .detail-chip .value {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: #111;
+    }
+
+    .detail-note {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #444;
+      line-height: 1.2;
+    }
+
+    .cards-wrap {
+      padding: 10px;
+      display: grid;
+      gap: 12px;
+      background: #fff;
+    }
+
+    .team-card {
+      background: var(--card);
+      border: 1px solid #d7dbe1;
+      border-radius: 18px;
+      padding: 8px 12px 6px;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+    }
+
+    .team-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .team-unit {
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .team-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--blue);
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .team-total {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--red);
+      margin-bottom: 3px;
+    }
+
+    .athlete-line {
+      display: grid;
+      grid-template-columns: 22px 1fr 52px 42px;
+      gap: 8px;
+      align-items: center;
+      min-height: 26px;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .athlete-order {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.2;
+      text-align: right;
+    }
+
+    .athlete-name {
+      font-size: 14px;
+      line-height: 1.15;
+    }
+
+    .athlete-score,
+    .athlete-x {
+      font-size: 14px;
+      font-weight: 400;
+      color: #111827;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .team-athlete-detail {
+      margin: 4px 0 6px 30px;
+      background: #f8fafc;
+      border: 1px solid #e2e6ec;
+      border-radius: 12px;
+      padding: 8px;
+    }
+
+    .empty {
+      padding: 20px 16px;
+      font-size: 14px;
+      text-align: center;
+      color: #666;
+      background: #fff;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (min-width: 768px) {
+      :root {
+        --sticky-head-h: 48px;
+      }
+
+      .tabs-wrap {
+        padding: 14px 24px 12px;
+      }
+
+      .tabs {
+        gap: 12px;
+      }
+
+      .tab-btn {
+        height: 52px;
+        font-size: 14px;
+      }
+
+      .summary-bar {
+        font-size: 14px;
+        padding: 10px 24px;
+      }
+
+      .sticky-table-head th {
+        font-size: 14px;
+        padding: 10px 8px;
+      }
+
+      .body-table td {
+        height: 36px;
+        font-size: 14px;
+        padding: 3px 8px;
+      }
+    }
+  </style>
 </head>
+
 <body class="has-tabs fixed-bars-page">
 
   <div class="app-shell">
     <div class="fixed-bars" id="fixedBars">
       <header class="page-header">
-  <div class="page-header-inner">
+        <div class="page-header-inner">
 
-    <a href="javascript:history.back()" class="page-back">
-  ← Quay lại
-</a>
+          <a href="javascript:history.back()" class="page-back">
+            ← Quay lại
+          </a>
 
-    <div class="page-title-wrap">
-      <div class="page-title" id="competition"></div>
-      <div class="page-subtitle" id="title"></div>
-    </div>
+          <div class="page-title-wrap">
+            <div class="page-title" id="competition"></div>
+            <div class="page-subtitle" id="title"></div>
+          </div>
 
-  </div>
-</header>
+        </div>
+      </header>
 
       <div class="tabs-wrap">
         <div class="tabs" id="tabsBar">
@@ -515,28 +410,6 @@ th.num{
 
       <div class="summary-bar" id="summaryBar">Đang tải...</div>
       <div id="stickyTableHead" class="sticky-table-head hidden"></div>
-      <script>
-function updateLayoutMetrics(){
-  const fixedBars = document.getElementById("fixedBars");
-
-  if(fixedBars){
-    document.documentElement.style.setProperty(
-      "--fixed-bars-h",
-      `${Math.ceil(fixedBars.offsetHeight)}px`
-    );
-  }
-}
-
-requestAnimationFrame(updateLayoutMetrics);
-
-window.addEventListener("resize", updateLayoutMetrics);
-
-window.addEventListener("orientationchange", () => {
-  setTimeout(updateLayoutMetrics,50);
-  setTimeout(updateLayoutMetrics,180);
-  setTimeout(updateLayoutMetrics,320);
-});
-</script>
     </div>
 
     <div class="content-scroll" id="contentScroll">
@@ -569,13 +442,14 @@ window.addEventListener("orientationchange", () => {
     let currentTab = "individual";
     let pollingTimer = null;
     let finalTabAvailable = false;
-    let finalPdfLoaded = false;
-    let finalPdfFailTimer = null;
 
     function updateLayoutMetrics() {
       const fixedBars = document.getElementById("fixedBars");
       if (fixedBars) {
-        document.documentElement.style.setProperty("--fixed-bars-h", `${Math.ceil(fixedBars.offsetHeight)}px`);
+        document.documentElement.style.setProperty(
+          "--fixed-bars-h",
+          `${Math.ceil(fixedBars.offsetHeight)}px`
+        );
       }
     }
 
@@ -715,6 +589,7 @@ window.addEventListener("orientationchange", () => {
       const vals = [row.s1, row.s2, row.s3, row.s4, row.s5, row.s6]
         .map(parseNum)
         .filter(v => v != null);
+
       if (!vals.length) return null;
       return vals.reduce((a, b) => a + b, 0);
     }
@@ -765,22 +640,20 @@ window.addEventListener("orientationchange", () => {
     }
 
     function attachExpandableRows(scope) {
-  scope.querySelectorAll("[data-expand-id]").forEach(row => {
-    row.addEventListener("click", () => {
-      const id = row.getAttribute("data-expand-id");
-      const detail = scope.querySelector(`[data-detail-id="${id}"]`);
-      if (!detail) return;
+      scope.querySelectorAll("[data-expand-id]").forEach(row => {
+        row.addEventListener("click", () => {
+          const id = row.getAttribute("data-expand-id");
+          const detail = scope.querySelector(`[data-detail-id="${id}"]`);
+          if (!detail) return;
 
-      /* ĐÓNG TẤT CẢ PHẦN ĐANG MỞ TRƯỚC */
-      scope.querySelectorAll("[data-detail-id]").forEach(x => {
-        if (x !== detail) x.classList.add("hidden");
+          scope.querySelectorAll("[data-detail-id]").forEach(x => {
+            if (x !== detail) x.classList.add("hidden");
+          });
+
+          detail.classList.toggle("hidden");
+        });
       });
-
-      /* MỞ / ĐÓNG DÒNG VỪA BẤM */
-      detail.classList.toggle("hidden");
-    });
-  });
-}
+    }
 
     function normalizeVN(s) {
       return safe(s)
@@ -803,6 +676,19 @@ window.addEventListener("orientationchange", () => {
 
     function xValue(r) {
       return parseInt(safe(r.x), 10) || 0;
+    }
+
+    function hasXValue(r) {
+      const t = safe(r.x);
+      return t !== "" && t !== "-" && t !== "—";
+    }
+
+    function formatXValue(r) {
+      return hasXValue(r) ? String(xValue(r)) : "";
+    }
+
+    function teamHasX(members) {
+      return members.some(m => hasXValue(m));
     }
 
     function shouldShowIndividualRank(r) {
@@ -833,6 +719,7 @@ window.addEventListener("orientationchange", () => {
         const bv = shotTieValue(b, k);
         if (Math.abs(av - bv) > 0.0001) return false;
       }
+
       return true;
     }
 
@@ -915,11 +802,13 @@ window.addEventListener("orientationchange", () => {
     function teamSumShot(members, k) {
       const idx = k - 1;
       let sum = 0;
+
       members.forEach(m => {
         const arr = [m.s1, m.s2, m.s3, m.s4, m.s5, m.s6];
         const v = idx >= 0 && idx < arr.length ? shotOptional(arr[idx]) : null;
         if (v != null) sum += v;
       });
+
       return sum;
     }
 
@@ -942,6 +831,7 @@ window.addEventListener("orientationchange", () => {
         const bv = teamSumShot(b.members, k);
         if (Math.abs(av - bv) > 0.0001) return false;
       }
+
       return true;
     }
 
@@ -951,6 +841,7 @@ window.addEventListener("orientationchange", () => {
 
       teamRows.forEach(r => {
         const key = `${safe(r.unit)}__${normTeamCodeKey(r.code)}`;
+
         if (!map.has(key)) {
           map.set(key, {
             unit: safe(r.unit),
@@ -958,6 +849,7 @@ window.addEventListener("orientationchange", () => {
             members: []
           });
         }
+
         map.get(key).members.push(r);
       });
 
@@ -1061,12 +953,12 @@ window.addEventListener("orientationchange", () => {
           <table>
             <colgroup>
               <col style="width: 9%">
-<col style="width: 37%">
-<col style="width: 11%">
-<col style="width: 11%">
-<col style="width: 11%">
-<col style="width: 8%">
-<col style="width: 13%">
+              <col style="width: 37%">
+              <col style="width: 11%">
+              <col style="width: 11%">
+              <col style="width: 11%">
+              <col style="width: 8%">
+              <col style="width: 13%">
             </colgroup>
             <thead>
               <tr>
@@ -1124,37 +1016,33 @@ window.addEventListener("orientationchange", () => {
 
       return rows.some(r => r.isFinalRow);
     }
-    function openFinalPdfFromTab(e){
-  e.preventDefault();
-  e.stopPropagation();
-
-  if(!pdfFinalParam){
-    alert("Chưa có link PDF chung kết");
-    return;
-  }
-
-  window.location.href =
-    "../pdfviewer.html?title=" +
-    encodeURIComponent(eventName + " - Chung kết") +
-    "&url=" +
-    encodeURIComponent(pdfFinalParam);
-}
 
     function rebuildTabs(hasFinalTab) {
-  const tabsBar = document.getElementById("tabsBar");
+      const tabsBar = document.getElementById("tabsBar");
 
-  tabsBar.innerHTML = `
-    <button class="tab-btn ${currentTab === "all" ? "active" : ""}" data-tab="all">Danh sách</button>
-    <button class="tab-btn ${currentTab === "individual" ? "active" : ""}" data-tab="individual">Cá nhân</button>
-    <button class="tab-btn ${currentTab === "team" ? "active" : ""}" data-tab="team">Đồng đội</button>
-    ${hasFinalTab ? `<button class="tab-btn ${currentTab === "final" ? "active" : ""}" data-tab="final" onclick="openFinalPdfFromTab(event)">Chung kết</button>` : ""}
-  `;
+      tabsBar.innerHTML = `
+        <button class="tab-btn ${currentTab === "all" ? "active" : ""}" data-tab="all">Danh sách</button>
+        <button class="tab-btn ${currentTab === "individual" ? "active" : ""}" data-tab="individual">Cá nhân</button>
+        <button class="tab-btn ${currentTab === "team" ? "active" : ""}" data-tab="team">Đồng đội</button>
+        ${hasFinalTab ? `<button class="tab-btn ${currentTab === "final" ? "active" : ""}" data-tab="final">Chung kết</button>` : ""}
+      `;
 
-  tabsBar.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      if (btn.dataset.tab === "final") return;
+      tabsBar.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (btn.dataset.tab === "final") {
+            if (pdfFinalParam) {
+              window.location.href =
+                "../pdfviewer.html?title=" +
+                encodeURIComponent(eventName + " - Chung kết") +
+                "&url=" +
+                encodeURIComponent(pdfFinalParam);
+              return;
+            }
 
-      currentTab = btn.dataset.tab;
+            currentTab = "final";
+          } else {
+            currentTab = btn.dataset.tab;
+          }
 
           const sc = document.getElementById("contentScroll");
           if (sc) sc.scrollTop = 0;
@@ -1163,10 +1051,6 @@ window.addEventListener("orientationchange", () => {
           document.getElementById("summaryBar").innerText = buildSummary(latestData, currentTab);
           updateStickyHeader(currentTab);
           updateLayoutMetrics();
-
-          if (currentTab === "final") {
-            loadFinalPdfInFrame();
-          }
         });
       });
     }
@@ -1206,24 +1090,25 @@ window.addEventListener("orientationchange", () => {
           </table>
         </div>
       `;
+
       attachExpandableRows(wrap);
     }
 
     function renderIndividualView(rows) {
       const rankedRows = buildRankedIndividualRows(rows);
-
       const wrap = document.getElementById("individualView");
+
       wrap.innerHTML = `
         <div class="table-wrap">
           <table class="body-table">
             <colgroup>
               <col style="width: 9%">
-<col style="width: 37%">
-<col style="width: 11%">
-<col style="width: 11%">
-<col style="width: 11%">
-<col style="width: 8%">
-<col style="width: 13%">
+              <col style="width: 37%">
+              <col style="width: 11%">
+              <col style="width: 11%">
+              <col style="width: 11%">
+              <col style="width: 8%">
+              <col style="width: 13%">
             </colgroup>
             <tbody>
               ${rankedRows.map((item, idx) => {
@@ -1247,6 +1132,7 @@ window.addEventListener("orientationchange", () => {
           </table>
         </div>
       `;
+
       attachExpandableRows(wrap);
     }
 
@@ -1263,6 +1149,8 @@ window.addEventListener("orientationchange", () => {
         <div class="cards-wrap">
           ${groups.map((g, gi) => {
             const total = teamTotal(g.members);
+            const xTotal = teamXTotal(g.members);
+            const showTeamX = teamHasX(g.members);
 
             return `
               <div class="team-card">
@@ -1270,17 +1158,28 @@ window.addEventListener("orientationchange", () => {
                   <div class="team-unit">${g.rankText ? `${g.rankText}. ` : ""}${g.unit || "-"}</div>
                   <div class="team-name">${teamLabel(g.code)}</div>
                 </div>
-                <div class="team-total">Tổng: ${formatScore(total) || "0"}</div>
 
-                ${g.members.map((m, mi) => `
-                  <div class="athlete-line" data-expand-id="team-${gi}-${mi}">
-                    <div class="athlete-order">${mi + 1}</div>
-                    <div class="athlete-name">${safe(m.name)}</div>
-                  </div>
-                  <div class="team-athlete-detail hidden" data-detail-id="team-${gi}-${mi}">
-                    ${detailBoxHTML(m)}
-                  </div>
-                `).join("")}
+                <div class="team-total">
+                  Tổng: ${formatScore(total) || "0"}${showTeamX ? ` - ${xTotal}x` : ""}
+                </div>
+
+                ${g.members.map((m, mi) => {
+                  const athleteTotal = calcTotal(m);
+                  const athleteX = hasXValue(m) ? formatXValue(m) : "";
+
+                  return `
+                    <div class="athlete-line" data-expand-id="team-${gi}-${mi}">
+                      <div class="athlete-order">${mi + 1}</div>
+                      <div class="athlete-name">${safe(m.name)}</div>
+                      <div class="athlete-score">${formatScore(athleteTotal)}</div>
+                      <div class="athlete-x">${athleteX ? `${athleteX}x` : "&nbsp;"}</div>
+                    </div>
+
+                    <div class="team-athlete-detail hidden" data-detail-id="team-${gi}-${mi}">
+                      ${detailBoxHTML(m)}
+                    </div>
+                  `;
+                }).join("")}
               </div>
             `;
           }).join("")}
@@ -1292,94 +1191,58 @@ window.addEventListener("orientationchange", () => {
 
     function renderFinalView(rows) {
       const wrap = document.getElementById("finalView");
+      const finalRows = rows.filter(hasRealName).filter(r => r.isFinalRow);
 
-      if (!pdfFinalParam) {
-        const finalRows = rows.filter(hasRealName).filter(r => r.isFinalRow);
-
-        if (!finalRows.length) {
-          wrap.innerHTML = `<div class="empty">Không có dữ liệu chung kết</div>`;
-          return;
-        }
-
-        wrap.innerHTML = `
-          <div class="table-wrap">
-            <table class="body-table">
-              <colgroup>
-                <col style="width: 10%">
-                <col style="width: 40%">
-                <col style="width: 12%">
-                <col style="width: 12%">
-                <col style="width: 12%">
-                <col style="width: 14%">
-              </colgroup>
-              <tbody>
-                ${finalRows.map((r, idx) => `
-                  <tr class="row-click" data-expand-id="final-${idx}">
-                    <td>${safe(r.tt)}</td>
-                    <td class="name"><span class="name-text">${safe(r.name)}</span></td>
-                    <td>${safe(r.unit)}</td>
-                    <td>${safe(r.code).toUpperCase()}</td>
-                    <td>${formatScore(calcTotal(r))}</td>
-                    <td class="note">${safe(r.note)}</td>
-                  </tr>
-                  <tr class="detail-row hidden" data-detail-id="final-${idx}">
-                    <td colspan="6">${detailBoxHTML(r)}</td>
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </div>
-        `;
-        attachExpandableRows(wrap);
+      if (!finalRows.length) {
+        wrap.innerHTML = `<div class="empty">Không có dữ liệu chung kết</div>`;
         return;
       }
 
       wrap.innerHTML = `
-        <div class="final-tools">
-          <button class="final-tool-btn" type="button" id="finalOpenBtn">Mở trực tiếp</button>
-          <button class="final-tool-btn" type="button" id="finalShareBtn">Gửi</button>
-        </div>
-
-        <div class="final-pdf-wrap">
-          <div class="final-loading" id="finalLoading">Đang mở PDF chung kết...</div>
-          <iframe id="finalPdfFrame" class="final-pdf-frame hidden" title="PDF Chung kết" referrerpolicy="no-referrer"></iframe>
-          <div class="final-error" id="finalError">
-            <div>Không mở được PDF chung kết trong khung.</div>
-            <button class="final-tool-btn" type="button" id="finalRetryBtn">Thử lại</button>
-          </div>
+        <div class="table-wrap">
+          <table class="body-table">
+            <colgroup>
+              <col style="width: 9%">
+              <col style="width: 37%">
+              <col style="width: 11%">
+              <col style="width: 11%">
+              <col style="width: 11%">
+              <col style="width: 8%">
+              <col style="width: 13%">
+            </colgroup>
+            <tbody>
+              ${finalRows.map((r, idx) => `
+                <tr class="row-click" data-expand-id="final-${idx}">
+                  <td>${safe(r.tt)}</td>
+                  <td class="name"><span class="name-text">${safe(r.name)}</span></td>
+                  <td>${safe(r.unit)}</td>
+                  <td>${safe(r.code).toUpperCase()}</td>
+                  <td>${formatScore(calcTotal(r))}</td>
+                  <td>${safe(r.x)}</td>
+                  <td class="note">${safe(r.note)}</td>
+                </tr>
+                <tr class="detail-row hidden" data-detail-id="final-${idx}">
+                  <td colspan="7">${detailBoxHTML(r)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
         </div>
       `;
 
-      document.getElementById("finalOpenBtn").onclick = () => {
-        window.location.href = pdfFinalParam;
-      };
-
-      document.getElementById("finalShareBtn").onclick = async () => {
-        try {
-          if (navigator.share) {
-            await navigator.share({
-              title: `${eventName} - Chung kết`,
-              url: pdfFinalParam
-            });
-          } else if (navigator.clipboard) {
-            await navigator.clipboard.writeText(pdfFinalParam);
-            alert("Đã sao chép link PDF chung kết");
-          }
-        } catch (e) {}
-      };
-
-      document.getElementById("finalRetryBtn").onclick = loadFinalPdfInFrame;
+      attachExpandableRows(wrap);
     }
 
     function renderAllTabs(data) {
       const openTabNorm = norm(openTabParam);
 
-     if (openTabNorm === "all" || openTabNorm === "danh sach") currentTab = "all";
-else if (openTabNorm === "individual" || openTabNorm === "ca nhan") currentTab = "individual";
-else if (openTabNorm === "team" || openTabNorm === "dong doi" || openTabNorm === "hon hop") currentTab = "team";
-else if (openTabNorm === "final" || openTabNorm === "chung ket") currentTab = "final";
+      if (openTabNorm === "all" || openTabNorm === "danh sach") currentTab = "all";
+      else if (openTabNorm === "individual" || openTabNorm === "ca nhan") currentTab = "individual";
+      else if (openTabNorm === "team" || openTabNorm === "dong doi" || openTabNorm === "hon hop") currentTab = "team";
+      else if (openTabNorm === "final" || openTabNorm === "chung ket") currentTab = "final";
+      else currentTab = "individual";
 
-if (currentTab === "final" && !finalTabAvailable) currentTab = "individual";
+      if (currentTab === "final" && !finalTabAvailable) currentTab = "individual";
 
       rebuildTabs(finalTabAvailable);
 
@@ -1392,10 +1255,6 @@ if (currentTab === "final" && !finalTabAvailable) currentTab = "individual";
       showTab(currentTab);
       updateStickyHeader(currentTab);
       updateLayoutMetrics();
-
-      if (currentTab === "final") {
-        loadFinalPdfInFrame();
-      }
     }
 
     function showTab(tab) {
@@ -1416,17 +1275,17 @@ if (currentTab === "final" && !finalTabAvailable) currentTab = "individual";
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
 
-const rowYear = norm(r[0] || "");
-const rowCompetition = norm(r[3] || "");
+        const rowYear = norm(r[0] || "");
+        const rowCompetition = norm(r[3] || "");
 
-if (yearText && rowYear !== norm(yearText)) continue;
-if (competitionName && rowCompetition !== norm(competitionName)) continue;
+        if (yearText && rowYear !== norm(yearText)) continue;
+        if (competitionName && rowCompetition !== norm(competitionName)) continue;
 
-const content = r[5] || "";
-const contentBaseNorm = norm(baseTitleOf(content));
+        const content = r[5] || "";
+        const contentBaseNorm = norm(baseTitleOf(content));
 
-if (!content) continue;
-if (contentBaseNorm !== eventBaseNorm) continue;
+        if (!content) continue;
+        if (contentBaseNorm !== eventBaseNorm) continue;
 
         const ho = r[11] || "";
         const ten = r[12] || "";
@@ -1466,49 +1325,6 @@ if (contentBaseNorm !== eventBaseNorm) continue;
       return data;
     }
 
-    function loadFinalPdfInFrame() {
-      if (currentTab !== "final") return;
-      if (!pdfFinalParam) return;
-
-      const frame = document.getElementById("finalPdfFrame");
-      const loading = document.getElementById("finalLoading");
-      const error = document.getElementById("finalError");
-
-      if (!frame || !loading || !error) return;
-
-      finalPdfLoaded = false;
-
-      if (finalPdfFailTimer) {
-        clearTimeout(finalPdfFailTimer);
-        finalPdfFailTimer = null;
-      }
-
-      loading.classList.remove("hidden");
-      error.style.display = "none";
-      frame.classList.add("hidden");
-
-      frame.onload = () => {
-        finalPdfLoaded = true;
-        if (finalPdfFailTimer) {
-          clearTimeout(finalPdfFailTimer);
-          finalPdfFailTimer = null;
-        }
-        loading.classList.add("hidden");
-        error.style.display = "none";
-        frame.classList.remove("hidden");
-      };
-
-      frame.src = pdfFinalParam;
-
-      finalPdfFailTimer = setTimeout(() => {
-        if (!finalPdfLoaded) {
-          loading.classList.add("hidden");
-          frame.classList.add("hidden");
-          error.style.display = "flex";
-        }
-      }, 6000);
-    }
-
     async function fetchAndRender(force = false) {
       try {
         const res = await fetch(`${url}&ts=${Date.now()}`, { cache: "no-store" });
@@ -1526,6 +1342,7 @@ if (contentBaseNorm !== eventBaseNorm) continue;
         latestRows = rows;
         latestData = buildDataFromRows(rows);
         finalTabAvailable = shouldShowFinalTab(latestData, rows);
+
         renderAllTabs(latestData);
       } catch (err) {
         console.error(err);
@@ -1559,5 +1376,13 @@ if (contentBaseNorm !== eventBaseNorm) continue;
 
     load();
   </script>
+
+<script>
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
+</script>
+
 </body>
 </html>
+

@@ -2,7 +2,12 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport"
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no,
+      viewport-fit=cover">
 <title>All Event</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,14 +19,17 @@
 :root{
   --bg:#e8f0ea;
   --tab-bg:#dfe9e2;
-  --tab-text:#2f6c48;
+  --tab-text:#155530;
   --date-red:#e53935;
   --card-bg:#fff;
   --time-gray:#9a9aa0;
-  --text-main:#111;
+  --text-main:#155530;
   --pdf-on:rgba(80,80,85,.85);
   --pdf-off:rgba(80,80,85,.28);
-  --line-green:#006400;
+  --line-green:#017201;
+
+  --header-h:75px;
+  --tabs-h:56px;
 }
 
 *{
@@ -38,6 +46,12 @@ html,body{
   font-size:14px;
 }
 
+body{
+  padding-top:75px;
+}
+
+
+
 #summary{
   display:none !important;
 }
@@ -45,20 +59,22 @@ html,body{
 /* CHỈ STYLE RIÊNG PHẦN TAB */
 .tabs{
   position:fixed;
+  top:75px;
   left:0;
   right:0;
-  top:75px;
   z-index:900;
 
   width:100%;
   padding:8px 14px 10px;
 
   display:flex;
-  gap:8px;
+  gap:4px;
+  padding-right:6px;
   overflow-x:auto;
 
-  background:var(--bg);
+  background:#e8f0ea;
   scrollbar-width:none;
+  box-shadow:0 12px 0 #e8f0ea;
 }
 
 .tabs::-webkit-scrollbar{
@@ -83,17 +99,30 @@ html,body{
   white-space:nowrap;
 }
 
+.tabs::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-14px;
+  height:14px;
+  background:#e8f0ea;
+  pointer-events:none;
+}
+
 /* CHỈ STYLE RIÊNG PHẦN NỘI DUNG */
 .content{
   width:100%;
-  padding:110px 0 40px;
+  padding-top:72px;
+  padding-bottom:40px;
 }
+
 
 .date{
   width:calc(100% - 40px);
-  margin:18px auto 8px;
+  margin:-5px auto 6px;/*Chỉnh lề*/
   color:var(--date-red);
-  font-size:18px;
+  font-size:16px;
   font-weight:700;
 }
 
@@ -121,6 +150,8 @@ html,body{
   font-weight:800;
   line-height:1.15;
 }
+
+
 
 .schedule-card.is-green .card-main-title,
 .schedule-card.is-green .sub-label{
@@ -211,6 +242,19 @@ html,body{
   font-family:inherit;
 }
 
+.page-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+}
+
+
+
+
+
+
 @media (min-width:768px){
   .tabs{
     padding:75px 32px 12px;
@@ -266,7 +310,9 @@ html,body{
 </header>
 
 <div class="tabs">
-  <div class="tab">Tài liệu</div>
+  <div class="tab" onclick="window.location.href='../tailieumenu.html'">
+  Tài liệu
+</div>
   <div class="tab">Đăng ký</div>
   <div class="tab">Danh sách</div>
   <div class="tab">Đẳng cấp</div>
@@ -396,7 +442,7 @@ function isGreenLine(s){
 
 function isRedLine(s){
   const t = norm(s);
-  return t.includes("mac") || t.includes("thuong");
+  return t.includes("mac") || t.includes("thuong") || t.includes("tham");
 }
 
 function hasIndividualCode(p){
@@ -502,40 +548,71 @@ function buildGroupedItems(rows){
 
   const items = Array.from(map.values()).map(item => {
     const pJoined = item.rows.map(x => x.pCode).filter(Boolean).join(" ");
-    const allowIndividual = hasIndividualCode(pJoined);
-    const allowTeam = allowIndividual && hasTeamCode(pJoined);
+const allowIndividual = hasIndividualCode(pJoined);
+const allowTeam = allowIndividual && hasTeamCode(pJoined);
 
-    const subLines = [];
+const isVietnamTeam =
+  norm(item.title) === "doi tuyen viet nam tham du";
 
-    if(allowIndividual){
+
+
+
+
+
+  const subLines = [];
+
+if(isVietnamTeam){
+
+  subLines.push({
+    label:"Danh sách",
+    time:"",
+    link:item.pdfList
+  });
+
+}else{
+
+  if(allowIndividual){
+
+    subLines.push({
+      label:"Danh sách",
+      time:"",
+      link:item.pdfList
+    });
+
+    subLines.push({
+      label:"Cá nhân",
+      time:item.time || " ",
+      link:item.pdfIndividual
+    });
+
+    if(allowTeam){
       subLines.push({
-        label:"Danh sách",
-        time:"",
-        link:item.pdfList
-      });
-
-      subLines.push({
-        label:"Cá nhân",
+        label:teamLabel(item.title),
         time:item.time || " ",
-        link:item.pdfIndividual
+        link:item.pdfTeam
       });
-
-      if(allowTeam){
-        subLines.push({
-          label:teamLabel(item.title),
-          time:item.time || " ",
-          link:item.pdfTeam
-        });
-      }
-
-      if(item.hasFinal){
-        subLines.push({
-          label:"Chung kết",
-          time:item.finalTime || " ",
-          link:item.pdfFinal
-        });
-      }
     }
+
+    if(item.hasFinal){
+      subLines.push({
+        label:"Chung kết",
+        time:item.finalTime || " ",
+        link:item.pdfFinal
+      });
+    }
+
+  }
+
+
+
+}
+    
+
+
+
+
+
+
 
     return {
       ...item,
@@ -602,10 +679,18 @@ function render(){
       : "";
 
     card.innerHTML = `
-      <div class="card-main-time">${item.time || " "}</div>
-      <div class="card-main-title">${item.title}</div>
-      ${subHtml}
-    `;
+  
+
+
+
+    ${!expanded &&
+  norm(item.title) !== "doi tuyen viet nam tham du"
+  ? `<div class="card-main-time">${item.time || " "}</div>`
+  : ``}
+
+  <div class="card-main-title">${item.title}</div>
+  ${subHtml}
+`;
 
     card.addEventListener("click", function(e){
       const pdfWrap = e.target.closest("[data-pdf-link]");
@@ -698,6 +783,14 @@ async function load(){
 }
 
 load();
+
+
+</script>
+
+<script>
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
 </script>
 
 </body>

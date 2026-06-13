@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta charset="UTF-8" />
+<meta name="viewport"
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no,
+      viewport-fit=cover">
 <title>Huy chương</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,74 +17,140 @@
 *{
   box-sizing:border-box;
   -webkit-tap-highlight-color:transparent;
-  font-family:"Roboto Condensed", Arial, sans-serif;
 }
 
-body{
+html,body{
   margin:0;
+  padding:0;
+  height:100%;
+  overflow:hidden;
   background:#eef3fb;
-  color:#111;
-  font-size:14px;
+  font-family:"Roboto Condensed", Arial, sans-serif;
+  color:#111827;
 }
 
-.header{
-  background:linear-gradient(180deg,#0a5f34,#083f24);
-  color:white;
-  padding:calc(env(safe-area-inset-top) + 8px) 12px 10px;
-  position:sticky;
+.page-header{
+  position:fixed;
   top:0;
-  z-index:10;
+  left:0;
+  right:0;
+  z-index:1000;
 }
 
-.header-row{
-  position:relative;
-  height:30px;
+.year-fixed{
+  position:fixed;
+  top:var(--headerH, 120px);
+  left:0;
+  right:0;
+  z-index:999;
+  background:#eef3fb;
+  padding:12px 0 0;
+}
+
+.scroll-page{
+  position:fixed;
+  top:var(--contentTop, 184px);
+  left:0;
+  right:0;
+  bottom:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  background:#eef3fb;
+  padding-bottom:24px;
+}
+
+.year-card{
+  width:95%;
+  height:40px;
+  text-decoration:none;
+  margin:0 auto 12px;
+  background:#ffffff;
+  border-radius:12px;
+  border:1px solid #d9e2ee;
   display:flex;
   align-items:center;
   justify-content:center;
+  position:relative;
+  padding:0 14px;
+  font-size:14px;
+  font-weight:700;
+  color:#1d4ed8;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
-.back-btn{
-  position:absolute;
-  left:0;
-  top:0;
-  height:30px;
+.year-card.current-year{
+  font-size:16px;
+  color:#d72d2d;
+}
+
+.year-arrow{
+  position:static;
+  margin-left:6px;
+  font-size:14px;
+  color:#777;
+}
+
+.year-panel{
+  width:95%;
+  margin:0 auto 12px;
+  background:#ffffff;
+  border-radius:12px;
+  border:1px solid #d9e2ee;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  overflow:hidden;
+  display:none;
+}
+
+.year-option{
+  height:40px;
   display:flex;
   align-items:center;
-  color:white;
-  text-decoration:none;
+  justify-content:center;
+  border-bottom:1px solid #edf1f7;
+  color:#1d4ed8;
   font-size:14px;
-  font-weight:600;
+  font-weight:700;
 }
 
-.title{
-  font-size:18px;
-  font-weight:800;
-  text-align:center;
+.year-option:last-child{
+  border-bottom:none;
 }
 
-.container{
-  padding:12px 0 24px;
+.year-option.current-year{
+  color:#d72d2d;
 }
 
-.card{
+.competition-card{
   width:95%;
-  min-height:40px;
-  margin:0 auto 8px;
-  background:white;
+  min-height:52px;
+  margin:0 auto 10px;
+  background:#ffffff;
   border-radius:12px;
+  border:1px solid #d9e2ee;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 14px;
+  padding:8px 14px;
   text-decoration:none;
-  color:#111;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  color:#1d4ed8;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
-.card-title{
+.main{
   font-size:14px;
-  font-weight:700;
+  font-weight:800;
+  line-height:18px;
+}
+
+.main.has-dash{
+  color:#d72d2d;
+}
+
+.sub{
+  font-size:14px;
+  color:#666;
+  margin-top:2px;
+  line-height:18px;
 }
 
 .arrow{
@@ -91,29 +162,68 @@ body{
 .empty{
   text-align:center;
   padding:20px;
-  color:#555;
+  color:#8b9098;
   font-size:14px;
+  font-weight:700;
 }
 </style>
 </head>
 
-<body>
+<body class="no-tabs doc-page">
 
-<div class="header">
-  <div class="header-row">
-    <a class="back-btn" href="../index.html">‹ Trở lại</a>
-    <div class="title">Huy chương</div>
+<header class="page-header" id="pageHeader">
+  <div class="page-header-inner">
+
+    <a href="javascript:history.back()" class="page-back">
+      ← Quay lại
+    </a>
+
+    <div class="page-title-wrap">
+      <div class="page-title">
+        Huy chương
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="year-fixed" id="yearFixed">
+  <div id="yearSelect" class="year-card">
+    <span id="selectedYearText">Chọn năm</span>
+    <span class="year-arrow"> Hoặc chọn năm khác</span>
+  </div>
+
+  <div id="yearPanel" class="year-panel"></div>
+</div>
+
+<div class="scroll-page" id="scrollPage">
+  <div id="list">
+    <div class="loading">Đang tải</div>
   </div>
 </div>
 
-<div class="container" id="list">
-  <div class="loading">Đang tải...</div>
-</div>
-
 <script>
-
 const SHEET_ID = "1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
 const GID = "1558133737";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+let allRows = [];
+let allYears = [];
+let selectedYear = String(new Date().getFullYear());
+
+function updateLayout(){
+  const header = document.getElementById("pageHeader");
+  const yearFixed = document.getElementById("yearFixed");
+
+  const headerH = header ? header.offsetHeight : 120;
+  const yearH = yearFixed ? yearFixed.offsetHeight : 64;
+
+  document.documentElement.style.setProperty("--headerH", headerH + "px");
+  document.documentElement.style.setProperty("--contentTop", (headerH + yearH) + "px");
+}
+
+window.addEventListener("load", updateLayout);
+window.addEventListener("resize", updateLayout);
 
 function splitCSVRow(row){
   const result = [];
@@ -153,36 +263,166 @@ function clean(v){
   return String(v || "").trim();
 }
 
+function shouldHideCompetition(name){
+  const n = name.toLowerCase();
+
+  return (
+    n.includes("tuần") ||
+    n.includes("tuan") ||
+    n.includes("học") ||
+    n.includes("hoc") ||
+    n.includes("hà nội") ||
+    n.includes("luật") ||
+    n.includes("luat")
+  );
+}
+
+function renderYearButton(){
+  const currentYear = String(new Date().getFullYear());
+  const yearSelect = document.getElementById("yearSelect");
+  const selectedYearText = document.getElementById("selectedYearText");
+
+  selectedYearText.textContent = `Năm: ${selectedYear}`;
+
+  if(selectedYear === currentYear){
+    yearSelect.classList.add("current-year");
+  }else{
+    yearSelect.classList.remove("current-year");
+  }
+
+  updateLayout();
+}
+
+function renderYearPanel(){
+  const currentYear = String(new Date().getFullYear());
+  const panel = document.getElementById("yearPanel");
+
+  panel.innerHTML = allYears.map(year => `
+    <div class="year-option ${year === currentYear ? "current-year" : ""}"
+         onclick="selectYear('${year}')">
+      ${year}
+    </div>
+  `).join("");
+
+  updateLayout();
+}
+
+function selectYear(year){
+  selectedYear = year;
+  document.getElementById("yearPanel").style.display = "none";
+  renderYearButton();
+  renderCompetitions();
+}
+
+function getStartDateValue(time, year){
+  const text = clean(time);
+
+  const m = text.match(/(\d{1,2})[./-](\d{1,2})(?:[./-](\d{4}))?/);
+  if(!m) return 99999999;
+
+  const d = String(m[1]).padStart(2,"0");
+  const mo = String(m[2]).padStart(2,"0");
+  const y = m[3] || year;
+
+  return Number(`${y}${mo}${d}`);
+}
+
+function renderCompetitions(){
+  const map = new Map();
+
+  allRows.forEach(r => {
+    const year = clean(r[0]);
+    const time = clean(r[1]);
+    const name = clean(r[3]);
+
+    if(year !== selectedYear || !name) return;
+    if(shouldHideCompetition(name)) return;
+
+    const key = `${name}__${time}`;
+
+    if(!map.has(key)){
+      map.set(key,{
+        year,
+        time,
+        name,
+        startValue:getStartDateValue(time, year)
+      });
+    }
+  });
+
+  const competitions = [...map.values()]
+    .sort((a,b) => a.startValue - b.startValue);
+
+  const list = document.getElementById("list");
+
+  if(competitions.length === 0){
+    list.innerHTML = `<div class="empty">Không có dữ liệu</div>`;
+    updateLayout();
+    return;
+  }
+
+  list.innerHTML = competitions.map(c => `
+    <a class="competition-card"
+       href="medal-ranking.html?year=${encodeURIComponent(c.year)}&competition=${encodeURIComponent(c.name)}&time=${encodeURIComponent(c.time)}">
+      <div>
+        <div class="main ${c.name.includes("-") ? "has-dash" : ""}">
+          ${c.name}
+        </div>
+        <div class="sub">${c.time}</div>
+      </div>
+      <div class="arrow"></div>
+    </a>
+  `).join("");
+
+  updateLayout();
+}
+
+document.getElementById("yearSelect").addEventListener("click", () => {
+  const panel = document.getElementById("yearPanel");
+  panel.style.display = panel.style.display === "block" ? "none" : "block";
+  updateLayout();
+});
+
 fetch(CSV_URL)
   .then(res => res.text())
   .then(text => {
-    const rows = parseCSV(text).slice(2);
+    allRows = parseCSV(text).slice(2);
 
-    const years = [...new Set(
-      rows
+    allYears = [...new Set(
+      allRows
         .map(r => clean(r[0]))
         .filter(v => /^\d{4}$/.test(v))
     )].sort((a,b) => Number(b) - Number(a));
 
-    const list = document.getElementById("list");
-
-    if(years.length === 0){
-      list.innerHTML = `<div class="empty">Không có dữ liệu</div>`;
+    if(allYears.length === 0){
+      document.getElementById("list").innerHTML =
+        `<div class="empty">Không có dữ liệu</div>`;
+      updateLayout();
       return;
     }
 
-    list.innerHTML = years.map(year => `
-      <a class="card" href="medal-competition.html?year=${encodeURIComponent(year)}">
-        <div class="card-title">${year}</div>
-        <div class="arrow">›</div>
-      </a>
-    `).join("");
+    if(!allYears.includes(selectedYear)){
+      selectedYear = allYears[0];
+    }
+
+    renderYearButton();
+    renderYearPanel();
+    renderCompetitions();
   })
   .catch(err => {
     document.getElementById("list").innerHTML =
       `<div class="empty">Lỗi tải dữ liệu</div>`;
+    updateLayout();
     console.error(err);
   });
+
+updateLayout();
+</script>
+
+<script>
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
 </script>
 
 </body>

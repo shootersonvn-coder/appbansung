@@ -9,12 +9,12 @@
       user-scalable=no,
       viewport-fit=cover">
 
-<title>Huy chương</title>
+<title>Quản trị</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="../style.css?v=2">
 
 <style>
@@ -33,13 +33,14 @@ html,body{
 
 .page{
   width:100%;
-  margin-top:22px;
+  margin-top:22px;/*Thay đổi độ cao của các card*/
+  padding-bottom:24px;
+  
 }
 
 .doc-card{
   width:95%;
   height:40px;
-  text-decoration:none;
   margin:0 auto 10px;
   background:#ffffff;
   border-radius:12px;
@@ -50,7 +51,14 @@ html,body{
   font-size:14px;
   font-weight:500;
   color:#1d4ed8;
+  text-decoration:none;
   box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+button.doc-card{
+  font-family:"Roboto Condensed", Arial, sans-serif;
+  cursor:pointer;
+  text-align:left;
 }
 
 .doc-card:active{
@@ -68,14 +76,12 @@ html,body{
 <header class="page-header">
   <div class="page-header-inner">
 
-    <a href="javascript:history.back()" class="page-back">
+    <a href="../index.html" class="page-back">
       ← Quay lại
     </a>
 
     <div class="page-title-wrap">
-      <div class="page-title">
-        Huy chương
-      </div>
+      <div class="page-title">Quản trị</div>
     </div>
 
   </div>
@@ -83,17 +89,24 @@ html,body{
 
 <div class="page">
 
-  <div
-  class="doc-card"
-  onclick="window.location.href='https://mellifluous-raindrop-50eec8.netlify.app/huychuong/medal-year.html?v=2'">
-  Tổng hợp huy chương
-</div>
+ 
+    <a class="doc-card" href="../score-input.html">
+  Nhập điểm tiêu chuẩn
+</a>
+  <div class="doc-card">Nhập Chung kết (Sắp triển khai)</div>
+  <div class="doc-card">Đăng ký thi đấu</div>
+  <div class="doc-card">Sắp triển khai</div>
+  
+  <div class="doc-card">Chờ</div>
 
   <div class="bottom-space"></div>
-
 </div>
 
 <script>
+function openScore(){
+  window.location.href = "../score.html";
+}
+
 document.addEventListener('gesturestart', e => e.preventDefault());
 document.addEventListener('gesturechange', e => e.preventDefault());
 document.addEventListener('gestureend', e => e.preventDefault());

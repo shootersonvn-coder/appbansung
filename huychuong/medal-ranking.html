@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no,
+      viewport-fit=cover">
+<title>Bảng huy chương</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=2">
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+html,body{
+  margin:0;
+  padding:0;
+  height:100%;
+  overflow:hidden;
+  background:#eef3fb;
+  font-family:"Roboto Condensed",Arial,sans-serif;
+  color:#111827;
+}
+
+.page-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+}
+
+.fixed-board{
+  position:fixed;
+  top:var(--headerH, 0px);
+  left:0;
+  right:0;
+  z-index:900;
+  background:#eef3fb;
+  padding-top:14px;
+}
+
+.sub-title{
+  width:95%;
+  margin:0 auto 10px;
+  text-align:center;
+  font-size:14px;
+  font-weight:700;
+  color:#1d4ed8;
+}
+
+.table{
+  width:95%;
+  margin:0 auto;
+  background:white;
+  overflow:hidden;
+  border:1px solid #d9e2ee;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+}
+
+.fixed-table{
+  border-radius:12px 12px 0 0;
+  border-bottom:none;
+}
+
+.scroll-area{
+  position:fixed;
+  top:var(--scrollTop, 0px);
+  left:0;
+  right:0;
+  bottom:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  background:#eef3fb;
+  padding-bottom:24px;
+}
+
+.body-table{
+  border-radius:0 0 12px 12px;
+  border-top:none;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:38px 1fr 38px 38px 38px 38px 48px;
+  min-height:38px;
+  align-items:center;
+  border-bottom:1px solid #edf1f7;
+}
+
+.row:last-child{border-bottom:none}
+
+.head{
+  background:#00542D;
+  color:white;
+  font-weight:800;
+}
+
+.total-row{
+  background:#f3d36b;
+  color:#111;
+  font-weight:800;
+}
+
+.cell{
+  padding:0 4px;
+  text-align:center;
+  font-size:13px;
+}
+
+.unit{
+  text-align:left;
+  font-weight:700;
+}
+
+.clickable{
+  cursor:pointer;
+}
+
+.loading,.empty{
+  text-align:center;
+  padding:20px;
+  color:#555;
+  font-size:14px;
+}
+.page-loading{
+  position:fixed;
+  top:calc(var(--headerH, 120px) + 90px);
+  left:0;
+  right:0;
+  z-index:950;
+  text-align:center;
+  color:#8b9098;
+  font-size:14px;
+  font-weight:700;
+  padding:20px;
+}
+</style>
+</head>
+
+<body class="no-tabs doc-page">
+
+<header class="page-header" id="pageHeader">
+  <div class="page-header-inner">
+
+    <a href="javascript:history.back()" class="page-back">
+      ← Quay lại
+    </a>
+
+    <div class="page-title-wrap">
+      <div class="page-title">Bảng huy chương</div>
+    </div>
+
+  </div>
+</header>
+
+<div class="fixed-board" id="fixedBoard">
+
+  <div class="sub-title" id="competitionName"></div>
+
+  <div class="table fixed-table">
+    <div class="row head">
+      <div class="cell">XH</div>
+      <div class="cell">Đơn vị</div>
+      <div class="cell">V</div>
+      <div class="cell">B</div>
+      <div class="cell">Đ</div>
+      <div class="cell">KL</div>
+      <div class="cell">Cộng</div>
+    </div>
+
+    <div id="totalRow">
+      <div class="loading">Đang tải...</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="scroll-area" id="scrollArea">
+  <div id="pageLoading" class="page-loading">
+  Đang tải
+</div>
+
+
+
+  <div class="table body-table" id="rows"></div>
+</div>
+
+<script>
+const SHEET_ID = "1MATLspvOeL4MFObWUIiYqjKkw-PkEEQ7IqXCw-kRheQ";
+const GID = "1558133737";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+const UNIT_GID = "1062776861";
+const UNIT_CSV_URL =
+`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${UNIT_GID}`;
+
+const params = new URLSearchParams(location.search);
+const selectedYear = params.get("year") || "";
+const selectedCompetition = params.get("competition") || "";
+const selectedTime = params.get("time") || "";
+
+document.getElementById("competitionName").textContent =
+  selectedCompetition + " " + selectedYear;
+
+function updateLayout(){
+  const header = document.getElementById("pageHeader");
+  const fixedBoard = document.getElementById("fixedBoard");
+
+  const headerH = header.offsetHeight;
+  const fixedH = fixedBoard.offsetHeight;
+
+  document.documentElement.style.setProperty("--headerH", headerH + "px");
+  document.documentElement.style.setProperty("--scrollTop", (headerH + fixedH) + "px");
+}
+
+window.addEventListener("load", updateLayout);
+window.addEventListener("resize", updateLayout);
+
+function splitCSVRow(row){
+  const result=[];
+  let current="";
+  let inQuotes=false;
+
+  for(let i=0;i<row.length;i++){
+    const char=row[i];
+    const next=row[i+1];
+
+    if(char === '"' && inQuotes && next === '"'){
+      current+='"';
+      i++;
+    }else if(char === '"'){
+      inQuotes=!inQuotes;
+    }else if(char === "," && !inQuotes){
+      result.push(current);
+      current="";
+    }else{
+      current+=char;
+    }
+  }
+
+  result.push(current);
+  return result.map(v=>v.trim());
+}
+
+function parseCSV(text){
+  return text
+    .replace(/\r/g,"")
+    .split("\n")
+    .filter(r=>r.trim()!=="")
+    .map(splitCSVRow);
+}
+
+function clean(v){
+  return String(v || "").trim();
+}
+
+function sortTextVN(v){
+  return String(v || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d")
+    .replace(/ă/g,"a")
+    .replace(/â/g,"a")
+    .replace(/ô/g,"o")
+    .replace(/ơ/g,"o")
+    .replace(/ư/g,"u")
+    .trim();
+}
+function isInternationalCompetition(){
+  return selectedCompetition.includes("-");
+}
+
+function isVietnamDomesticUnit(unit){
+  const s = sortTextVN(unit);
+
+  return (
+    s === "ha noi" ||
+    s === "hai phong" ||
+    s === "tp hcm" ||
+    s === "hcm" ||
+    s === "ha tinh" ||
+    s === "quan doi" ||
+    s === "cong an nd" ||
+    s === "da nang" ||
+    s === "dak lak" ||
+    s === "dong nai" ||
+    s === "quang ninh" ||
+    s === "thanh hoa" ||
+    s === "phu tho"
+  );
+}
+function medalType(v){
+  const s = clean(v).toLowerCase().replace(/\s+/g,"");
+
+  if(!s) return "";
+
+  if(s === "v" || s === "v1") return "gold";
+  if(s === "b" || s === "b1") return "silver";
+
+  if(
+    s === "đ" ||
+    s === "d" ||
+    s === "đ1" ||
+    s === "d1" ||
+    s === "đ4" ||
+    s === "d4"
+  ) return "bronze";
+
+  return "";
+}
+
+function hasRecord(v){
+  const s = clean(v).toLowerCase();
+  return s && s !== "0" && s !== "-" && s !== "không";
+}
+
+function recordGroupFromCode(code){
+  const c = clean(code).toUpperCase().replace("Đ","D");
+
+  if(["PKLD1","PKLD2","PKLD3"].includes(c)) return "PKLD1";
+  if(["PKLD4","PKLD5","PKLD6"].includes(c)) return "PKLD4";
+  if(["PKLD7","PKLD8","PKLD9"].includes(c)) return "PKLD7";
+
+  if(["LKLD1","LKLD2","LKLD3"].includes(c)) return "LKLD1";
+  if(["LKLD4","LKLD5","LKLD6"].includes(c)) return "LKLD4";
+  if(["LKLD7","LKLD8","LKLD9"].includes(c)) return "LKLD7";
+
+  if(["DKLD1","DKLD2","DKLD3"].includes(c)) return "DKLD1";
+  if(["DKLD4","DKLD5","DKLD6"].includes(c)) return "DKLD4";
+  if(["DKLD7","DKLD8","DKLD9"].includes(c)) return "DKLD7";
+
+  return "";
+}
+
+function makeItem(unit){
+  return {
+    unit,
+    gold:0,
+    silver:0,
+    bronze:0,
+    record:0,
+    total:0,
+    recordKeys:new Set()
+  };
+}
+
+function addMedal(item, value){
+  const t = medalType(value);
+
+  if(t === "gold") item.gold++;
+  if(t === "silver") item.silver++;
+  if(t === "bronze") item.bronze++;
+}
+
+function openMedalDetail(unit,type){
+  const url =
+    `medal-detail.html?year=${encodeURIComponent(selectedYear)}` +
+    `&competition=${encodeURIComponent(selectedCompetition)}` +
+    `&time=${encodeURIComponent(selectedTime)}` +
+    `&unit=${encodeURIComponent(unit)}` +
+    `&type=${encodeURIComponent(type)}`;
+
+  window.location.href = url;
+}
+
+async function loadUnitMap(){
+  const map = new Map();
+
+  const res = await fetch(UNIT_CSV_URL);
+  const text = await res.text();
+
+  const rows = parseCSV(text).slice(1);
+
+  rows.forEach(r=>{
+    const code = clean(r[0]);
+    const name = clean(r[1]);
+
+    if(code && name){
+      map.set(code,name);
+    }
+  });
+
+  return map;
+}
+
+Promise.all([
+  fetch(CSV_URL).then(res=>res.text()),
+  loadUnitMap()
+])
+.then(([text, unitMap])=>{
+    document.getElementById("pageLoading").style.display = "none";
+  const rows = parseCSV(text).slice(2);
+  const map = new Map();
+
+  rows.forEach(r=>{
+    const year = clean(r[0]);
+    const time = clean(r[1]);
+    const competition = clean(r[3]);
+    const unit = clean(r[14]);
+
+    if(year !== selectedYear) return;
+if(competition !== selectedCompetition) return;
+if(selectedTime && time !== selectedTime) return;
+if(!unit) return;
+
+const displayUnit = unitMap.get(unit) || unit;
+
+if(
+  isInternationalCompetition() &&
+  isVietnamDomesticUnit(displayUnit)
+){
+  return;
+}
+
+    if(!map.has(unit)){
+      map.set(unit, makeItem(unit));
+    }
+
+    const item = map.get(unit);
+
+    addMedal(item, r[29]);
+    addMedal(item, r[30]);
+
+    if(hasRecord(r[26])) item.record++;
+    if(hasRecord(r[27])) item.record++;
+
+    const ac = clean(r[28]).toUpperCase();
+
+    const singleRecordCodes = [
+      "PKLK1","LKLK1","DKLK1",
+      "PKLC1","LKLC1","DKLC1"
+    ];
+
+    if(singleRecordCodes.includes(ac)){
+      item.record++;
+    }
+
+    const recordGroup = recordGroupFromCode(ac);
+
+    if(recordGroup){
+      const key = `${competition}__${unit}__${clean(r[5])}__${recordGroup}`;
+
+      if(!item.recordKeys.has(key)){
+        item.recordKeys.add(key);
+        item.record++;
+      }
+    }
+  });
+
+  let data = [...map.values()].map(x=>{
+  x.total = x.gold + x.silver + x.bronze;
+  return x;
+});
+
+data.sort((a,b)=>{
+  const aHas = a.total > 0 || a.record > 0;
+  const bHas = b.total > 0 || b.record > 0;
+
+  if(aHas && !bHas) return -1;
+  if(!aHas && bHas) return 1;
+
+  if(!aHas && !bHas){
+    const nameA = unitMap.get(a.unit) || a.unit;
+    const nameB = unitMap.get(b.unit) || b.unit;
+    return sortTextVN(nameA).localeCompare(sortTextVN(nameB));
+  }
+
+  return (
+    b.gold - a.gold ||
+    b.silver - a.silver ||
+    b.bronze - a.bronze ||
+    b.record - a.record ||
+    b.total - a.total ||
+    sortTextVN(unitMap.get(a.unit) || a.unit)
+      .localeCompare(sortTextVN(unitMap.get(b.unit) || b.unit))
+  );
+});
+
+  const totalRow = document.getElementById("totalRow");
+  const rowsBox = document.getElementById("rows");
+
+  if(data.length === 0){
+    totalRow.innerHTML = "";
+    rowsBox.innerHTML = `<div class="empty">Không có dữ liệu huy chương</div>`;
+    updateLayout();
+    return;
+  }
+
+  const total = data.reduce((s,x)=>({
+    gold:s.gold+x.gold,
+    silver:s.silver+x.silver,
+    bronze:s.bronze+x.bronze,
+    record:s.record+x.record,
+    total:s.total+x.total
+  }),{gold:0,silver:0,bronze:0,record:0,total:0});
+
+  totalRow.innerHTML = `
+    <div class="row total-row">
+      <div class="cell"></div>
+      <div class="cell unit">Tổng cộng</div>
+      <div class="cell">${total.gold}</div>
+      <div class="cell">${total.silver}</div>
+      <div class="cell">${total.bronze}</div>
+      <div class="cell">${total.record}</div>
+      <div class="cell">${total.total}</div>
+    </div>
+  `;
+
+  rowsBox.innerHTML = data.map((r,i)=>`
+    <div class="row">
+      <div class="cell">${i+1}</div>
+
+      <div class="cell unit clickable" onclick="openMedalDetail('${r.unit}','all')">
+        ${unitMap.get(r.unit) || r.unit}
+      </div>
+
+      <div class="cell clickable" onclick="openMedalDetail('${r.unit}','gold')">
+        ${r.gold || ""}
+      </div>
+
+      <div class="cell clickable" onclick="openMedalDetail('${r.unit}','silver')">
+        ${r.silver || ""}
+      </div>
+
+      <div class="cell clickable" onclick="openMedalDetail('${r.unit}','bronze')">
+        ${r.bronze || ""}
+      </div>
+
+      <div class="cell clickable" onclick="openMedalDetail('${r.unit}','record')">
+        ${r.record || ""}
+      </div>
+
+      <div class="cell clickable" onclick="openMedalDetail('${r.unit}','all')">
+        ${r.total || ""}
+      </div>
+    </div>
+  `).join("");
+
+  updateLayout();
+})
+.catch(err=>{
+    document.getElementById("pageLoading").style.display = "none";
+  document.getElementById("totalRow").innerHTML = "";
+  document.getElementById("rows").innerHTML =
+    `<div class="empty">Lỗi tải dữ liệu</div>`;
+  updateLayout();
+  console.error(err);
+});
+</script>
+
+<script>
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
+</script>
+
+</body>
+</html>
