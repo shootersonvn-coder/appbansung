@@ -617,6 +617,11 @@ function renderPickButtons(noidung){
         Cá nhân
       </button>
 
+      <button class="pick-btn ${isMixedTeam?"disabled":""}"
+        ${isMixedTeam?'type="button"':'onclick="togglePick(this)" data-type="k.tra"'}>
+        K.tra
+      </button>
+
       <button class="pick-btn" onclick="togglePick(this)" data-type="doi1">Đội 1</button>
 
       <button class="pick-btn ${limit>=2?"":"disabled"}"
